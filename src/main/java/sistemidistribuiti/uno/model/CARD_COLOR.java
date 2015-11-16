@@ -9,5 +9,5 @@ package sistemidistribuiti.uno.model;
 public enum CARD_COLOR {
 	RED, BLUE, YELLOW, GREEN,
 	// SPECIAL COLOR
-	BLACK;
+	RAINBOW;
 }

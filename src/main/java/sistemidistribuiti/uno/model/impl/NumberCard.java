@@ -11,9 +11,9 @@ import sistemidistribuiti.uno.model.UnoCard;
  */
 public class NumberCard extends UnoCard{
 	private int number;
-	
-	public NumberCard(int number, CARD_COLOR color) {
-		super(color);
+
+	public NumberCard(CARD_COLOR color, byte[] image, int number) {
+		super(color, image);
 		this.number = number;
 	}
 
