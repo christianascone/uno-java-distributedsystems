@@ -1,7 +1,7 @@
-package sistemidistribuiti.uno.model.impl;
+package sistemidistribuiti.uno.model.card.impl;
 
-import sistemidistribuiti.uno.model.CARD_COLOR;
-import sistemidistribuiti.uno.model.UnoCard;
+import sistemidistribuiti.uno.model.card.CARD_COLOR;
+import sistemidistribuiti.uno.model.card.UnoCard;
 
 /**
  * Classic card, with a number and a background color

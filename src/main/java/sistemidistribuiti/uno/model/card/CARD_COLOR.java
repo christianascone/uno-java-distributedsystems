@@ -1,4 +1,4 @@
-package sistemidistribuiti.uno.model;
+package sistemidistribuiti.uno.model.card;
 
 /**
  * Card background colors

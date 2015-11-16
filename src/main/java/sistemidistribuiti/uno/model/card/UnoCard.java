@@ -1,4 +1,4 @@
-package sistemidistribuiti.uno.model;
+package sistemidistribuiti.uno.model.card;
 
 /**
  * Abstract class for uno card, classic or special

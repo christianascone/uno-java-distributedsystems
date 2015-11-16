@@ -1,8 +1,8 @@
-package sistemidistribuiti.uno.model.impl;
+package sistemidistribuiti.uno.model.card.impl;
 
-import sistemidistribuiti.uno.model.CARD_COLOR;
-import sistemidistribuiti.uno.model.SPECIAL_CARD_TYPE;
-import sistemidistribuiti.uno.model.UnoCard;
+import sistemidistribuiti.uno.model.card.CARD_COLOR;
+import sistemidistribuiti.uno.model.card.SPECIAL_CARD_TYPE;
+import sistemidistribuiti.uno.model.card.UnoCard;
 
 public class SpecialCard extends UnoCard{
 	private SPECIAL_CARD_TYPE specialCardType;
