@@ -13,7 +13,6 @@ public class SpecialCard extends UnoCard{
 		this.specialCardType = specialCardType;
 	}
 
-
 	public SPECIAL_CARD_TYPE getSpecialCardType() {
 		return specialCardType;
 	}
