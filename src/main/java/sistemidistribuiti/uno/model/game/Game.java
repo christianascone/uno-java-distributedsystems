@@ -13,6 +13,7 @@ public class Game {
 	private List<UnoCard> deck;
 	private List<UnoCard> discarded;
 	private Player current;
+	private Direction gameDirection;
 	
 	public Game(List<Player> players, List<UnoCard> deck, Player current) {
 		this.players = players;
@@ -25,6 +26,8 @@ public class Game {
 		Random rnd = new Random();
 		int randomStartingPlayer = rnd.nextInt(players.size());
 		this.current = players.get(randomStartingPlayer);
+		
+		this.gameDirection = Direction.getDefault();
 	}
 
 	public List<Player> getPlayers() {
@@ -43,6 +46,17 @@ public class Game {
 		return current;
 	}
 	
+	public Direction getGameDirection() {
+		return gameDirection;
+	}
+	
+	/**
+	 * Reverse game direction
+	 */
+	public void reverseDirection(){
+		gameDirection = Direction.reverseDirection(gameDirection);
+	}
+
 	/**
 	 * Shuffle the currenct deck
 	 */
