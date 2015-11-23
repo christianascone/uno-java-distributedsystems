@@ -1,5 +1,6 @@
 package rmiSourceCode.engine;
 
+import java.net.URL;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
@@ -23,7 +24,9 @@ public class ComputeEngine implements Compute {
         if (System.getSecurityManager() == null) {
             System.setSecurityManager(new SecurityManager());
         }
-        System.setProperty("java.security.policy","/Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/jre/lib/security/java.policy");
+        URL url = ComputeEngine.class.getClassLoader().getResource("java.policy");
+        
+        System.setProperty("java.security.policy",url.getPath());
 
         try {
             Compute engine = new ComputeEngine();
