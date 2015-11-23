@@ -1,32 +1,35 @@
-package sistemidistribuiti.uno.rmi.server;
+package sistemidistribuiti.uno.workflow;
 
 import java.net.URL;
 import java.util.Scanner;
 
+import sistemidistribuiti.uno.listener.DataReceiverListener;
 import sistemidistribuiti.uno.rmi.interfaces.UnoRemoteGameInterface;
+import sistemidistribuiti.uno.rmi.server.UnoRemoteServer;
 import sistemidistribuiti.uno.rmi.utils.ServerHelper;
 
-public class TestComputeServer implements UnoRemoteGameInterface {
-
-	public TestComputeServer() {
-        super();	
-    }
+/**
+ * Starter class for every server/client
+ * 
+ * @author christian
+ *
+ */
+public class Starter {
+	private static UnoRemoteGameInterface remoteServer;
 	
-	public int multiply(int a, int b) {
-		return a * b;
-	}
-
+	private static DataReceiverListener dataReceiverListener;
+	
 	public static void main(String[] args) {
 		if (System.getSecurityManager() == null) {
 			System.setSecurityManager(new SecurityManager());
 		}
-		URL url = TestComputeServer.class.getClassLoader().getResource(
+		URL url = UnoRemoteServer.class.getClassLoader().getResource(
 				"java.policy");
 
 		System.setProperty("java.security.policy", url.getPath());
 
 		try {
-
+			dataReceiverListener = new DataReceiver();
 			Scanner scan = new Scanner(System.in);
 
 			System.out.println("Insert server name:");
@@ -36,7 +39,7 @@ public class TestComputeServer implements UnoRemoteGameInterface {
 			int port = scan.nextInt();
 			scan.close();
 
-			UnoRemoteGameInterface remoteServer = new TestComputeServer();
+			remoteServer = new UnoRemoteServer(dataReceiverListener);
 			ServerHelper.setupServer(remoteServer, name, port);
 			System.out.println("ComputeEngine bound");
 		} catch (Exception e) {
@@ -44,4 +47,5 @@ public class TestComputeServer implements UnoRemoteGameInterface {
 			e.printStackTrace();
 		}
 	}
+
 }
