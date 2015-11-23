@@ -3,6 +3,7 @@ package rmiSourceCode.engine;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Scanner;
 
 import rmiSourceCode.compute.Compute;
 import rmiSourceCode.compute.Task;
@@ -14,6 +15,7 @@ public class ComputeEngine implements Compute {
     }
 
     public <T> T executeTask(Task<T> t) {
+    	System.out.println("Called");
         return t.execute();
     }
 
@@ -24,10 +26,19 @@ public class ComputeEngine implements Compute {
         System.setProperty("java.security.policy","/Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/jre/lib/security/java.policy");
 
         try {
-            String name = "Compute";
             Compute engine = new ComputeEngine();
-            LocateRegistry.createRegistry(1099);
-            Compute stub = (Compute) UnicastRemoteObject.exportObject(engine, 1099);
+            
+            Scanner scan = new Scanner(System.in);
+            
+            System.out.println("Insert server name:");
+            String name = scan.nextLine();
+            
+            System.out.println("Insert server port:");
+            int port = scan.nextInt();
+            scan.close();
+            
+            LocateRegistry.createRegistry(port);
+            Compute stub = (Compute) UnicastRemoteObject.exportObject(engine, port);
             Registry registry = LocateRegistry.getRegistry();
             registry.rebind(name, stub);
             System.out.println("ComputeEngine bound");
