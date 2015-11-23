@@ -5,6 +5,11 @@ import sistemidistribuiti.uno.model.card.SPECIAL_CARD_TYPE;
 import sistemidistribuiti.uno.model.card.UnoCard;
 
 public class SpecialCard extends UnoCard{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6864973083834352541L;
+	
 	private SPECIAL_CARD_TYPE specialCardType;
 
 	public SpecialCard(CARD_COLOR color, byte[] image,

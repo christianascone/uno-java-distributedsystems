@@ -1,12 +1,19 @@
 package sistemidistribuiti.uno.model.card;
 
+import java.io.Serializable;
+
 /**
  * Abstract class for uno card, classic or special
  * 
  * @author christian
  *
  */
-public abstract class UnoCard {
+public abstract class UnoCard implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4560112007584528044L;
+	
 	private CARD_COLOR color;
 	private byte[] image;
 	

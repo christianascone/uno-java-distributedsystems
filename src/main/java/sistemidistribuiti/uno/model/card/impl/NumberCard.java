@@ -10,6 +10,11 @@ import sistemidistribuiti.uno.model.card.UnoCard;
  *
  */
 public class NumberCard extends UnoCard{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7210043546952154154L;
+	
 	private int number;
 
 	public NumberCard(CARD_COLOR color, byte[] image, int number) {
