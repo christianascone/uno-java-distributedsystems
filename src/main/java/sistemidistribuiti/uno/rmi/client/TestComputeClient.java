@@ -4,7 +4,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Scanner;
 
-import sistemidistribuiti.uno.rmi.interfaces.TestRemoteInterface;
+import sistemidistribuiti.uno.rmi.interfaces.UnoRemoteGameInterface;
 
 
 public class TestComputeClient {
@@ -30,7 +30,7 @@ public class TestComputeClient {
             scan.close();
         	
             Registry registry = LocateRegistry.getRegistry(host);
-            TestRemoteInterface comp = (TestRemoteInterface) registry.lookup(name);
+            UnoRemoteGameInterface comp = (UnoRemoteGameInterface) registry.lookup(name);
             
             int result = comp.multiply(number1, number2);
             System.out.println(result);
