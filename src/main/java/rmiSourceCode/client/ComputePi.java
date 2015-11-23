@@ -12,6 +12,7 @@ public class ComputePi {
             System.setSecurityManager(new SecurityManager());
         }
         try {
+        	
             String name = "Compute";
             Registry registry = LocateRegistry.getRegistry(args[0]);
             Compute comp = (Compute) registry.lookup(name);
