@@ -2,12 +2,13 @@ package sistemidistribuiti.uno.workflow;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import sistemidistribuiti.uno.listener.DataReceiverListener;
 import sistemidistribuiti.uno.model.game.Game;
 import sistemidistribuiti.uno.rmi.client.UnoRemoteClient;
 import sistemidistribuiti.uno.rmi.interfaces.UnoRemoteGameInterface;
-import sistemidistribuiti.uno.rmi.utils.ServerHelper;
 
 /**
  * Data receiver class which manage the callback when RMI methods are sent to 
@@ -16,6 +17,10 @@ import sistemidistribuiti.uno.rmi.utils.ServerHelper;
  *
  */
 public class GameManager implements DataReceiverListener{
+	private static final Logger logger = Logger.getLogger(GameManager.class.getName());
+	
+	private boolean token = false;
+	
 	private int id;
 	private String name;
 	private int port;
@@ -32,48 +37,38 @@ public class GameManager implements DataReceiverListener{
 	@Override
 	public void setGame(Game game) throws RemoteException, NotBoundException {
 		this.game = game;
+		if(game.getCurrent().getId() == id){
+			token = true;
+			logger.log(Level.INFO, String.format("Node %d has the token", id));
+		}
 		this.remoteClient = new UnoRemoteClient(game, id);
-	}
-
-	public int getId() {
-		return id;
 	}
 
 	public void setId(int id) {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
-	}
-
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public int getPort() {
-		return port;
 	}
 
 	public void setPort(int port) {
 		this.port = port;
 	}
 
-	public UnoRemoteGameInterface getRemoteServer() {
-		return remoteServer;
-	}
-
 	public void setRemoteServer(UnoRemoteGameInterface remoteServer) {
 		this.remoteServer = remoteServer;
-	}
-
-	public UnoRemoteClient getRemoteClient() {
-		return remoteClient;
 	}
 
 	public void setRemoteClient(UnoRemoteClient remoteClient) {
 		this.remoteClient = remoteClient;
 	}
 
+	public UnoRemoteGameInterface getRemoteServer() {
+		return remoteServer;
+	}
 
+	public UnoRemoteClient getRemoteClient() {
+		return remoteClient;
+	}
 }
