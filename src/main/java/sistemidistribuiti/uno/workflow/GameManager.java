@@ -1,9 +1,13 @@
 package sistemidistribuiti.uno.workflow;
 
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+
 import sistemidistribuiti.uno.listener.DataReceiverListener;
 import sistemidistribuiti.uno.model.game.Game;
 import sistemidistribuiti.uno.rmi.client.UnoRemoteClient;
 import sistemidistribuiti.uno.rmi.interfaces.UnoRemoteGameInterface;
+import sistemidistribuiti.uno.rmi.utils.ServerHelper;
 
 /**
  * Data receiver class which manage the callback when RMI methods are sent to 
@@ -26,8 +30,9 @@ public class GameManager implements DataReceiverListener{
 	}
 
 	@Override
-	public void setGame(Game game) {
+	public void setGame(Game game) throws RemoteException, NotBoundException {
 		this.game = game;
+		this.remoteClient = new UnoRemoteClient(game, id);
 	}
 
 	public int getId() {

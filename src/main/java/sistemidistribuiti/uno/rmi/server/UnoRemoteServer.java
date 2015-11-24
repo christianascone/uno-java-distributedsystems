@@ -1,5 +1,7 @@
 package sistemidistribuiti.uno.rmi.server;
 
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,7 +24,7 @@ public class UnoRemoteServer implements UnoRemoteGameInterface {
         this.mListener = mListener;
     }	
 	
-	public void sendGame(Game game){
+	public void sendGame(Game game) throws RemoteException, NotBoundException{
 		logger.log(Level.INFO, "Received game");
 		mListener.setGame(game);
 	}
