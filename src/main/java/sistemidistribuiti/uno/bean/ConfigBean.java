@@ -2,20 +2,27 @@ package sistemidistribuiti.uno.bean;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import sistemidistribuiti.uno.model.card.UnoCard;
 import sistemidistribuiti.uno.model.player.Player;
 
 public class ConfigBean {
+	private static final Logger logger = Logger.getLogger(ConfigBean.class.getName());
+	
 	private final String UNO_CONFIG_KEY = "UnoConfig";
 	private final String NODES_KEY = "nodes";
 	private final String NAME_KEY = "name";
 	private final String HOST_KEY = "host";
+	private final String LEADER_KEY = "leader";
 	
 	private List<Player> players;
+	private String leaderName;
 	
 	public ConfigBean(String json){
 		// Parse json
@@ -28,6 +35,14 @@ public class ConfigBean {
 			
 			String name = node.getString(NAME_KEY);
 			String host = node.getString(HOST_KEY);
+			boolean leader = false;
+			
+			try{
+				leader = node.getBoolean(LEADER_KEY);
+				this.leaderName = name; 
+			}catch(JSONException e){
+				logger.log(Level.INFO, String.format("Player %s is not the leader", name));
+			}
 			
 			Player player = new Player(name, host, new LinkedList<UnoCard>());
 			players.add(player);
@@ -36,5 +51,13 @@ public class ConfigBean {
 
 	public List<Player> getPlayers() {
 		return players;
+	}
+
+	public String getLeaderName() {
+		return leaderName;
+	}
+
+	public void setLeaderName(String leaderName) {
+		this.leaderName = leaderName;
 	}
 }

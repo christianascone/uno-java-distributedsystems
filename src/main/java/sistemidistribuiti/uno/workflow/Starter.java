@@ -3,6 +3,9 @@ package sistemidistribuiti.uno.workflow;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.rmi.AccessException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -27,17 +30,20 @@ import sistemidistribuiti.uno.utils.DeckHelper;
  *
  */
 public class Starter {
+	private static String name;
+	private static int port;
+
 	private static UnoRemoteGameInterface remoteServer;
 	private static UnoRemoteClient remoteClient;
-	
+
 	private static DataReceiverListener dataReceiverListener;
 	private static Game game;
-	
+
 	private static final int START_CARDS_COUNT = 7;
-	
+
 	private static boolean leader = false;
-	
-	public static void main(String[] args) throws IOException {
+
+	public static void main(String[] args) throws IOException, NotBoundException {
 		if (System.getSecurityManager() == null) {
 			System.setSecurityManager(new SecurityManager());
 		}
@@ -46,55 +52,62 @@ public class Starter {
 
 		System.setProperty("java.security.policy", url.getPath());
 
+		serverConfiguration();
+
 		File configFile = new File("config.json");
-		if(configFile.exists()){
-			leader = true;
+		if (configFile.exists()) {
+			leader = setupGame(configFile);
 		}
-		
-		try {
-			dataReceiverListener = new DataReceiver();
-			Scanner scan = new Scanner(System.in);
 
-			System.out.println("Insert server name:");
-			String name = scan.nextLine();
-
-			System.out.println("Insert server port:");
-			int port = scan.nextInt();
-			scan.close();
-
-			remoteServer = new UnoRemoteServer(dataReceiverListener);
-			ServerHelper.setupServer(remoteServer, name, port);
-			System.out.println("ComputeEngine bound");
-		} catch (Exception e) {
-			System.err.println("ComputeEngine exception:");
-			e.printStackTrace();
+		if (leader) {
+			remoteClient = new UnoRemoteClient(game);
 		}
-		
-		if(leader){
-			setupGame(configFile);
-		}
+	}
+
+	private static void serverConfiguration() throws RemoteException,
+			AccessException {
+		dataReceiverListener = new DataReceiver();
+		Scanner scan = new Scanner(System.in);
+
+		System.out.println("Insert server name:");
+		name = scan.nextLine();
+
+		System.out.println("Insert server port:");
+		port = scan.nextInt();
+		scan.close();
+
+		remoteServer = new UnoRemoteServer(dataReceiverListener);
+		ServerHelper.setupServer(remoteServer, name, port);
+		System.out.println("ComputeEngine bound");
 	}
 
 	/**
 	 * Parse config json and setup game
+	 * 
 	 * @param configFile
-	 * @throws IOException 
+	 * @throws IOException
 	 */
-	private static void setupGame(File configFile) throws IOException {
-		List<UnoCard> cards = DeckHelper.getDeck(); 
+	private static boolean setupGame(File configFile) throws IOException {
+		List<UnoCard> cards = DeckHelper.getDeck();
 		Deck newDeck = new Deck(cards);
-		
+
 		String jsonString = FileUtils.readFileToString(configFile);
 		ConfigBean configBean = new ConfigBean(jsonString);
-		
-		for(Player player : configBean.getPlayers()){
-			for(int i = 0; i < START_CARDS_COUNT; i++){
+
+		for (Player player : configBean.getPlayers()) {
+			for (int i = 0; i < START_CARDS_COUNT; i++) {
 				UnoCard draw = newDeck.getCardList().remove(0);
 				player.addCard(draw);
 			}
 		}
-		
+
+		String leaderName = configBean.getLeaderName();
+		if (!leaderName.equals(name)) {
+			return false;
+		}
+
 		game = new Game(configBean.getPlayers(), newDeck);
+		return true;
 	}
 
 }

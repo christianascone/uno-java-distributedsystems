@@ -3,7 +3,8 @@
       "nodes":[
          {
             "name":"test1",
-            "host":"127.0.0.1"
+            "host":"127.0.0.1",
+            "leader":"true"
          },
          {
             "name":"test2",

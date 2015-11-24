@@ -1,11 +1,14 @@
 package sistemidistribuiti.uno.rmi.utils;
 
 import java.rmi.AccessException;
+import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+
+import sistemidistribuiti.uno.rmi.interfaces.UnoRemoteGameInterface;
 
 public class ServerHelper {
 
@@ -27,4 +30,18 @@ public class ServerHelper {
 		registry.rebind(name, stub);
 	}
 
+	/**
+	 * Setup the client side of the caller, creating the host reference
+	 * @param host
+	 * @param name
+	 * @return
+	 * @throws RemoteException
+	 * @throws NotBoundException
+	 */
+	public static UnoRemoteGameInterface setupClient(String host, String name) throws RemoteException, NotBoundException{
+        Registry registry = LocateRegistry.getRegistry(host);
+        UnoRemoteGameInterface remoteClient = (UnoRemoteGameInterface) registry.lookup(name);
+        
+        return remoteClient;
+	}
 }
