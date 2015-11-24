@@ -10,6 +10,11 @@ import sistemidistribuiti.uno.model.card.impl.Deck;
 import sistemidistribuiti.uno.model.player.Player;
 
 public class Game implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2750321770514228846L;
+	
 	private List<Player> players;
 	private Deck deck;
 	private Deck discarded;
