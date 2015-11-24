@@ -12,7 +12,6 @@ import java.util.Scanner;
 import org.apache.commons.io.FileUtils;
 
 import sistemidistribuiti.uno.bean.ConfigBean;
-import sistemidistribuiti.uno.listener.DataReceiverListener;
 import sistemidistribuiti.uno.model.card.UnoCard;
 import sistemidistribuiti.uno.model.card.impl.Deck;
 import sistemidistribuiti.uno.model.game.Game;
@@ -31,18 +30,11 @@ import sistemidistribuiti.uno.utils.DeckHelper;
  */
 public class Starter {
 	private static int id;
-	private static String name;
-	private static int port;
 
-	private static UnoRemoteGameInterface remoteServer;
-	private static UnoRemoteClient remoteClient;
-
-	private static DataReceiverListener dataReceiverListener;
+	private static GameManager gameManager;
 	private static Game game;
 
 	private static final int START_CARDS_COUNT = 7;
-
-	private static boolean leader = false;
 
 	public static void main(String[] args) throws IOException, NotBoundException {
 		if (System.getSecurityManager() == null) {
@@ -56,34 +48,46 @@ public class Starter {
 		serverConfiguration();
 
 		File configFile = new File("config.json");
+		boolean leader = false;
 		if (configFile.exists()) {
 			leader = setupGame(configFile);
 		}
 
 		if (leader) {
-			remoteClient = new UnoRemoteClient(game, id);
+			UnoRemoteClient remoteClient = new UnoRemoteClient(game, id);
 			remoteClient.broadcastGame(game);
 		}
+		
 	}
 
+	/**
+	 * Configures the server with data from input
+	 * @throws RemoteException
+	 * @throws AccessException
+	 */
 	private static void serverConfiguration() throws RemoteException,
 			AccessException {
-		dataReceiverListener = new DataReceiver();
+		gameManager = new GameManager();
 		Scanner scan = new Scanner(System.in);
 
 		System.out.println("Insert server name:");
-		name = scan.nextLine();
+		String name = scan.nextLine();
 		
 		System.out.println("Insert server id:");
 		id = scan.nextInt();		
 
 		System.out.println("Insert server port:");
-		port = scan.nextInt();
+		int port = scan.nextInt();
 		scan.close();
 
-		remoteServer = new UnoRemoteServer(dataReceiverListener);
+		UnoRemoteGameInterface remoteServer = new UnoRemoteServer(gameManager);
 		ServerHelper.setupServer(remoteServer, name, port);
 		System.out.println("ComputeEngine bound");
+		
+		gameManager.setRemoteServer(remoteServer);
+		gameManager.setId(id);
+		gameManager.setName(name);
+		gameManager.setPort(port);
 	}
 
 	/**
