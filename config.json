@@ -3,20 +3,24 @@
       "nodes":[
          {
             "name":"test1",
-            "host":"127.0.0.1",
+            "id":1,
+            "host":"localhost",
             "leader":"true"
          },
          {
             "name":"test2",
-            "host":"127.0.0.2"
+            "id":2,
+            "host":"localhost"
          },
          {
             "name":"test3",
-            "host":"127.0.0.3"
+            "id":3,
+            "host":"localhost"
          },
          {
             "name":"test4",
-            "host":"127.0.0.4"
+            "id":4,
+            "host":"localhost"
          }
       ]
    }

@@ -1,20 +1,32 @@
 package sistemidistribuiti.uno.model.player;
 
+import java.io.Serializable;
 import java.util.List;
 
 import sistemidistribuiti.uno.model.card.UnoCard;
 
-public class Player {
+public class Player implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6265969723023495838L;
+	
+	private int id;
 	private String nickname;
 	private String host;
 	private List<UnoCard> cards;
 	private PLAYER_STATE state;
 	
-	public Player(String nickname, String url, List<UnoCard> cards) {
+	public Player(int id, String nickname, String url, List<UnoCard> cards) {
+		this.id = id;
 		this.nickname = nickname;
 		this.host = url;
 		this.cards = cards;
 		this.state = PLAYER_STATE.ACTIVE;
+	}
+
+	public int getId() {
+		return id;
 	}
 
 	public String getNickname() {

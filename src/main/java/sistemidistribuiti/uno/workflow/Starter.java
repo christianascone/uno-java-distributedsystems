@@ -30,6 +30,7 @@ import sistemidistribuiti.uno.utils.DeckHelper;
  *
  */
 public class Starter {
+	private static int id;
 	private static String name;
 	private static int port;
 
@@ -60,7 +61,8 @@ public class Starter {
 		}
 
 		if (leader) {
-			remoteClient = new UnoRemoteClient(game);
+			remoteClient = new UnoRemoteClient(game, id);
+			remoteClient.broadcastGame(game);
 		}
 	}
 
@@ -71,6 +73,9 @@ public class Starter {
 
 		System.out.println("Insert server name:");
 		name = scan.nextLine();
+		
+		System.out.println("Insert server id:");
+		id = scan.nextInt();		
 
 		System.out.println("Insert server port:");
 		port = scan.nextInt();
@@ -101,8 +106,8 @@ public class Starter {
 			}
 		}
 
-		String leaderName = configBean.getLeaderName();
-		if (!leaderName.equals(name)) {
+		int leaderId = configBean.getLeaderId();
+		if (leaderId != id) {
 			return false;
 		}
 

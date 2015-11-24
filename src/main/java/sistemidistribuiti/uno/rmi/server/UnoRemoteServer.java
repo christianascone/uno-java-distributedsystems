@@ -1,5 +1,8 @@
 package sistemidistribuiti.uno.rmi.server;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import sistemidistribuiti.uno.listener.DataReceiverListener;
 import sistemidistribuiti.uno.model.game.Game;
 import sistemidistribuiti.uno.rmi.interfaces.UnoRemoteGameInterface;
@@ -10,6 +13,8 @@ import sistemidistribuiti.uno.rmi.interfaces.UnoRemoteGameInterface;
  *
  */
 public class UnoRemoteServer implements UnoRemoteGameInterface {
+	private final static Logger logger = Logger.getLogger(UnoRemoteServer.class.getName());
+	
 	private DataReceiverListener mListener;
 	
 	public UnoRemoteServer(DataReceiverListener mListener) {
@@ -18,6 +23,7 @@ public class UnoRemoteServer implements UnoRemoteGameInterface {
     }	
 	
 	public void sendGame(Game game){
+		logger.log(Level.INFO, "Received game");
 		mListener.setGame(game);
 	}
 }

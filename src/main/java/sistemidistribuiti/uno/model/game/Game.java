@@ -1,5 +1,6 @@
 package sistemidistribuiti.uno.model.game;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -8,7 +9,7 @@ import sistemidistribuiti.uno.model.card.UnoCard;
 import sistemidistribuiti.uno.model.card.impl.Deck;
 import sistemidistribuiti.uno.model.player.Player;
 
-public class Game {
+public class Game implements Serializable{
 	private List<Player> players;
 	private Deck deck;
 	private Deck discarded;
