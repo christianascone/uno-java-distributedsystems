@@ -1,6 +1,6 @@
 package sistemidistribuiti.uno.listener;
 
-import sistemidistribuiti.uno.model.card.impl.Deck;
+import sistemidistribuiti.uno.model.game.Game;
 
 /**
  * Listener used for the RMI callback
@@ -10,8 +10,8 @@ import sistemidistribuiti.uno.model.card.impl.Deck;
  */
 public interface DataReceiverListener {
 	/**
-	 * Set the deck received from client
-	 * @param deck
+	 * Set the Game received from client
+	 * @param game
 	 */
-	void setDeck(Deck deck);
+	void setGame(Game game);
 }

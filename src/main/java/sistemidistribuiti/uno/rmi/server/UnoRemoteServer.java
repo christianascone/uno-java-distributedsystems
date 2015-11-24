@@ -1,7 +1,7 @@
 package sistemidistribuiti.uno.rmi.server;
 
 import sistemidistribuiti.uno.listener.DataReceiverListener;
-import sistemidistribuiti.uno.model.card.impl.Deck;
+import sistemidistribuiti.uno.model.game.Game;
 import sistemidistribuiti.uno.rmi.interfaces.UnoRemoteGameInterface;
 
 /**
@@ -17,7 +17,7 @@ public class UnoRemoteServer implements UnoRemoteGameInterface {
         this.mListener = mListener;
     }	
 	
-	public void sendDeck(Deck deck){
-		mListener.setDeck(deck);
+	public void sendGame(Game game){
+		mListener.setGame(game);
 	}
 }

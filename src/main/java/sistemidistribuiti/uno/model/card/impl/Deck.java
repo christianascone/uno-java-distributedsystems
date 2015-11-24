@@ -18,6 +18,10 @@ public class Deck implements Serializable{
 		this.cardList = new LinkedList<UnoCard>();
 	}
 
+	public Deck(List<UnoCard> cards) {
+		this.cardList = cards;
+	}
+
 	public List<UnoCard> getCardList() {
 		return cardList;
 	}

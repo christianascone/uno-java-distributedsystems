@@ -15,7 +15,7 @@ public class Game {
 	private Player current;
 	private Direction gameDirection;
 	
-	public Game(List<Player> players, Deck deck, Player current) {
+	public Game(List<Player> players, Deck deck) {
 		this.players = players;
 		this.deck = deck;
 		

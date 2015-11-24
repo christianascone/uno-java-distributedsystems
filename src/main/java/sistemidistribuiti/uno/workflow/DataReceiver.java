@@ -1,7 +1,7 @@
 package sistemidistribuiti.uno.workflow;
 
 import sistemidistribuiti.uno.listener.DataReceiverListener;
-import sistemidistribuiti.uno.model.card.impl.Deck;
+import sistemidistribuiti.uno.model.game.Game;
 
 /**
  * Data receiver class which manage the callback when RMI methods are sent to 
@@ -10,15 +10,15 @@ import sistemidistribuiti.uno.model.card.impl.Deck;
  *
  */
 public class DataReceiver implements DataReceiverListener{
-	private Deck deck;
+	private Game game;
 	
-	public Deck getDeck() {
-		return this.deck;
+	public Game getGame() {
+		return game;
 	}
-	
+
 	@Override
-	public void setDeck(Deck deck) {
-		this.deck = deck;
+	public void setGame(Game game) {
+		this.game = game;
 	}
 
 }

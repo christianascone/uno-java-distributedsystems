@@ -6,13 +6,13 @@ import sistemidistribuiti.uno.model.card.UnoCard;
 
 public class Player {
 	private String nickname;
-	private String url;
+	private String host;
 	private List<UnoCard> cards;
 	private PLAYER_STATE state;
 	
 	public Player(String nickname, String url, List<UnoCard> cards) {
 		this.nickname = nickname;
-		this.url = url;
+		this.host = url;
 		this.cards = cards;
 		this.state = PLAYER_STATE.ACTIVE;
 	}
@@ -25,12 +25,12 @@ public class Player {
 		this.nickname = nickname;
 	}
 
-	public String getUrl() {
-		return url;
+	public String getHost() {
+		return host;
 	}
 
-	public void setUrl(String url) {
-		this.url = url;
+	public void setHost(String url) {
+		this.host = url;
 	}
 
 	public List<UnoCard> getCards() {
@@ -47,5 +47,13 @@ public class Player {
 
 	public void setState(PLAYER_STATE state) {
 		this.state = state;
+	}
+
+	/**
+	 * Adds a card to the owned cards
+	 * @param draw
+	 */
+	public void addCard(UnoCard draw) {
+		this.cards.add(draw);
 	}
 }
