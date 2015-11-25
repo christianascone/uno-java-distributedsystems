@@ -19,8 +19,6 @@ import sistemidistribuiti.uno.rmi.interfaces.UnoRemoteGameInterface;
 public class GameManager implements DataReceiverListener{
 	private static final Logger logger = Logger.getLogger(GameManager.class.getName());
 	
-	private boolean token = false;
-	
 	private int id;
 	private String name;
 	private int port;
@@ -38,7 +36,6 @@ public class GameManager implements DataReceiverListener{
 	public void setGame(Game game) throws RemoteException, NotBoundException {
 		this.game = game;
 		if(game.getCurrent().getId() == id){
-			token = true;
 			logger.log(Level.INFO, String.format("Node %d has the token", id));
 		}
 		this.remoteClient = new UnoRemoteClient(game, id);
