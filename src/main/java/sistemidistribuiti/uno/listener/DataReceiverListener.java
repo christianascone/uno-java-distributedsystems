@@ -13,6 +13,15 @@ import sistemidistribuiti.uno.model.game.Game;
  */
 public interface DataReceiverListener {
 	/**
+	 * Setup remote client with given game
+	 * 
+	 * @param game
+	 * @throws NotBoundException 
+	 * @throws RemoteException 
+	 */
+	void setupRemoteClient(Game game) throws RemoteException, NotBoundException;
+	
+	/**
 	 * Set the Game received from client
 	 * @param game
 	 * @throws NotBoundException 

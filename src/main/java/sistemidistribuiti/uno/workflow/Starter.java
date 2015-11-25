@@ -16,6 +16,7 @@ import sistemidistribuiti.uno.model.card.UnoCard;
 import sistemidistribuiti.uno.model.card.impl.Deck;
 import sistemidistribuiti.uno.model.game.Game;
 import sistemidistribuiti.uno.model.player.Player;
+import sistemidistribuiti.uno.rmi.client.UnoRemoteClient;
 import sistemidistribuiti.uno.rmi.interfaces.UnoRemoteGameInterface;
 import sistemidistribuiti.uno.rmi.server.UnoRemoteServer;
 import sistemidistribuiti.uno.rmi.utils.ServerHelper;
@@ -53,8 +54,9 @@ public class Starter {
 		}
 
 		if (leader) {
-			gameManager.setGame(game);
+			gameManager.setRemoteClient(new UnoRemoteClient(game, id));
 			gameManager.getRemoteClient().broadcastGame(game);
+			gameManager.setGame(game);
 		}
 		
 	}

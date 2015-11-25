@@ -16,10 +16,10 @@ public interface UnoRemoteGameInterface extends Remote{
 	// IMPORTANTISSIMA LA REMOTE EXCEPTION
 	
 	/**
-	 * Send game to server
+	 * Setup game to server
 	 * @param deck
 	 * @throws RemoteException
 	 * @throws NotBoundException 
 	 */
-	void sendGame(Game game) throws RemoteException, NotBoundException;
+	void setupGame(Game game) throws RemoteException, NotBoundException;
 }

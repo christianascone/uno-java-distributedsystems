@@ -40,7 +40,7 @@ public class UnoRemoteClient {
 	public void broadcastGame(Game game) throws RemoteException, NotBoundException{
 		logger.log(Level.INFO, "Broadcast game");
 		for(UnoRemoteGameInterface remote : hosts){
-			remote.sendGame(game);
+			remote.setupGame(game);
 		}
 	}
 }

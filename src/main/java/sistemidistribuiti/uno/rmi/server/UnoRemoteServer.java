@@ -24,8 +24,8 @@ public class UnoRemoteServer implements UnoRemoteGameInterface {
         this.mListener = mListener;
     }	
 	
-	public void sendGame(Game game) throws RemoteException, NotBoundException{
+	public void setupGame(Game game) throws RemoteException, NotBoundException{
 		logger.log(Level.INFO, "Received game");
-		mListener.setGame(game);
+		mListener.setupRemoteClient(game);
 	}
 }

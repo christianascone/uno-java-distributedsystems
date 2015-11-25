@@ -38,7 +38,12 @@ public class GameManager implements DataReceiverListener{
 		if(game.getCurrent().getId() == id){
 			logger.log(Level.INFO, String.format("Node %d has the token", id));
 		}
+	}
+	
+	@Override
+	public void setupRemoteClient(Game game) throws RemoteException, NotBoundException{
 		this.remoteClient = new UnoRemoteClient(game, id);
+		setGame(game);
 	}
 
 	public void setId(int id) {
