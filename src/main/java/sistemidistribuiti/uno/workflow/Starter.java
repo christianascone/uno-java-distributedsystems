@@ -110,6 +110,7 @@ public class Starter {
 		gameManager.setId(id);
 		gameManager.setName(name);
 		gameManager.setPort(port);
+		new Thread(gameManager).start();
 	}
 
 	/**

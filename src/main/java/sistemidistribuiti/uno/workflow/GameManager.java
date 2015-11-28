@@ -20,7 +20,7 @@ import sistemidistribuiti.uno.rmi.interfaces.UnoRemoteGameInterface;
  * @author christian
  *
  */
-public class GameManager implements DataReceiverListener{
+public class GameManager implements DataReceiverListener, Runnable{
 	private static final Logger logger = Logger.getLogger(GameManager.class.getName());
 	
 	private int id;
@@ -41,7 +41,6 @@ public class GameManager implements DataReceiverListener{
 		this.game = game;
 		if(isMyTurn(game)){
 			logger.log(Level.INFO, String.format("Node %d has the token", id));
-			playMyTurn();
 		}
 	}
 
@@ -56,7 +55,8 @@ public class GameManager implements DataReceiverListener{
 				played = scan.nextLine();		
 				break;
 			}catch(Exception e){
-				e.printStackTrace();
+				played= "auto";
+				break;
 			}
 		}
 		logger.log(Level.INFO, String.format("Input: %s", played));
@@ -127,5 +127,21 @@ public class GameManager implements DataReceiverListener{
 
 	public UnoRemoteClient getRemoteClient() {
 		return remoteClient;
+	}
+
+	@Override
+	public void run() {
+		while(true){
+			if(game != null && game.getCurrent() != null && isMyTurn(game)){
+				playMyTurn();
+			}
+			
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 }
