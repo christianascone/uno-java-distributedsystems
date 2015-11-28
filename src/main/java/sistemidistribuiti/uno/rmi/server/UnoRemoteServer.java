@@ -28,4 +28,10 @@ public class UnoRemoteServer implements UnoRemoteGameInterface {
 		logger.log(Level.INFO, "Received game");
 		mListener.setupRemoteClient(game);
 	}
+
+	@Override
+	public void sendGame(Game game) throws RemoteException, NotBoundException {
+		logger.log(Level.INFO, "Received game");
+		mListener.setGame(game);
+	}
 }

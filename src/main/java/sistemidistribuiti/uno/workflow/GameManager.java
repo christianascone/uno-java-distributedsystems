@@ -2,11 +2,15 @@ package sistemidistribuiti.uno.workflow;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.List;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import sistemidistribuiti.uno.exception.NextPlayerNotFoundException;
 import sistemidistribuiti.uno.listener.DataReceiverListener;
 import sistemidistribuiti.uno.model.game.Game;
+import sistemidistribuiti.uno.model.player.Player;
 import sistemidistribuiti.uno.rmi.client.UnoRemoteClient;
 import sistemidistribuiti.uno.rmi.interfaces.UnoRemoteGameInterface;
 
@@ -35,15 +39,66 @@ public class GameManager implements DataReceiverListener{
 	@Override
 	public void setGame(Game game) throws RemoteException, NotBoundException {
 		this.game = game;
-		if(game.getCurrent().getId() == id){
+		if(isMyTurn(game)){
 			logger.log(Level.INFO, String.format("Node %d has the token", id));
+			playMyTurn();
+		}
+	}
+
+	/**
+	 * Play my own turn
+	 */
+	private void playMyTurn() {
+		Scanner scan = new Scanner(System.in);
+		String played = "";
+		while(true){
+			try{
+				played = scan.nextLine();		
+				break;
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+		}
+		logger.log(Level.INFO, String.format("Input: %s", played));
+		scan.close();
+				
+		Player newCurrent;
+		try {
+			newCurrent = getNextPlayer();
+			game.setCurrent(newCurrent);
+			remoteClient.broadcastUpdatedGame(game);
+		} catch (Exception e) {
+			// TODO GESTIRE UN BEL PROBLEMONE
+			e.printStackTrace();
 		}
 	}
 	
+	private Player getNextPlayer() throws NextPlayerNotFoundException{
+		List<Player> players = game.getPlayers();
+		for(int i = 0; i < players.size(); i++){
+			Player iteratePlayer = players.get(i);
+			if(iteratePlayer.getId() == game.getCurrent().getId()){
+				Player newCurrent = players.get((i + 1) % players.size());
+				return newCurrent;
+			}
+		}
+		
+		throw new NextPlayerNotFoundException();
+	}
+
 	@Override
 	public void setupRemoteClient(Game game) throws RemoteException, NotBoundException{
 		this.remoteClient = new UnoRemoteClient(game, id);
 		setGame(game);
+	}
+	
+	/**
+	 * Check whether the token is actually owned
+	 * @param game
+	 * @return
+	 */
+	private boolean isMyTurn(Game game) {
+		return game.getCurrent().getId() == id;
 	}
 
 	public void setId(int id) {

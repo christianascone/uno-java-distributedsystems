@@ -22,4 +22,12 @@ public interface UnoRemoteGameInterface extends Remote{
 	 * @throws NotBoundException 
 	 */
 	void setupGame(Game game) throws RemoteException, NotBoundException;
+	
+	/**
+	 * Send the current game to other players
+	 * @param game
+	 * @throws RemoteException
+	 * @throws NotBoundException
+	 */
+	void sendGame(Game game) throws RemoteException, NotBoundException;
 }

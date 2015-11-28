@@ -70,4 +70,8 @@ public class Game implements Serializable{
 		List<UnoCard> cards = deck.getCardList();
 		Collections.shuffle(cards);
 	}
+
+	public void setCurrent(Player newCurrent) {
+		this.current = newCurrent;
+	}
 }

@@ -8,6 +8,8 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.io.FileUtils;
 
@@ -29,6 +31,8 @@ import sistemidistribuiti.uno.utils.DeckHelper;
  *
  */
 public class Starter {
+	private static final Logger logger = Logger.getLogger(Starter.class.getName());
+	
 	private static int id;
 
 	private static GameManager gameManager;
@@ -36,7 +40,8 @@ public class Starter {
 
 	private static final int START_CARDS_COUNT = 7;
 
-	public static void main(String[] args) throws IOException, NotBoundException {
+	public static void main(String[] args) throws IOException,
+			NotBoundException {
 		if (System.getSecurityManager() == null) {
 			System.setSecurityManager(new SecurityManager());
 		}
@@ -45,7 +50,7 @@ public class Starter {
 
 		System.setProperty("java.security.policy", url.getPath());
 
-		serverConfiguration();
+		serverConfiguration(args);
 
 		File configFile = new File("config.json");
 		boolean leader = false;
@@ -55,36 +60,52 @@ public class Starter {
 
 		if (leader) {
 			gameManager.setRemoteClient(new UnoRemoteClient(game, id));
-			gameManager.getRemoteClient().broadcastGame(game);
+			gameManager.getRemoteClient().broadcastNewGame(game);
 			gameManager.setGame(game);
 		}
-		
+
 	}
 
 	/**
 	 * Configures the server with data from input
+	 * 
 	 * @throws RemoteException
 	 * @throws AccessException
 	 */
-	private static void serverConfiguration() throws RemoteException,
-			AccessException {
+	private static void serverConfiguration(String[] args)
+			throws RemoteException, AccessException {
 		gameManager = new GameManager();
-		Scanner scan = new Scanner(System.in);
 
-		System.out.println("Insert server name:");
-		String name = scan.nextLine();
+		String name = "";
+		id = 0;
+		int port = 0;
 		
-		System.out.println("Insert server id:");
-		id = scan.nextInt();		
+		if (args.length == 0) {
+			Scanner scan = new Scanner(System.in);
 
-		System.out.println("Insert server port:");
-		int port = scan.nextInt();
-		scan.close();
+			System.out.println("Insert server name:");
+			name = scan.nextLine();
+
+			System.out.println("Insert server id:");
+			id = scan.nextInt();
+
+			System.out.println("Insert server port:");
+			port = scan.nextInt();
+			scan.close();
+		} else {
+			name = args[0];
+			id = Integer.parseInt(args[1]);
+			port = Integer.parseInt(args[2]);
+		}
+		
+		logger.log(Level.INFO, String.format("Server name: %s", name));
+		logger.log(Level.INFO, String.format("Server id: %d", id));
+		logger.log(Level.INFO, String.format("Server port: %d", port));
 
 		UnoRemoteGameInterface remoteServer = new UnoRemoteServer(gameManager);
 		ServerHelper.setupServer(remoteServer, name, port);
 		System.out.println("ComputeEngine bound");
-		
+
 		gameManager.setRemoteServer(remoteServer);
 		gameManager.setId(id);
 		gameManager.setName(name);
