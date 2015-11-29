@@ -1,9 +1,11 @@
 package sistemidistribuiti.uno.view.frame;
 
+import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -13,8 +15,6 @@ import sistemidistribuiti.uno.view.listener.GameGUIListener;
 import sistemidistribuiti.uno.workflow.GameManager;
 import sistemidistribuiti.uno.workflow.Starter;
 
-import javax.swing.JButton;
-
 public class MainWindow extends JFrame implements GameGUIListener{
 
 	/**
@@ -23,10 +23,15 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	private static final long serialVersionUID = -7507193594059818919L;
 	private JPanel contentPane;
 	
-	private JLabel lblUser;
+	private JLabel lblThisUser;
 	JButton btnPlay;
 	
 	private GameManager gameManager;
+	private JPanel northPanel;
+	private JPanel southPanel;
+	private JPanel westPanel;
+	private JPanel eastPanel;
+	private JPanel centerPanel;
 
 	/**
 	 * Launch the application.
@@ -50,24 +55,40 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	 * Create the frame.
 	 */
 	public MainWindow() {
+		setResizable(false);
 		setTitle("Uno");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 535, 474);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-		contentPane.setLayout(null);
+		contentPane.setLayout(new BorderLayout(0, 0));
+		
+		northPanel = new JPanel();
+		contentPane.add(northPanel, BorderLayout.NORTH);
+		
+		southPanel = new JPanel();
+		contentPane.add(southPanel, BorderLayout.SOUTH);
 		
 		JLabel lblUsernameTitle = new JLabel("Username:");
-		lblUsernameTitle.setBounds(6, 22, 66, 16);
-		contentPane.add(lblUsernameTitle);
+		southPanel.add(lblUsernameTitle);
 		
-		lblUser = new JLabel("user1");
-		lblUser.setBounds(84, 22, 360, 16);
-		contentPane.add(lblUser);
+		lblThisUser = new JLabel("user1");
+		southPanel.add(lblThisUser);
+		
+		westPanel = new JPanel();
+		contentPane.add(westPanel, BorderLayout.WEST);
+		
+		eastPanel = new JPanel();
+		contentPane.add(eastPanel, BorderLayout.EAST);
+		
+		centerPanel = new JPanel();
+		contentPane.add(centerPanel, BorderLayout.CENTER);
+		centerPanel.setLayout(null);
 		
 		btnPlay = new JButton("Play");
-		btnPlay.setBounds(199, 167, 117, 29);
+		btnPlay.setBounds(215, 164, 75, 29);
+		centerPanel.add(btnPlay);
 		btnPlay.setEnabled(false);
 		btnPlay.addActionListener(new ActionListener() {
 			
@@ -77,12 +98,11 @@ public class MainWindow extends JFrame implements GameGUIListener{
 				gameManager.playMyTurn();
 			}
 		});
-		contentPane.add(btnPlay);
 	}
 
 	@Override
 	public void setLabelText(String text) {
-		lblUser.setText(text);
+		lblThisUser.setText(text);
 	}
 
 	@Override
