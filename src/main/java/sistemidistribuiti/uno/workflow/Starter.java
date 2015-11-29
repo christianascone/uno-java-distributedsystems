@@ -23,6 +23,7 @@ import sistemidistribuiti.uno.rmi.interfaces.UnoRemoteGameInterface;
 import sistemidistribuiti.uno.rmi.server.UnoRemoteServer;
 import sistemidistribuiti.uno.rmi.utils.ServerHelper;
 import sistemidistribuiti.uno.utils.DeckHelper;
+import sistemidistribuiti.uno.view.listener.LabelListener;
 
 /**
  * Starter class for every server/client
@@ -40,7 +41,7 @@ public class Starter {
 
 	private static final int START_CARDS_COUNT = 7;
 
-	public static void main(String[] args) throws IOException,
+	public static void startGame(String[] args, LabelListener labelListener) throws IOException,
 			NotBoundException {
 		if (System.getSecurityManager() == null) {
 			System.setSecurityManager(new SecurityManager());
@@ -50,7 +51,7 @@ public class Starter {
 
 		System.setProperty("java.security.policy", url.getPath());
 
-		serverConfiguration(args);
+		serverConfiguration(args, labelListener);
 
 		File configFile = new File("config.json");
 		boolean leader = false;
@@ -68,11 +69,12 @@ public class Starter {
 
 	/**
 	 * Configures the server with data from input
+	 * @param labelListener 
 	 * 
 	 * @throws RemoteException
 	 * @throws AccessException
 	 */
-	private static void serverConfiguration(String[] args)
+	private static void serverConfiguration(String[] args, LabelListener labelListener)
 			throws RemoteException, AccessException {
 		gameManager = new GameManager();
 
@@ -97,6 +99,8 @@ public class Starter {
 			id = Integer.parseInt(args[1]);
 			port = Integer.parseInt(args[2]);
 		}
+		
+		labelListener.setLabelText(name);
 		
 		logger.log(Level.INFO, String.format("Server name: %s", name));
 		logger.log(Level.INFO, String.format("Server id: %d", id));
