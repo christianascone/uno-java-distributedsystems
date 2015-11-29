@@ -16,25 +16,27 @@ import sistemidistribuiti.uno.rmi.interfaces.UnoRemoteGameInterface;
 import sistemidistribuiti.uno.view.listener.GameGUIListener;
 
 /**
- * Data receiver class which manage the callback when RMI methods are sent to 
- * a class
+ * Data receiver class which manage the callback when RMI methods are sent to a
+ * class
+ * 
  * @author christian
  *
  */
-public class GameManager implements DataReceiverListener, Runnable{
-	private static final Logger logger = Logger.getLogger(GameManager.class.getName());
-	
+public class GameManager implements DataReceiverListener {
+	private static final Logger logger = Logger.getLogger(GameManager.class
+			.getName());
+
 	private int id;
 	private String name;
 	private int port;
-	
+
 	private UnoRemoteGameInterface remoteServer;
 	private UnoRemoteClient remoteClient;
-	
+
 	private GameGUIListener gameGUIListener;
-	
+
 	private Game game;
-	
+
 	public GameManager(GameGUIListener gameGuiListener) {
 		this.gameGUIListener = gameGuiListener;
 	}
@@ -46,8 +48,9 @@ public class GameManager implements DataReceiverListener, Runnable{
 	@Override
 	public void setGame(Game game) throws RemoteException, NotBoundException {
 		this.game = game;
-		if(isMyTurn(game)){
+		if (game != null && game.getCurrent() != null && isMyTurn(game)) {
 			logger.log(Level.INFO, String.format("Node %d has the token", id));
+			enableGame();
 		}
 	}
 
@@ -65,32 +68,34 @@ public class GameManager implements DataReceiverListener, Runnable{
 			e.printStackTrace();
 		}
 	}
-	
-	private void enableGame(){
+
+	private void enableGame() {
 		gameGUIListener.playMyTurn();
 	}
-	
-	private Player getNextPlayer() throws NextPlayerNotFoundException{
+
+	private Player getNextPlayer() throws NextPlayerNotFoundException {
 		List<Player> players = game.getPlayers();
-		for(int i = 0; i < players.size(); i++){
+		for (int i = 0; i < players.size(); i++) {
 			Player iteratePlayer = players.get(i);
-			if(iteratePlayer.getId() == game.getCurrent().getId()){
+			if (iteratePlayer.getId() == game.getCurrent().getId()) {
 				Player newCurrent = players.get((i + 1) % players.size());
 				return newCurrent;
 			}
 		}
-		
+
 		throw new NextPlayerNotFoundException();
 	}
 
 	@Override
-	public void setupRemoteClient(Game game) throws RemoteException, NotBoundException{
+	public void setupRemoteClient(Game game) throws RemoteException,
+			NotBoundException {
 		this.remoteClient = new UnoRemoteClient(game, id);
 		setGame(game);
 	}
-	
+
 	/**
 	 * Check whether the token is actually owned
+	 * 
 	 * @param game
 	 * @return
 	 */
@@ -126,19 +131,4 @@ public class GameManager implements DataReceiverListener, Runnable{
 		return remoteClient;
 	}
 
-	@Override
-	public void run() {
-		while(true){
-			if(game != null && game.getCurrent() != null && isMyTurn(game)){
-				enableGame();
-			}
-			
-			try {
-				Thread.sleep(5000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
 }

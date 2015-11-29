@@ -115,7 +115,6 @@ public class Starter {
 		gameManager.setName(name);
 		gameManager.setPort(port);
 		gameGuiListener.setGameManager(gameManager);
-		new Thread(gameManager).start();
 	}
 
 	/**
