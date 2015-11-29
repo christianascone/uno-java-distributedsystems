@@ -10,4 +10,6 @@ public interface GameGUIListener {
 	void setLabelText(String text);
 	
 	void setGameManager(GameManager gameManager);
+
+	void playMyTurn();
 }

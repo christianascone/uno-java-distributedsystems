@@ -1,6 +1,8 @@
 package sistemidistribuiti.uno.view.frame;
 
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -11,7 +13,9 @@ import sistemidistribuiti.uno.view.listener.GameGUIListener;
 import sistemidistribuiti.uno.workflow.GameManager;
 import sistemidistribuiti.uno.workflow.Starter;
 
-public class MainWindows extends JFrame implements GameGUIListener{
+import javax.swing.JButton;
+
+public class MainWindow extends JFrame implements GameGUIListener{
 
 	/**
 	 * 
@@ -20,6 +24,7 @@ public class MainWindows extends JFrame implements GameGUIListener{
 	private JPanel contentPane;
 	
 	private JLabel lblUser;
+	JButton btnPlay;
 	
 	private GameManager gameManager;
 
@@ -30,7 +35,7 @@ public class MainWindows extends JFrame implements GameGUIListener{
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					MainWindows frame = new MainWindows();
+					MainWindow frame = new MainWindow();
 					frame.setVisible(true);
 					
 					Starter.startGame(args, frame);
@@ -44,7 +49,7 @@ public class MainWindows extends JFrame implements GameGUIListener{
 	/**
 	 * Create the frame.
 	 */
-	public MainWindows() {
+	public MainWindow() {
 		setTitle("Uno");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
@@ -60,6 +65,19 @@ public class MainWindows extends JFrame implements GameGUIListener{
 		lblUser = new JLabel("user1");
 		lblUser.setBounds(84, 22, 360, 16);
 		contentPane.add(lblUser);
+		
+		btnPlay = new JButton("Play");
+		btnPlay.setBounds(199, 167, 117, 29);
+		btnPlay.setEnabled(false);
+		btnPlay.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				btnPlay.setEnabled(false);
+				gameManager.playMyTurn();
+			}
+		});
+		contentPane.add(btnPlay);
 	}
 
 	@Override
@@ -70,5 +88,10 @@ public class MainWindows extends JFrame implements GameGUIListener{
 	@Override
 	public void setGameManager(GameManager gameManager) {
 		this.gameManager = gameManager;
+	}
+
+	@Override
+	public void playMyTurn() {
+		this.btnPlay.setEnabled(true);
 	}
 }

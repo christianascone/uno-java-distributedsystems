@@ -13,6 +13,7 @@ import sistemidistribuiti.uno.model.game.Game;
 import sistemidistribuiti.uno.model.player.Player;
 import sistemidistribuiti.uno.rmi.client.UnoRemoteClient;
 import sistemidistribuiti.uno.rmi.interfaces.UnoRemoteGameInterface;
+import sistemidistribuiti.uno.view.listener.GameGUIListener;
 
 /**
  * Data receiver class which manage the callback when RMI methods are sent to 
@@ -30,8 +31,14 @@ public class GameManager implements DataReceiverListener, Runnable{
 	private UnoRemoteGameInterface remoteServer;
 	private UnoRemoteClient remoteClient;
 	
+	private GameGUIListener gameGUIListener;
+	
 	private Game game;
 	
+	public GameManager(GameGUIListener gameGuiListener) {
+		this.gameGUIListener = gameGuiListener;
+	}
+
 	public Game getGame() {
 		return game;
 	}
@@ -47,21 +54,7 @@ public class GameManager implements DataReceiverListener, Runnable{
 	/**
 	 * Play my own turn
 	 */
-	private void playMyTurn() {
-		Scanner scan = new Scanner(System.in);
-		String played = "";
-		while(true){
-			try{
-				played = scan.nextLine();		
-				break;
-			}catch(Exception e){
-				played= "auto";
-				break;
-			}
-		}
-		logger.log(Level.INFO, String.format("Input: %s", played));
-		scan.close();
-				
+	public void playMyTurn() {
 		Player newCurrent;
 		try {
 			newCurrent = getNextPlayer();
@@ -71,6 +64,10 @@ public class GameManager implements DataReceiverListener, Runnable{
 			// TODO GESTIRE UN BEL PROBLEMONE
 			e.printStackTrace();
 		}
+	}
+	
+	private void enableGame(){
+		gameGUIListener.playMyTurn();
 	}
 	
 	private Player getNextPlayer() throws NextPlayerNotFoundException{
@@ -133,7 +130,7 @@ public class GameManager implements DataReceiverListener, Runnable{
 	public void run() {
 		while(true){
 			if(game != null && game.getCurrent() != null && isMyTurn(game)){
-				playMyTurn();
+				enableGame();
 			}
 			
 			try {

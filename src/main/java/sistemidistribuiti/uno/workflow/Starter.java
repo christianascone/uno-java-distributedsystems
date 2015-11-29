@@ -69,14 +69,14 @@ public class Starter {
 
 	/**
 	 * Configures the server with data from input
-	 * @param labelListener 
+	 * @param gameGuiListener 
 	 * 
 	 * @throws RemoteException
 	 * @throws AccessException
 	 */
-	private static void serverConfiguration(String[] args, GameGUIListener labelListener)
+	private static void serverConfiguration(String[] args, GameGUIListener gameGuiListener)
 			throws RemoteException, AccessException {
-		gameManager = new GameManager();
+		gameManager = new GameManager(gameGuiListener);
 
 		String name = "";
 		id = 0;
@@ -100,7 +100,7 @@ public class Starter {
 			port = Integer.parseInt(args[2]);
 		}
 		
-		labelListener.setLabelText(name);
+		gameGuiListener.setLabelText(name);
 		
 		logger.log(Level.INFO, String.format("Server name: %s", name));
 		logger.log(Level.INFO, String.format("Server id: %d", id));
@@ -114,7 +114,7 @@ public class Starter {
 		gameManager.setId(id);
 		gameManager.setName(name);
 		gameManager.setPort(port);
-		labelListener.setGameManager(gameManager);
+		gameGuiListener.setGameManager(gameManager);
 		new Thread(gameManager).start();
 	}
 
