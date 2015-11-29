@@ -7,10 +7,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import sistemidistribuiti.uno.view.listener.LabelListener;
+import sistemidistribuiti.uno.view.listener.GameGUIListener;
+import sistemidistribuiti.uno.workflow.GameManager;
 import sistemidistribuiti.uno.workflow.Starter;
 
-public class MainWindows extends JFrame implements LabelListener{
+public class MainWindows extends JFrame implements GameGUIListener{
 
 	/**
 	 * 
@@ -19,6 +20,8 @@ public class MainWindows extends JFrame implements LabelListener{
 	private JPanel contentPane;
 	
 	private JLabel lblUser;
+	
+	private GameManager gameManager;
 
 	/**
 	 * Launch the application.
@@ -62,5 +65,10 @@ public class MainWindows extends JFrame implements LabelListener{
 	@Override
 	public void setLabelText(String text) {
 		lblUser.setText(text);
+	}
+
+	@Override
+	public void setGameManager(GameManager gameManager) {
+		this.gameManager = gameManager;
 	}
 }

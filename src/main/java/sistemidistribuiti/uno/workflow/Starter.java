@@ -23,7 +23,7 @@ import sistemidistribuiti.uno.rmi.interfaces.UnoRemoteGameInterface;
 import sistemidistribuiti.uno.rmi.server.UnoRemoteServer;
 import sistemidistribuiti.uno.rmi.utils.ServerHelper;
 import sistemidistribuiti.uno.utils.DeckHelper;
-import sistemidistribuiti.uno.view.listener.LabelListener;
+import sistemidistribuiti.uno.view.listener.GameGUIListener;
 
 /**
  * Starter class for every server/client
@@ -41,7 +41,7 @@ public class Starter {
 
 	private static final int START_CARDS_COUNT = 7;
 
-	public static void startGame(String[] args, LabelListener labelListener) throws IOException,
+	public static void startGame(String[] args, GameGUIListener labelListener) throws IOException,
 			NotBoundException {
 		if (System.getSecurityManager() == null) {
 			System.setSecurityManager(new SecurityManager());
@@ -74,7 +74,7 @@ public class Starter {
 	 * @throws RemoteException
 	 * @throws AccessException
 	 */
-	private static void serverConfiguration(String[] args, LabelListener labelListener)
+	private static void serverConfiguration(String[] args, GameGUIListener labelListener)
 			throws RemoteException, AccessException {
 		gameManager = new GameManager();
 
@@ -114,6 +114,7 @@ public class Starter {
 		gameManager.setId(id);
 		gameManager.setName(name);
 		gameManager.setPort(port);
+		labelListener.setGameManager(gameManager);
 		new Thread(gameManager).start();
 	}
 
