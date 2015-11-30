@@ -3,12 +3,12 @@ package sistemidistribuiti.uno.workflow;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.List;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import sistemidistribuiti.uno.exception.NextPlayerNotFoundException;
 import sistemidistribuiti.uno.listener.DataReceiverListener;
+import sistemidistribuiti.uno.model.card.UnoCard;
 import sistemidistribuiti.uno.model.game.Game;
 import sistemidistribuiti.uno.model.player.Player;
 import sistemidistribuiti.uno.rmi.client.UnoRemoteClient;
@@ -91,6 +91,22 @@ public class GameManager implements DataReceiverListener {
 			NotBoundException {
 		this.remoteClient = new UnoRemoteClient(game, id);
 		setGame(game);
+	}
+	
+	/**
+	 * Gets the cards of the current player
+	 * @return
+	 */
+	public List<UnoCard> getCurrentPlayerCards(){
+		return this.game.getCurrent().getCards();
+	}
+	
+	/**
+	 * Discard the given card
+	 * @param discarded
+	 */
+	public void discardCard(UnoCard discarded){
+		this.game.getDiscarded().getCardList().add(discarded);
 	}
 
 	/**

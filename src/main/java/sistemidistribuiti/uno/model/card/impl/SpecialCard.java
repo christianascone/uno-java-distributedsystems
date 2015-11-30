@@ -1,6 +1,7 @@
 package sistemidistribuiti.uno.model.card.impl;
 
 import sistemidistribuiti.uno.model.card.CARD_COLOR;
+import sistemidistribuiti.uno.model.card.CARD_TYPE_ENUM;
 import sistemidistribuiti.uno.model.card.SPECIAL_CARD_TYPE;
 import sistemidistribuiti.uno.model.card.UnoCard;
 
@@ -14,7 +15,7 @@ public class SpecialCard extends UnoCard{
 
 	public SpecialCard(CARD_COLOR color, byte[] image,
 			SPECIAL_CARD_TYPE specialCardType) {
-		super(color, image);
+		super(color, image, CARD_TYPE_ENUM.SPECIAL_CARD);
 		this.specialCardType = specialCardType;
 	}
 

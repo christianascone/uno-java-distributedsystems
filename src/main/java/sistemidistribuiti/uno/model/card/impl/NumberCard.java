@@ -1,6 +1,7 @@
 package sistemidistribuiti.uno.model.card.impl;
 
 import sistemidistribuiti.uno.model.card.CARD_COLOR;
+import sistemidistribuiti.uno.model.card.CARD_TYPE_ENUM;
 import sistemidistribuiti.uno.model.card.UnoCard;
 
 /**
@@ -18,7 +19,7 @@ public class NumberCard extends UnoCard{
 	private int number;
 
 	public NumberCard(CARD_COLOR color, byte[] image, int number) {
-		super(color, image);
+		super(color, image, CARD_TYPE_ENUM.NUMBER_CARD);
 		this.number = number;
 	}
 

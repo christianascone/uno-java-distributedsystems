@@ -17,10 +17,13 @@ public abstract class UnoCard implements Serializable{
 	private CARD_COLOR color;
 	private byte[] image;
 	
-	public UnoCard(CARD_COLOR color, byte[] image) {
+	private CARD_TYPE_ENUM cardType;
+	
+	public UnoCard(CARD_COLOR color, byte[] image, CARD_TYPE_ENUM cardType) {
 		super();
 		this.color = color;
 		this.image = image;
+		this.cardType = cardType;
 	}
 
 	public CARD_COLOR getColor() {
@@ -37,5 +40,9 @@ public abstract class UnoCard implements Serializable{
 
 	public void setImage(byte[] image) {
 		this.image = image;
+	}
+	
+	public CARD_TYPE_ENUM getCardType() {
+		return cardType;
 	}
 }
