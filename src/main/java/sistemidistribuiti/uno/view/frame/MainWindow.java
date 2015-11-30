@@ -100,6 +100,13 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		southPanel.add(cardPanel);
 		
 		previousCardBtn = new JButton("Previous");
+		previousCardBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				previousCard();
+			}
+		});
 		cardPanel.add(previousCardBtn);
 		
 		numberLabel = new JLabel("Number");
@@ -109,6 +116,13 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		cardPanel.add(colorLabel);
 		
 		nextCardBtn = new JButton("Next");
+		nextCardBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				nextCard();
+			}
+		});
 		cardPanel.add(nextCardBtn);
 		
 		panel_1 = new JPanel();
@@ -149,12 +163,30 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	@Override
 	public void playMyTurn() {
 		this.btnPlay.setEnabled(true);
-		List<UnoCard> cards = gameManager.getCurrentPlayerCards();
+		List<UnoCard> cards = gameManager.getMyCards();
 		
 		UnoCard showed = cards.get(currentCardIndex);
 		setupCardView(showed);
 	}
 
+	private void nextCard(){
+		changeCard(1);
+	}
+	
+	private void previousCard(){
+		changeCard(-1);
+	}
+	
+	private void changeCard(int i){
+		List<UnoCard> cards = gameManager.getMyCards();
+		currentCardIndex = (currentCardIndex + i) % cards.size();
+		if(currentCardIndex < 0){
+			currentCardIndex = cards.size() - 1;
+		}
+		
+		setupCardView(cards.get(currentCardIndex));
+	}
+	
 	/**
 	 * Setup how the card is showed
 	 * 
@@ -181,7 +213,7 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	private void playCard() {
 		btnPlay.setEnabled(false);
 		
-		List<UnoCard> cards = gameManager.getCurrentPlayerCards();
+		List<UnoCard> cards = gameManager.getMyCards();
 		UnoCard showed = cards.get(currentCardIndex);
 		cards.remove(showed);
 		

@@ -2,6 +2,7 @@ package sistemidistribuiti.uno.workflow;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -97,8 +98,15 @@ public class GameManager implements DataReceiverListener {
 	 * Gets the cards of the current player
 	 * @return
 	 */
-	public List<UnoCard> getCurrentPlayerCards(){
-		return this.game.getCurrent().getCards();
+	public List<UnoCard> getMyCards(){
+		List<Player> players = this.game.getPlayers();
+		for(Player player : players){
+			if(player.getId() == id){
+				return player.getCards();
+			}
+		}
+		
+		return new LinkedList<UnoCard>();
 	}
 	
 	/**
