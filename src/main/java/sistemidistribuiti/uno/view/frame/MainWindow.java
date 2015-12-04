@@ -11,15 +11,20 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import sistemidistribuiti.uno.model.card.CARD_COLOR;
+import sistemidistribuiti.uno.model.card.CARD_TYPE_ENUM;
 import sistemidistribuiti.uno.model.card.UnoCard;
 import sistemidistribuiti.uno.model.card.impl.NumberCard;
 import sistemidistribuiti.uno.model.card.impl.SpecialCard;
 import sistemidistribuiti.uno.view.listener.GameGUIListener;
 import sistemidistribuiti.uno.workflow.GameManager;
 import sistemidistribuiti.uno.workflow.Starter;
+import java.awt.Font;
+import javax.swing.SwingConstants;
 
 public class MainWindow extends JFrame implements GameGUIListener{
 
@@ -52,6 +57,8 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	private JPanel lastPlayedPanel;
 	private JLabel lastPlayedNumber;
 	private JLabel lastPlayedColor;
+	private JPanel panel_2;
+	private JLabel labelCardCounter;
 
 	/**
 	 * Launch the application.
@@ -141,6 +148,14 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		});
 		cardPanel.add(nextCardBtn);
 		
+		panel_2 = new JPanel();
+		southPanel.add(panel_2);
+		
+		labelCardCounter = new JLabel("curr/total");
+		labelCardCounter.setHorizontalAlignment(SwingConstants.CENTER);
+		labelCardCounter.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
+		panel_2.add(labelCardCounter);
+		
 		panel_1 = new JPanel();
 		southPanel.add(panel_1);
 		
@@ -218,6 +233,8 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	 * @param showed
 	 */
 	private void setupCardView(UnoCard showed) {
+		this.labelCardCounter.setText(String.format("%d/%d", currentCardIndex+1, gameManager.getMyCards().size()));
+		
 		switch (showed.getCardType()) {
 		case NUMBER_CARD:
 			NumberCard numberCard = (NumberCard) showed;
@@ -256,7 +273,7 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	 */
 	private void playCard() {
 		if(!currentCardIsPlayable()){
-			// TODO Show a message
+			JOptionPane.showMessageDialog(null, "You cannot play this card.");
 			return;
 		}
 		btnPlay.setEnabled(false);
@@ -268,6 +285,7 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		gameManager.discardCard(showed);
 		setupLastPlayedCardView();
 		
+		currentCardIndex = 0;
 		setupCardView(cards.get(0));
 		gameManager.playMyTurn();
 	}
@@ -277,8 +295,35 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	 * @return
 	 */
 	private boolean currentCardIsPlayable() {
-		// TODO Auto-generated method stub
-		return true;
+		UnoCard lastPlayed = gameManager.getLastPlayedCard();
+		List<UnoCard> cards = gameManager.getMyCards();
+		UnoCard toPlay = cards.get(currentCardIndex);
+		
+		if(toPlay.getColor() == lastPlayed.getColor()){
+			return true;
+		}
+		
+		switch(toPlay.getCardType()){
+		case NUMBER_CARD:
+			if(lastPlayed.getCardType() == CARD_TYPE_ENUM.NUMBER_CARD){
+				NumberCard lastPlayedNumberCard = (NumberCard) lastPlayed;
+				NumberCard toPlayNumberCard = (NumberCard) toPlay;
+				if(lastPlayedNumberCard.getNumber() == toPlayNumberCard.getNumber()){
+					return true;
+				}
+			}
+			break;
+		case SPECIAL_CARD:
+			if(toPlay.getColor() == CARD_COLOR.RAINBOW){
+				return true;
+			}
+			break;
+		default:
+			break;
+		
+		}
+		
+		return false;
 	}
 
 
