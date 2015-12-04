@@ -12,4 +12,6 @@ public interface GameGUIListener {
 	void setGameManager(GameManager gameManager);
 
 	void playMyTurn();
+
+	void updateGameField();
 }

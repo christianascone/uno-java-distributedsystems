@@ -2,6 +2,7 @@ package sistemidistribuiti.uno.view.frame;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,6 +23,8 @@ import sistemidistribuiti.uno.workflow.Starter;
 
 public class MainWindow extends JFrame implements GameGUIListener{
 
+	private static final int DIRECTION_PREVIOUS = -1;
+	private static final int DIRECTION_NEXT = 1;
 	/**
 	 * 
 	 */
@@ -46,6 +49,9 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	private JLabel colorLabel;
 	private JButton nextCardBtn;
 	private JPanel panel_1;
+	private JPanel lastPlayedPanel;
+	private JLabel lastPlayedNumber;
+	private JLabel lastPlayedColor;
 
 	/**
 	 * Launch the application.
@@ -86,7 +92,17 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		
 		centerPanel = new JPanel();
 		contentPane.add(centerPanel, BorderLayout.CENTER);
-		centerPanel.setLayout(null);
+		centerPanel.setLayout(new GridLayout(0, 1, 0, 0));
+		
+		lastPlayedPanel = new JPanel();
+		FlowLayout fl_lastPlayedPanel = (FlowLayout) lastPlayedPanel.getLayout();
+		centerPanel.add(lastPlayedPanel);
+		
+		lastPlayedNumber = new JLabel("Number");
+		lastPlayedPanel.add(lastPlayedNumber);
+		
+		lastPlayedColor = new JLabel("Color");
+		lastPlayedPanel.add(lastPlayedColor);
 		
 		eastPanel = new JPanel();
 		contentPane.add(eastPanel, BorderLayout.EAST);
@@ -169,17 +185,26 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		setupCardView(showed);
 	}
 
+	@Override
+	public void updateGameField() {
+		setupLastPlayedCardView();	
+	}
+	
 	private void nextCard(){
-		changeCard(1);
+		changeCard(DIRECTION_NEXT);
 	}
 	
 	private void previousCard(){
-		changeCard(-1);
+		changeCard(DIRECTION_PREVIOUS);
 	}
 	
-	private void changeCard(int i){
+	/**
+	 * Change the current card with given parameter for direction
+	 * @param direction
+	 */
+	private void changeCard(int direction){
 		List<UnoCard> cards = gameManager.getMyCards();
-		currentCardIndex = (currentCardIndex + i) % cards.size();
+		currentCardIndex = (currentCardIndex + direction) % cards.size();
 		if(currentCardIndex < 0){
 			currentCardIndex = cards.size() - 1;
 		}
@@ -208,9 +233,32 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	}
 	
 	/**
+	 * Setup the view for the last played card
+	 */
+	private void setupLastPlayedCardView() {
+		UnoCard showed = gameManager.getLastPlayedCard();
+		switch (showed.getCardType()) {
+		case NUMBER_CARD:
+			NumberCard numberCard = (NumberCard) showed;
+			this.lastPlayedNumber.setText(numberCard.getNumber()+"");
+			this.lastPlayedColor.setText(numberCard.getColor().toString());
+			break;
+		case SPECIAL_CARD:
+			SpecialCard specialCard = (SpecialCard) showed;
+			this.lastPlayedNumber.setText(specialCard.getSpecialCardType().toString());
+			this.lastPlayedColor.setText(specialCard.getColor().toString());
+			break;
+		}
+	}
+	
+	/**
 	 * Play the card
 	 */
 	private void playCard() {
+		if(!currentCardIsPlayable()){
+			// TODO Show a message
+			return;
+		}
 		btnPlay.setEnabled(false);
 		
 		List<UnoCard> cards = gameManager.getMyCards();
@@ -218,8 +266,20 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		cards.remove(showed);
 		
 		gameManager.discardCard(showed);
+		setupLastPlayedCardView();
 		
 		setupCardView(cards.get(0));
 		gameManager.playMyTurn();
 	}
+
+	/**
+	 * Checks whether the current card is playable
+	 * @return
+	 */
+	private boolean currentCardIsPlayable() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+
 }

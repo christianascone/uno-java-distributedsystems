@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import sistemidistribuiti.uno.exception.EmptyDeckException;
 import sistemidistribuiti.uno.exception.NextPlayerNotFoundException;
 import sistemidistribuiti.uno.listener.DataReceiverListener;
 import sistemidistribuiti.uno.model.card.UnoCard;
@@ -49,6 +50,11 @@ public class GameManager implements DataReceiverListener {
 	@Override
 	public void setGame(Game game) throws RemoteException, NotBoundException {
 		this.game = game;
+		
+		if(game != null){
+			updateGameField();			
+		}
+		
 		if (game != null && game.getCurrent() != null && isMyTurn(game)) {
 			logger.log(Level.INFO, String.format("Node %d has the token", id));
 			enableGame();
@@ -74,6 +80,10 @@ public class GameManager implements DataReceiverListener {
 		gameGUIListener.playMyTurn();
 	}
 
+	private void updateGameField() {
+		gameGUIListener.updateGameField();	
+	}
+	
 	private Player getNextPlayer() throws NextPlayerNotFoundException {
 		List<Player> players = game.getPlayers();
 		for (int i = 0; i < players.size(); i++) {
@@ -107,6 +117,16 @@ public class GameManager implements DataReceiverListener {
 		}
 		
 		return new LinkedList<UnoCard>();
+	}
+	
+	public UnoCard getLastPlayedCard() {
+		List<UnoCard> discarded = game.getDiscarded().getCardList();
+		if(discarded.isEmpty()){
+			List<UnoCard> deckCards = game.getDeck().getCardList();
+			UnoCard card = deckCards.get(0);
+			discarded.add(card);
+		}
+		return discarded.get(discarded.size()-1);
 	}
 	
 	/**
