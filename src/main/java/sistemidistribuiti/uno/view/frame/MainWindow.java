@@ -59,6 +59,7 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	private JLabel lastPlayedColor;
 	private JPanel panel_2;
 	private JLabel labelCardCounter;
+	private JButton btnDraw;
 
 	/**
 	 * Launch the application.
@@ -162,6 +163,10 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		btnPlay = new JButton("Play");
 		panel_1.add(btnPlay);
 		btnPlay.setEnabled(false);
+		
+		btnDraw = new JButton("Draw");
+		btnDraw.setEnabled(false);
+		panel_1.add(btnDraw);
 		btnPlay.addActionListener(new ActionListener() {
 			
 			@Override
@@ -169,6 +174,14 @@ public class MainWindow extends JFrame implements GameGUIListener{
 				playCard();
 			}
 
+		});
+		
+		btnDraw.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Gestire Draw
+			}
 		});
 		
 		panel = new JPanel();
@@ -193,11 +206,16 @@ public class MainWindow extends JFrame implements GameGUIListener{
 
 	@Override
 	public void playMyTurn() {
-		this.btnPlay.setEnabled(true);
 		List<UnoCard> cards = gameManager.getMyCards();
 		
 		UnoCard showed = cards.get(currentCardIndex);
 		setupCardView(showed);
+		
+		if(atLeastOneCardPlayable()){
+			this.btnPlay.setEnabled(true);
+		}else{
+			this.btnDraw.setEnabled(true);
+		}
 	}
 
 	@Override
@@ -272,11 +290,12 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	 * Play the card
 	 */
 	private void playCard() {
-		if(!currentCardIsPlayable()){
+		if(!currentCardIsPlayable(currentCardIndex)){
 			JOptionPane.showMessageDialog(null, "You cannot play this card.");
 			return;
 		}
 		btnPlay.setEnabled(false);
+		btnDraw.setEnabled(false);
 		
 		List<UnoCard> cards = gameManager.getMyCards();
 		UnoCard showed = cards.get(currentCardIndex);
@@ -289,15 +308,30 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		setupCardView(cards.get(0));
 		gameManager.playMyTurn();
 	}
+	
+	/**
+	 * Checks whether there is at least a playable card in the player hand
+	 * 
+	 * @return true or false
+	 */
+	private boolean atLeastOneCardPlayable() {
+		for(int i = 0; i < gameManager.getMyCards().size(); i++){
+			boolean playable = currentCardIsPlayable(i);
+			if(playable){
+				return true;
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * Checks whether the current card is playable
 	 * @return
 	 */
-	private boolean currentCardIsPlayable() {
+	private boolean currentCardIsPlayable(int index) {
 		UnoCard lastPlayed = gameManager.getLastPlayedCard();
 		List<UnoCard> cards = gameManager.getMyCards();
-		UnoCard toPlay = cards.get(currentCardIndex);
+		UnoCard toPlay = cards.get(index);
 		
 		if(toPlay.getColor() == lastPlayed.getColor()){
 			return true;
