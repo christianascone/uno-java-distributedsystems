@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import sistemidistribuiti.uno.exception.EmptyDeckException;
 import sistemidistribuiti.uno.exception.NextPlayerNotFoundException;
 import sistemidistribuiti.uno.listener.DataReceiverListener;
 import sistemidistribuiti.uno.model.card.UnoCard;
@@ -123,7 +122,7 @@ public class GameManager implements DataReceiverListener {
 		List<UnoCard> discarded = game.getDiscarded().getCardList();
 		if(discarded.isEmpty()){
 			List<UnoCard> deckCards = game.getDeck().getCardList();
-			UnoCard card = deckCards.get(0);
+			UnoCard card = deckCards.remove(0);
 			discarded.add(card);
 		}
 		return discarded.get(discarded.size()-1);
