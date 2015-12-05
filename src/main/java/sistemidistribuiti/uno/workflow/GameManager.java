@@ -11,6 +11,7 @@ import sistemidistribuiti.uno.exception.NextPlayerNotFoundException;
 import sistemidistribuiti.uno.listener.DataReceiverListener;
 import sistemidistribuiti.uno.model.card.UnoCard;
 import sistemidistribuiti.uno.model.game.Game;
+import sistemidistribuiti.uno.model.player.PLAYER_STATE;
 import sistemidistribuiti.uno.model.player.Player;
 import sistemidistribuiti.uno.rmi.client.UnoRemoteClient;
 import sistemidistribuiti.uno.rmi.interfaces.UnoRemoteGameInterface;
@@ -128,6 +129,22 @@ public class GameManager implements DataReceiverListener {
 		return discarded.get(discarded.size()-1);
 	}
 	
+	public UnoCard drawCard(){
+		List<UnoCard> deckCards = game.getDeck().getCardList();
+		if(!deckCards.isEmpty()){
+			return deckCards.remove(0);
+		}
+		List<UnoCard> discardedCards = game.getDiscarded().getCardList();
+		
+		deckCards.addAll(discardedCards);
+		discardedCards.clear();
+		discardedCards.add(deckCards.get(deckCards.size()-1));
+		
+		game.shuffleDeck();
+		
+		return deckCards.remove(0);
+	}
+	
 	/**
 	 * Discard the given card
 	 * @param discarded
@@ -172,6 +189,15 @@ public class GameManager implements DataReceiverListener {
 
 	public UnoRemoteClient getRemoteClient() {
 		return remoteClient;
+	}
+
+	public void winGame() {
+		List<Player> players = game.getPlayers();
+		for(Player player : players){
+			if(player.getId() == id){
+				player.setState(PLAYER_STATE.WINNER);
+			}
+		}
 	}
 
 }

@@ -180,7 +180,7 @@ public class MainWindow extends JFrame implements GameGUIListener{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Gestire Draw
+				drawCard();
 			}
 		});
 		
@@ -294,14 +294,34 @@ public class MainWindow extends JFrame implements GameGUIListener{
 			JOptionPane.showMessageDialog(null, "You cannot play this card.");
 			return;
 		}
+		
+		List<UnoCard> myCards = gameManager.getMyCards();
+		UnoCard showed = myCards.get(currentCardIndex);
+		myCards.remove(showed);
+		gameManager.discardCard(showed);
+		
+		if(myCards.isEmpty()){
+			gameManager.winGame();
+		}
+		
+		passTurn(myCards);
+	}
+	
+	/**
+	 * Draw a card
+	 */
+	private void drawCard(){
+		List<UnoCard> myCards = gameManager.getMyCards();
+		UnoCard drawedCard = gameManager.drawCard();
+		myCards.add(drawedCard);
+		
+		passTurn(myCards);
+	}
+
+	private void passTurn(List<UnoCard> cards) {
 		btnPlay.setEnabled(false);
 		btnDraw.setEnabled(false);
 		
-		List<UnoCard> cards = gameManager.getMyCards();
-		UnoCard showed = cards.get(currentCardIndex);
-		cards.remove(showed);
-		
-		gameManager.discardCard(showed);
 		setupLastPlayedCardView();
 		
 		currentCardIndex = 0;
