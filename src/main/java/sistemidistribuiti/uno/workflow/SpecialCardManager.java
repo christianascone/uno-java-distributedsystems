@@ -37,6 +37,7 @@ public class SpecialCardManager {
 	 * @throws NextPlayerNotFoundException 
 	 */
 	public static void skipCard(Game game) throws NextPlayerNotFoundException {
+		//TODO Da verificare perché sembra non funzionare
 		game.setCurrent(game.getNextPlayerWithSkip());
 	}
 
