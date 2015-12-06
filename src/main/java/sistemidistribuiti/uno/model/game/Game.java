@@ -124,6 +124,7 @@ public class Game implements Serializable {
 
 	public Player getNextPlayerWithSkip() throws NextPlayerNotFoundException {
 		Player nextPlayer = getNextPlayer();
-		return getNextPlayer(nextPlayer.getId());
+		//return getNextPlayer(nextPlayer.getId());
+		return nextPlayer;
 	}
 }
