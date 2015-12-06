@@ -3,6 +3,7 @@ package sistemidistribuiti.uno.view.frame;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,6 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import sistemidistribuiti.uno.model.card.CARD_COLOR;
@@ -24,10 +26,6 @@ import sistemidistribuiti.uno.model.player.Player;
 import sistemidistribuiti.uno.view.listener.GameGUIListener;
 import sistemidistribuiti.uno.workflow.GameManager;
 import sistemidistribuiti.uno.workflow.Starter;
-
-import java.awt.Font;
-
-import javax.swing.SwingConstants;
 
 public class MainWindow extends JFrame implements GameGUIListener{
 
@@ -327,6 +325,21 @@ public class MainWindow extends JFrame implements GameGUIListener{
 			        colors, // Array of choices
 			        colors[0]); // Initial choice
 			showed.setColor(input);
+		}else if(showed.getCardType() == CARD_TYPE_ENUM.SPECIAL_CARD){
+			SpecialCard specialCard = (SpecialCard) showed;
+			switch (specialCard.getSpecialCardType()) {
+			case DRAW_TWO:
+				break;
+			case REVERSE:
+				gameManager.getGame().reverseDirection();
+				break;
+			case SKIP:
+				break;
+			case WILD:
+				break;
+			case WILD_DRAW_FOUR:
+				break;
+			}
 		}
 	}
 	
@@ -352,7 +365,10 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		setupLastPlayedCardView();
 		
 		currentCardIndex = 0;
-		setupCardView(cards.get(0));
+		
+		if(!cards.isEmpty()){
+			setupCardView(cards.get(0));
+		}
 		gameManager.playMyTurn();
 	}
 	

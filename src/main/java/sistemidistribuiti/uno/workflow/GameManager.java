@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import sistemidistribuiti.uno.exception.NextPlayerNotFoundException;
 import sistemidistribuiti.uno.listener.DataReceiverListener;
 import sistemidistribuiti.uno.model.card.UnoCard;
+import sistemidistribuiti.uno.model.game.Direction;
 import sistemidistribuiti.uno.model.game.Game;
 import sistemidistribuiti.uno.model.player.PLAYER_STATE;
 import sistemidistribuiti.uno.model.player.Player;
@@ -97,10 +98,28 @@ public class GameManager implements DataReceiverListener {
 	
 	private Player getNextPlayer() throws NextPlayerNotFoundException {
 		List<Player> players = game.getPlayers();
+		
+		Direction direction = game.getGameDirection();
+		
+		int directionValue = 0;
+		
+		switch(direction){
+		case BACKWARD:
+			directionValue = -1;
+			break;
+		case FORWARD:
+			directionValue = 1;
+			break;
+		}
+		
 		for (int i = 0; i < players.size(); i++) {
 			Player iteratePlayer = players.get(i);
 			if (iteratePlayer.getId() == game.getCurrent().getId()) {
-				Player newCurrent = players.get((i + 1) % players.size());
+				i = (i + directionValue) % players.size();
+				if(i < 0){
+					i = players.size() - 1;
+				}
+				Player newCurrent = players.get(i);
 				return newCurrent;
 			}
 		}
