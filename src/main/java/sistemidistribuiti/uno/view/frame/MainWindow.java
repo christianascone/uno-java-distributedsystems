@@ -20,10 +20,13 @@ import sistemidistribuiti.uno.model.card.CARD_TYPE_ENUM;
 import sistemidistribuiti.uno.model.card.UnoCard;
 import sistemidistribuiti.uno.model.card.impl.NumberCard;
 import sistemidistribuiti.uno.model.card.impl.SpecialCard;
+import sistemidistribuiti.uno.model.player.Player;
 import sistemidistribuiti.uno.view.listener.GameGUIListener;
 import sistemidistribuiti.uno.workflow.GameManager;
 import sistemidistribuiti.uno.workflow.Starter;
+
 import java.awt.Font;
+
 import javax.swing.SwingConstants;
 
 public class MainWindow extends JFrame implements GameGUIListener{
@@ -378,6 +381,11 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		}
 		
 		return false;
+	}
+
+	@Override
+	public void showWinnerAlert(Player player) {
+		JOptionPane.showMessageDialog(null, String.format("Player %s won!", player.getNickname()));
 	}
 
 

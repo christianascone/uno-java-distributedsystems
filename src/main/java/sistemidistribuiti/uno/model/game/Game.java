@@ -7,6 +7,7 @@ import java.util.Random;
 
 import sistemidistribuiti.uno.model.card.UnoCard;
 import sistemidistribuiti.uno.model.card.impl.Deck;
+import sistemidistribuiti.uno.model.player.PLAYER_STATE;
 import sistemidistribuiti.uno.model.player.Player;
 
 public class Game implements Serializable{
@@ -73,5 +74,15 @@ public class Game implements Serializable{
 
 	public void setCurrent(Player newCurrent) {
 		this.current = newCurrent;
+	}
+
+	public boolean playerWon() {
+		for(Player player : players){
+			if(player.getState() == PLAYER_STATE.WINNER){
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }

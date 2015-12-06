@@ -51,6 +51,17 @@ public class GameManager implements DataReceiverListener {
 	public void setGame(Game game) throws RemoteException, NotBoundException {
 		this.game = game;
 		
+		if(game.playerWon()){
+			List<Player> players = game.getPlayers();
+			for(Player player : players){
+				if(player.getState() == PLAYER_STATE.WINNER){
+					gameGUIListener.showWinnerAlert(player);
+				}
+			}
+			
+			return;
+		}
+		
 		if(game != null){
 			updateGameField();			
 		}

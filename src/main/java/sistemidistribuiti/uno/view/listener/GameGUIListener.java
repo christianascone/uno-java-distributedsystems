@@ -1,5 +1,6 @@
 package sistemidistribuiti.uno.view.listener;
 
+import sistemidistribuiti.uno.model.player.Player;
 import sistemidistribuiti.uno.workflow.GameManager;
 
 public interface GameGUIListener {
@@ -14,4 +15,6 @@ public interface GameGUIListener {
 	void playMyTurn();
 
 	void updateGameField();
+	
+	void showWinnerAlert(Player player);
 }
