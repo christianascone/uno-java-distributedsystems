@@ -307,7 +307,27 @@ public class MainWindow extends JFrame implements GameGUIListener{
 			gameManager.winGame();
 		}
 		
+		manageCard(showed);
+		
 		passTurn(myCards);
+	}
+
+	/**
+	 * Manage the played card
+	 * 
+	 * @param showed
+	 */
+	private void manageCard(UnoCard showed) {
+		if(showed.getCardType() == CARD_TYPE_ENUM.SPECIAL_CARD && showed.getColor() == CARD_COLOR.RAINBOW){
+			CARD_COLOR[] colors = {CARD_COLOR.RED, CARD_COLOR.BLUE, CARD_COLOR.YELLOW, CARD_COLOR.GREEN};
+			CARD_COLOR input = (CARD_COLOR) JOptionPane.showInputDialog(null, "Choose color",
+			        "Choose the color for this card.", JOptionPane.QUESTION_MESSAGE, null, // Use
+			                                                                        // default
+			                                                                        // icon
+			        colors, // Array of choices
+			        colors[0]); // Initial choice
+			showed.setColor(input);
+		}
 	}
 	
 	/**
@@ -321,6 +341,10 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		passTurn(myCards);
 	}
 
+	/**
+	 * Pass the turn to the next player
+	 * @param cards
+	 */
 	private void passTurn(List<UnoCard> cards) {
 		btnPlay.setEnabled(false);
 		btnDraw.setEnabled(false);
