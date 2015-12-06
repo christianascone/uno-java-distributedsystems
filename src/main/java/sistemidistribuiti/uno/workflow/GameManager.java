@@ -208,11 +208,12 @@ public class GameManager implements DataReceiverListener {
 			SpecialCardManager.reverseCard(getGame());
 			break;
 		case SKIP:
-			SpecialCardManager.skipCard(game);
-			break;
-		case WILD:
+			SpecialCardManager.skipCard(getGame());
 			break;
 		case WILD_DRAW_FOUR:
+			SpecialCardManager.drawFour(getGame());
+			break;
+		case WILD:
 			break;
 		}
 	}

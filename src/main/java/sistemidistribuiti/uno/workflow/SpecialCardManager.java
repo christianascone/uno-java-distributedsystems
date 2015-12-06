@@ -37,6 +37,16 @@ public class SpecialCardManager {
 	 * @throws NextPlayerNotFoundException 
 	 */
 	public static void skipCard(Game game) throws NextPlayerNotFoundException {
-		//TODO 
+		
+	}
+
+	/**
+	 * Draw four cards
+	 * @param game
+	 * @throws NextPlayerNotFoundException 
+	 */
+	public static void drawFour(Game game) throws NextPlayerNotFoundException {
+		drawTwoCard(game);
+		drawTwoCard(game);
 	}
 }

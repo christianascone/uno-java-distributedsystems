@@ -326,7 +326,9 @@ public class MainWindow extends JFrame implements GameGUIListener{
 			        colors, // Array of choices
 			        colors[0]); // Initial choice
 			showed.setColor(input);
-		}else if(showed.getCardType() == CARD_TYPE_ENUM.SPECIAL_CARD){
+		}
+
+		if(showed.getCardType() == CARD_TYPE_ENUM.SPECIAL_CARD){
 			SpecialCard specialCard = (SpecialCard) showed;
 			try {
 				gameManager.manageSpecialCard(specialCard);
