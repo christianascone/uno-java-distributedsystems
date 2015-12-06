@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+import sistemidistribuiti.uno.exception.NextPlayerNotFoundException;
 import sistemidistribuiti.uno.model.card.CARD_COLOR;
 import sistemidistribuiti.uno.model.card.CARD_TYPE_ENUM;
 import sistemidistribuiti.uno.model.card.UnoCard;
@@ -327,18 +328,11 @@ public class MainWindow extends JFrame implements GameGUIListener{
 			showed.setColor(input);
 		}else if(showed.getCardType() == CARD_TYPE_ENUM.SPECIAL_CARD){
 			SpecialCard specialCard = (SpecialCard) showed;
-			switch (specialCard.getSpecialCardType()) {
-			case DRAW_TWO:
-				break;
-			case REVERSE:
-				gameManager.getGame().reverseDirection();
-				break;
-			case SKIP:
-				break;
-			case WILD:
-				break;
-			case WILD_DRAW_FOUR:
-				break;
+			try {
+				gameManager.manageSpecialCard(specialCard);
+			} catch (NextPlayerNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}

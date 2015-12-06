@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 import sistemidistribuiti.uno.exception.NextPlayerNotFoundException;
 import sistemidistribuiti.uno.listener.DataReceiverListener;
 import sistemidistribuiti.uno.model.card.UnoCard;
-import sistemidistribuiti.uno.model.game.Direction;
+import sistemidistribuiti.uno.model.card.impl.SpecialCard;
 import sistemidistribuiti.uno.model.game.Game;
 import sistemidistribuiti.uno.model.player.PLAYER_STATE;
 import sistemidistribuiti.uno.model.player.Player;
@@ -79,7 +79,7 @@ public class GameManager implements DataReceiverListener {
 	public void playMyTurn() {
 		Player newCurrent;
 		try {
-			newCurrent = getNextPlayer();
+			newCurrent = game.getNextPlayer();
 			game.setCurrent(newCurrent);
 			remoteClient.broadcastUpdatedGame(game);
 		} catch (Exception e) {
@@ -96,37 +96,6 @@ public class GameManager implements DataReceiverListener {
 		gameGUIListener.updateGameField();	
 	}
 	
-	private Player getNextPlayer() throws NextPlayerNotFoundException {
-		List<Player> players = game.getPlayers();
-		
-		Direction direction = game.getGameDirection();
-		
-		int directionValue = 0;
-		
-		switch(direction){
-		case BACKWARD:
-			directionValue = -1;
-			break;
-		case FORWARD:
-			directionValue = 1;
-			break;
-		}
-		
-		for (int i = 0; i < players.size(); i++) {
-			Player iteratePlayer = players.get(i);
-			if (iteratePlayer.getId() == game.getCurrent().getId()) {
-				i = (i + directionValue) % players.size();
-				if(i < 0){
-					i = players.size() - 1;
-				}
-				Player newCurrent = players.get(i);
-				return newCurrent;
-			}
-		}
-
-		throw new NextPlayerNotFoundException();
-	}
-
 	@Override
 	public void setupRemoteClient(Game game) throws RemoteException,
 			NotBoundException {
@@ -227,6 +196,24 @@ public class GameManager implements DataReceiverListener {
 			if(player.getId() == id){
 				player.setState(PLAYER_STATE.WINNER);
 			}
+		}
+	}
+
+	public void manageSpecialCard(SpecialCard specialCard) throws NextPlayerNotFoundException {
+		switch (specialCard.getSpecialCardType()) {
+		case DRAW_TWO:
+			SpecialCardManager.drawTwoCard(getGame());
+			break;
+		case REVERSE:
+			SpecialCardManager.reverseCard(getGame());
+			break;
+		case SKIP:
+			SpecialCardManager.skipCard(game);
+			break;
+		case WILD:
+			break;
+		case WILD_DRAW_FOUR:
+			break;
 		}
 	}
 

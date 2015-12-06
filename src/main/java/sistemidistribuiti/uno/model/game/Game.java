@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import sistemidistribuiti.uno.exception.NextPlayerNotFoundException;
 import sistemidistribuiti.uno.model.card.UnoCard;
 import sistemidistribuiti.uno.model.card.impl.Deck;
 import sistemidistribuiti.uno.model.player.PLAYER_STATE;
@@ -84,5 +85,36 @@ public class Game implements Serializable{
 		}
 		
 		return false;
+	}
+
+	public Player getNextPlayer() throws NextPlayerNotFoundException {
+		List<Player> players = getPlayers();
+		
+		Direction direction = getGameDirection();
+		
+		int directionValue = 0;
+		
+		switch(direction){
+		case BACKWARD:
+			directionValue = -1;
+			break;
+		case FORWARD:
+			directionValue = 1;
+			break;
+		}
+		
+		for (int i = 0; i < players.size(); i++) {
+			Player iteratePlayer = players.get(i);
+			if (iteratePlayer.getId() == getCurrent().getId()) {
+				i = (i + directionValue) % players.size();
+				if(i < 0){
+					i = players.size() - 1;
+				}
+				Player newCurrent = players.get(i);
+				return newCurrent;
+			}
+		}
+	
+		throw new NextPlayerNotFoundException();
 	}
 }
