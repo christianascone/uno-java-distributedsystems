@@ -410,6 +410,11 @@ public class MainWindow extends JFrame implements GameGUIListener{
 			if(toPlay.getColor() == CARD_COLOR.RAINBOW){
 				return true;
 			}
+			SpecialCard toPlaySpecialCard = (SpecialCard) toPlay;
+			SpecialCard lastPlayedSpecialCard = (SpecialCard) lastPlayed;
+			if(toPlaySpecialCard.getSpecialCardType() == lastPlayedSpecialCard.getSpecialCardType()){
+				return true;
+			}
 			break;
 		default:
 			break;
