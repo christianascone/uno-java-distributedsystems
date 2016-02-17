@@ -1,0 +1,48 @@
+Documentation for the project:
+
+Il codice del progetto si trova nella cartella (\src\main\java\sistemidistribuiti\uno).
+Qui troviamo i seguenti elementi:
+- bean
+- exception
+- listener
+- model
+- rmi
+- utils
+- view
+- workflow
+- App.java (entry point)
+
+********
+**Bean**
+********
+Nella cartella bean torviamo il file ConfigBean. Il file ConfigBean si occupa
+dei settaggi di configurazione
+*************
+**Exception**
+*************
+Nella cartella Exception torviamo l'eccezione NextPlayerNotFoundException. La quale
+viene invocata nel momento in cui il nodo successivo incaricato di procedere nel gioco
+non è raggiungibile.
+*************
+**Listener***
+*************
+Nella cartella Listener troviamo DataReceiverListener, che non è altri che il Listener
+utilizzato per le callback di RMI.
+*************
+****Model****
+*************
+All'interno della cartella model abbiamo le seguenti sottocartelle
+- Card
+- Game
+- Player
+      *************
+      ****Card*****
+      *************
+      Card al suo interno contiene 3 classi:
+      - CARD_COLOR
+      - CARD_TYPE_ENUM
+      - SPECIAL_CARD_TYPE
+      Queste 3 classi sono necessarie al fine di arricchire l'oggetto UnoCard fornendo
+      informazioni aggiuntive riguardo al colore al tipo di carta (numero o speciale), e
+      al tipo di carta speciale che queste sono.
+       
