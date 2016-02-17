@@ -43,6 +43,35 @@ All'interno della cartella model abbiamo le seguenti sottocartelle
       - CARD_TYPE_ENUM
       - SPECIAL_CARD_TYPE
       Queste 3 classi sono necessarie al fine di arricchire l'oggetto UnoCard fornendo
-      informazioni aggiuntive riguardo al colore al tipo di carta (numero o speciale), e
-      al tipo di carta speciale che queste sono.
-       
+      informazioni aggiuntive riguardo: al colore, al tipo di carta (numero o speciale), e
+      se speciale al tipo di carta speciale che questa è.
+      UnoCard invece è la classe che definisce l'oggetto carta da UNO caratterizzata dagli attributi:
+      - Color (CARD_COLOR)
+      - Image (byte, questo attributo dovrà contenere l'immagine della carta da uno che identifica l'oggetto)
+      - CardType (CARD_TYPE_ENUM).
+      Sempre all'interno della cartella Card abbiamo la cartella Impl. Questa cartella contiene:
+      - Deck, la quale identifica l'oggetto mazzo
+      - NumberCard, è una sottoclasse di unoCard, la quale specializza UnoCard per le carte numeriche
+      - SpecialCard, è una sottoclasse di unoCard, la quale specializza UnoCard per le carte speciali
+      *************
+      ****Game*****
+      *************
+      Game al suo interno contiene 2 classi:
+      - Direction
+      - Game
+      Direction: tale classe serve per definire il tipo di direzione del gioco la quale può essere
+      invertita dalla carta speciale reverseDirection.
+      La classe Game invece è un oggetto (una sorta di token) che viene passato di giocatore in giocatore.
+      E al suo interno contiene dei metodi che modificano lo stato del gioco in base alle azioni che effettuano i vari
+      utenti.
+      ***************
+      *****Player****
+      ***************
+      Game al suo interno contiene 2 classi:
+      - Direction
+      - Game
+      Direction: tale classe serve per definire il tipo di direzione del gioco la quale può essere
+      invertita dalla carta speciale reverseDirection.
+      La classe Game invece è un oggetto (una sorta di token) che viene passato di giocatore in giocatore.
+      E al suo interno contiene dei metodi che modificano lo stato del gioco in base alle azioni che effettuano i vari
+      utenti.
