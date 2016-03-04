@@ -4,18 +4,23 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import sistemidistribuiti.uno.exception.NextPlayerNotFoundException;
 import sistemidistribuiti.uno.model.card.UnoCard;
 import sistemidistribuiti.uno.model.card.impl.Deck;
+import sistemidistribuiti.uno.model.player.CurrentNode;
 import sistemidistribuiti.uno.model.player.PLAYER_STATE;
 import sistemidistribuiti.uno.model.player.Player;
+import sistemidistribuiti.uno.rmi.client.UnoRemoteClient;
 
 public class Game implements Serializable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 2750321770514228846L;
+	private final static Logger logger = Logger.getLogger(UnoRemoteClient.class.getName());
 
 	private List<Player> players;
 	private Deck deck;
@@ -33,7 +38,7 @@ public class Game implements Serializable {
 		// Draw the starting player
 		Random rnd = new Random();
 		int randomStartingPlayer = rnd.nextInt(players.size());
-		this.current = players.get(randomStartingPlayer);
+		this.current = players.get(0);
 
 		this.gameDirection = Direction.getDefault();
 	}
@@ -92,8 +97,10 @@ public class Game implements Serializable {
 	}
 
 	public Player getNextPlayer(int id) throws NextPlayerNotFoundException {
-		List<Player> players = getPlayers();
 
+		List<Player> players = getPlayers();
+		
+		logger.log(Level.WARNING, "Id node singleton:"+ CurrentNode.getInstance().getId());				
 		Direction direction = getGameDirection();
 
 		int directionValue = 0;
@@ -113,12 +120,15 @@ public class Game implements Serializable {
 				i = (i + directionValue) % players.size();
 				if (i < 0) {
 					i = players.size() - 1;
-				}
+				}				
 				Player newCurrent = players.get(i);
+				logger.log(Level.INFO, "New Current Node:" + newCurrent.getId() + " - " + newCurrent.getHost() + " - " + newCurrent.getNickname());
 				return newCurrent;
 			}
 		}
 
+		logger.log(Level.INFO, "Nodes in game class:" + getPlayers().toString());
+		
 		throw new NextPlayerNotFoundException();
 	}
 

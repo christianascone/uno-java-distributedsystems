@@ -17,6 +17,7 @@ import sistemidistribuiti.uno.bean.ConfigBean;
 import sistemidistribuiti.uno.model.card.UnoCard;
 import sistemidistribuiti.uno.model.card.impl.Deck;
 import sistemidistribuiti.uno.model.game.Game;
+import sistemidistribuiti.uno.model.player.CurrentNode;
 import sistemidistribuiti.uno.model.player.Player;
 import sistemidistribuiti.uno.rmi.client.UnoRemoteClient;
 import sistemidistribuiti.uno.rmi.interfaces.UnoRemoteGameInterface;
@@ -106,9 +107,11 @@ public class Starter {
 		logger.log(Level.INFO, String.format("Server id: %d", id));
 		logger.log(Level.INFO, String.format("Server port: %d", port));
 
+		CurrentNode.getInstance().setId(id); 
+		CurrentNode.getInstance().setHost(name); 
+		
 		UnoRemoteGameInterface remoteServer = new UnoRemoteServer(gameManager);
 		ServerHelper.setupServer(remoteServer, name, port);
-		System.out.println("ComputeEngine bound");
 
 		gameManager.setRemoteServer(remoteServer);
 		gameManager.setId(id);

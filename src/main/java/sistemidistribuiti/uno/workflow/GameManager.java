@@ -26,8 +26,7 @@ import sistemidistribuiti.uno.view.listener.GameGUIListener;
  *
  */
 public class GameManager implements DataReceiverListener {
-	private static final Logger logger = Logger.getLogger(GameManager.class
-			.getName());
+	private static final Logger logger = Logger.getLogger(GameManager.class.getName());
 
 	private int id;
 	private String name;
@@ -52,6 +51,8 @@ public class GameManager implements DataReceiverListener {
 	public void setGame(Game game) throws RemoteException, NotBoundException {
 		this.game = game;
 		
+		
+		// check if one of the player won
 		if(game.playerWon()){
 			List<Player> players = game.getPlayers();
 			for(Player player : players){
@@ -59,9 +60,9 @@ public class GameManager implements DataReceiverListener {
 					gameGUIListener.showWinnerAlert(player);
 				}
 			}
-			
 			return;
 		}
+		
 		
 		if(game != null){
 			updateGameField();			
@@ -71,6 +72,7 @@ public class GameManager implements DataReceiverListener {
 			logger.log(Level.INFO, String.format("Node %d has the token", id));
 			enableGame();
 		}
+		/* else{} */
 	}
 
 	/**

@@ -30,4 +30,6 @@ public interface UnoRemoteGameInterface extends Remote{
 	 * @throws NotBoundException
 	 */
 	void sendGame(Game game) throws RemoteException, NotBoundException;
+	
+	
 }

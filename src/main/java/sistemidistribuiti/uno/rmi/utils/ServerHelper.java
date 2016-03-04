@@ -39,8 +39,8 @@ public class ServerHelper {
 	 * @throws NotBoundException
 	 */
 	public static UnoRemoteGameInterface setupClient(String host, String name) throws RemoteException, NotBoundException{
-        Registry registry = LocateRegistry.getRegistry(host);
-        UnoRemoteGameInterface remoteClient = (UnoRemoteGameInterface) registry.lookup(name);
+		Registry registry = LocateRegistry.getRegistry(host);
+		UnoRemoteGameInterface remoteClient = (UnoRemoteGameInterface) registry.lookup(name);
         
         return remoteClient;
 	}

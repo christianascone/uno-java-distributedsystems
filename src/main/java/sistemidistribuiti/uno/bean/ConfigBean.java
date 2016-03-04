@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import sistemidistribuiti.uno.model.card.UnoCard;
+import sistemidistribuiti.uno.model.player.CurrentNode;
 import sistemidistribuiti.uno.model.player.Player;
 
 public class ConfigBean {
@@ -41,7 +42,7 @@ public class ConfigBean {
 			int id = node.getInt(ID_KEY);
 			String name = node.getString(NAME_KEY);
 			String host = node.getString(HOST_KEY);
-			
+
 			try{
 				boolean leader = node.getBoolean(LEADER_KEY);
 				if(leader)
