@@ -1,8 +1,11 @@
 package sistemidistribuiti.uno.rmi.server;
 
 import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import sistemidistribuiti.uno.exception.NextPlayerNotFoundException;
 
 public class UNOTimer {
 
@@ -20,17 +23,24 @@ public class UNOTimer {
 		// init
 		this.timerTask = new TimerTask(){
 			public void run() {
-				callback.timeUp();
+				try {
+					callback.timeUp();
+					stop(); 
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		};
 		this.timer = new Timer(true);
 		// start
-		timer.scheduleAtFixedRate(this.timerTask,this.seconds * 1000, this.seconds * 1000);
+		this.timer.scheduleAtFixedRate(this.timerTask,this.seconds * 1000, this.seconds * 1000);
 	}
 
 	public void stop(){
 		timerTask.cancel();
 		timer.cancel(); 
 	}
+
+
 
 }

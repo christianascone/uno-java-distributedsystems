@@ -12,10 +12,13 @@ import sistemidistribuiti.uno.listener.DataReceiverListener;
 import sistemidistribuiti.uno.model.card.UnoCard;
 import sistemidistribuiti.uno.model.card.impl.SpecialCard;
 import sistemidistribuiti.uno.model.game.Game;
+import sistemidistribuiti.uno.model.player.CurrentNode;
 import sistemidistribuiti.uno.model.player.PLAYER_STATE;
 import sistemidistribuiti.uno.model.player.Player;
 import sistemidistribuiti.uno.rmi.client.UnoRemoteClient;
 import sistemidistribuiti.uno.rmi.interfaces.UnoRemoteGameInterface;
+import sistemidistribuiti.uno.rmi.server.TimerCallback;
+import sistemidistribuiti.uno.rmi.server.UNOTimer;
 import sistemidistribuiti.uno.view.listener.GameGUIListener;
 
 /**
@@ -25,7 +28,7 @@ import sistemidistribuiti.uno.view.listener.GameGUIListener;
  * @author christian
  *
  */
-public class GameManager implements DataReceiverListener {
+public class GameManager implements DataReceiverListener, TimerCallback {
 	private static final Logger logger = Logger.getLogger(GameManager.class.getName());
 
 	private int id;
@@ -35,6 +38,8 @@ public class GameManager implements DataReceiverListener {
 	private UnoRemoteGameInterface remoteServer;
 	private UnoRemoteClient remoteClient;
 
+	private UNOTimer timer;
+	
 	private GameGUIListener gameGUIListener;
 
 	private Game game;
@@ -49,9 +54,8 @@ public class GameManager implements DataReceiverListener {
 
 	@Override
 	public void setGame(Game game) throws RemoteException, NotBoundException {
-		this.game = game;
-		
-		
+		this.timer = null;
+		this.game = game;		
 		// check if one of the player won
 		if(game.playerWon()){
 			List<Player> players = game.getPlayers();
@@ -63,7 +67,6 @@ public class GameManager implements DataReceiverListener {
 			return;
 		}
 		
-		
 		if(game != null){
 			updateGameField();			
 		}
@@ -71,9 +74,11 @@ public class GameManager implements DataReceiverListener {
 		if (game != null && game.getCurrent() != null && isMyTurn(game)) {
 			logger.log(Level.INFO, String.format("Node %d has the token", id));
 			enableGame();
+		}else{
+			startUnoTimer();
 		}
-		/* else{} */
 	}
+
 
 	/**
 	 * Play my own turn
@@ -99,8 +104,7 @@ public class GameManager implements DataReceiverListener {
 	}
 	
 	@Override
-	public void setupRemoteClient(Game game) throws RemoteException,
-			NotBoundException {
+	public void setupRemoteClient(Game game) throws RemoteException, NotBoundException {
 		this.remoteClient = new UnoRemoteClient(game, id);
 		setGame(game);
 	}
@@ -218,6 +222,30 @@ public class GameManager implements DataReceiverListener {
 		case WILD:
 			break;
 		}
+	}
+	
+	public void timeUp() throws NextPlayerNotFoundException, RemoteException, NotBoundException {
+		Player player = game.getNextPlayer();
+		// if I am the next node in the turn I ll:
+		// - remove
+		logger.log(Level.INFO, "waiting - Id:" + game.getCurrent().getId());
+		Player crashedPlayer = game.getCurrent();
+		game.setCurrent(player);
+		//remove crashed player			
+		game.getPlayers().remove(crashedPlayer);
+		
+		if (player.getId() == CurrentNode.getInstance().getId()){
+			// play
+			setGame(game);
+			
+		}else{
+			startUnoTimer();		// again
+		}
+	}
+	
+	public void startUnoTimer(){
+		this.timer = new UNOTimer(this, 40);
+		this.timer.start();
 	}
 
 }
