@@ -440,7 +440,13 @@ public class MainWindow extends JFrame implements GameGUIListener{
 			logger.log(Level.INFO, "6.0.8.2 playable ? ");
 			SpecialCard toPlaySpecialCard = (SpecialCard) toPlay;
 			logger.log(Level.INFO, "6.0.8.3 playable ? ");
-			SpecialCard lastPlayedSpecialCard = (SpecialCard) lastPlayed;
+			
+			SpecialCard lastPlayedSpecialCard = null;
+			try{
+				lastPlayedSpecialCard = (SpecialCard) lastPlayed;
+			}catch(Exception e){
+				return false;
+			}
 			logger.log(Level.INFO, "6.0.8.4 playable ? ");
 			if(toPlaySpecialCard.getSpecialCardType() == lastPlayedSpecialCard.getSpecialCardType()){
 				logger.log(Level.INFO, "6.0.8.5 playable ? ");
