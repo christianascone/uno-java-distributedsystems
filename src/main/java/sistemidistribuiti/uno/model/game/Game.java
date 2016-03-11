@@ -100,7 +100,6 @@ public class Game implements Serializable {
 
 		List<Player> players = getPlayers();
 		
-		logger.log(Level.WARNING, "Id node singleton:"+ CurrentNode.getInstance().getId());				
 		Direction direction = getGameDirection();
 
 		int directionValue = 0;
@@ -122,7 +121,6 @@ public class Game implements Serializable {
 					i = players.size() - 1;
 				}				
 				Player newCurrent = players.get(i);
-				logger.log(Level.INFO, "New Current Node:" + newCurrent.getId() + " - " + newCurrent.getHost() + " - " + newCurrent.getNickname());
 				return newCurrent;
 			}
 		}
@@ -137,4 +135,18 @@ public class Game implements Serializable {
 		//return getNextPlayer(nextPlayer.getId());
 		return nextPlayer;
 	}
+	
+	public String toString(){
+		String strGame = "";
+		strGame = "Next Player -> " + current.getId() + "\n";
+		strGame = strGame + "Number of players -> " + players.size() + "\n";
+		strGame = strGame + "Players IDs -> ";
+		String strCom = "";
+		for (int i = 0; i< players.size(); i++){
+			strCom = strCom + players.get(i).getId() + " - ";			
+		}
+		strGame = strGame + strCom;
+		return strGame;
+	}
+	
 }

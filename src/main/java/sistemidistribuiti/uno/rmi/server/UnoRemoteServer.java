@@ -16,23 +16,21 @@ import sistemidistribuiti.uno.rmi.interfaces.UnoRemoteGameInterface;
  */
 public class UnoRemoteServer implements UnoRemoteGameInterface {
 	private final static Logger logger = Logger.getLogger(UnoRemoteServer.class.getName());
-	
 	private DataReceiverListener mListener;
 	
 	public UnoRemoteServer(DataReceiverListener mListener) {
-        super();	
+        super();
         this.mListener = mListener;
     }	
 	
 	public void setupGame(Game game) throws RemoteException, NotBoundException{
-		logger.log(Level.INFO, "Received game");
-		mListener.setupRemoteClient(game);
-		        
+		logger.log(Level.INFO, "Received game:"+ game.toString());
+		mListener.setupRemoteClient(game);	        
 	}
 
 	@Override
 	public void sendGame(Game game) throws RemoteException, NotBoundException {
-		logger.log(Level.INFO, "Received game");
+		logger.log(Level.INFO, "Received game:"+ game.toString());
 		mListener.setGame(game);	
 	}
 	

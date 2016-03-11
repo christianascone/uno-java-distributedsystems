@@ -54,6 +54,7 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 
 	@Override
 	public void setGame(Game game) throws RemoteException, NotBoundException {
+		if (this.timer != null) this.timer.stop();
 		this.timer = null;
 		this.game = game;		
 		// check if one of the player won
@@ -72,7 +73,7 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 		}
 		
 		if (game != null && game.getCurrent() != null && isMyTurn(game)) {
-			logger.log(Level.INFO, String.format("Node %d has the token", id));
+			logger.log(Level.INFO, "Turn Conditions passed");
 			enableGame();
 		}else{
 			startUnoTimer();
@@ -88,7 +89,10 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 		try {
 			newCurrent = game.getNextPlayer();
 			game.setCurrent(newCurrent);
+			
+			logger.log(Level.INFO, "Before broadcast - game struct:" + game.toString());			
 			remoteClient.broadcastUpdatedGame(game);
+			startUnoTimer();
 		} catch (Exception e) {
 			// TODO GESTIRE UN BEL PROBLEMONE
 			e.printStackTrace();
@@ -228,7 +232,6 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 		Player player = game.getNextPlayer();
 		// if I am the next node in the turn I ll:
 		// - remove
-		logger.log(Level.INFO, "waiting - Id:" + game.getCurrent().getId());
 		Player crashedPlayer = game.getCurrent();
 		game.setCurrent(player);
 		//remove crashed player			
@@ -249,3 +252,4 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 	}
 
 }
+	

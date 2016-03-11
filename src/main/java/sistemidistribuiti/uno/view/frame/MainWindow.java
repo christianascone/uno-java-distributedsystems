@@ -8,6 +8,8 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -30,6 +32,8 @@ import sistemidistribuiti.uno.workflow.Starter;
 
 public class MainWindow extends JFrame implements GameGUIListener{
 
+	private final static Logger logger = Logger.getLogger(MainWindow.class.getName());
+	
 	private static final int DIRECTION_PREVIOUS = -1;
 	private static final int DIRECTION_NEXT = 1;
 	/**
@@ -209,15 +213,18 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	@Override
 	public void playMyTurn() {
 		List<UnoCard> cards = gameManager.getMyCards();
-		
 		UnoCard showed = cards.get(currentCardIndex);
 		setupCardView(showed);
-		
+
+
 		if(atLeastOneCardPlayable()){
+			logger.log(Level.INFO, "5 - at least 1");
 			this.btnPlay.setEnabled(true);
 		}else{
+			logger.log(Level.INFO, "5.1 - at least 1 NOT ");
 			this.btnDraw.setEnabled(true);
 		}
+		logger.log(Level.INFO, "Finished in playMyTurn GUI");
 	}
 
 	@Override
@@ -374,7 +381,9 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	 * @return true or false
 	 */
 	private boolean atLeastOneCardPlayable() {
+		logger.log(Level.INFO, "5.0.1 playable ? ");
 		for(int i = 0; i < gameManager.getMyCards().size(); i++){
+			logger.log(Level.INFO, "5.0.3 playable ? " + i);
 			boolean playable = currentCardIsPlayable(i);
 			if(playable){
 				return true;
@@ -388,39 +397,62 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	 * @return
 	 */
 	private boolean currentCardIsPlayable(int index) {
+		logger.log(Level.INFO, "6.0.2 playable ? ");
 		UnoCard lastPlayed = gameManager.getLastPlayedCard();
+		logger.log(Level.INFO, "6.0.3 playable ? ");
 		List<UnoCard> cards = gameManager.getMyCards();
+		logger.log(Level.INFO, "6.0.4 playable ? ");
 		UnoCard toPlay = cards.get(index);
-		
+		logger.log(Level.INFO, "6.0.5 playable ? ");
 		if(toPlay.getColor() == lastPlayed.getColor()){
 			return true;
 		}
+		logger.log(Level.INFO, "6.0.6 playable ? ");
 		
 		switch(toPlay.getCardType()){
 		case NUMBER_CARD:
+			logger.log(Level.INFO, "6.0.7 playable ? ");
 			if(lastPlayed.getCardType() == CARD_TYPE_ENUM.NUMBER_CARD){
+				logger.log(Level.INFO, "6.0.7.1 playable ? ");
+
 				NumberCard lastPlayedNumberCard = (NumberCard) lastPlayed;
+				logger.log(Level.INFO, "6.0.7.2 playable ? ");
+
 				NumberCard toPlayNumberCard = (NumberCard) toPlay;
+				logger.log(Level.INFO, "6.0.7.3 playable ? ");
+
 				if(lastPlayedNumberCard.getNumber() == toPlayNumberCard.getNumber()){
+					logger.log(Level.INFO, "6.0.7.4 playable ? ");
+
 					return true;
 				}
+				logger.log(Level.INFO, "6.0.7.5 playable ? ");
 			}
+			logger.log(Level.INFO, "6.0.7.6 playable ? ");
+
 			break;
 		case SPECIAL_CARD:
+			logger.log(Level.INFO, "6.0.8 playable ? ");
 			if(toPlay.getColor() == CARD_COLOR.RAINBOW){
+				logger.log(Level.INFO, "6.0.8.1 playable ? ");
 				return true;
 			}
+			logger.log(Level.INFO, "6.0.8.2 playable ? ");
 			SpecialCard toPlaySpecialCard = (SpecialCard) toPlay;
+			logger.log(Level.INFO, "6.0.8.3 playable ? ");
 			SpecialCard lastPlayedSpecialCard = (SpecialCard) lastPlayed;
+			logger.log(Level.INFO, "6.0.8.4 playable ? ");
 			if(toPlaySpecialCard.getSpecialCardType() == lastPlayedSpecialCard.getSpecialCardType()){
+				logger.log(Level.INFO, "6.0.8.5 playable ? ");
 				return true;
 			}
+			logger.log(Level.INFO, "6.0.8.6 playable ? ");
 			break;
 		default:
+			logger.log(Level.INFO, "6.0.9 playable ? ");
 			break;
-		
 		}
-		
+		logger.log(Level.INFO, "6.0.10 playable ? ");		
 		return false;
 	}
 

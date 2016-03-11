@@ -43,7 +43,6 @@ public class UnoRemoteClient {
 	}
 	
 	public void broadcastNewGame(Game game) throws RemoteException, NotBoundException{
-		logger.log(Level.INFO, "Broadcast new game");
 		for(Host remote : hosts){
 			remote.getServer().setupGame(game);
 		}
@@ -52,13 +51,10 @@ public class UnoRemoteClient {
 
 	public void broadcastUpdatedGame(Game game) throws RemoteException, NotBoundException, NextPlayerNotFoundException{
 		Boolean booError = false;
-		logger.log(Level.INFO, "Broadcast updated game");
 		for(Host remote : hosts){
 			try{
 				remote.getServer().sendGame(game);				
-			}catch(Exception e){
-				logger.log(Level.WARNING, "Node crashed");
-				
+			}catch(Exception e){				
 				for(Player player : game.getPlayers()){
 					if (player.getId() == remote.getId()){
 						game.getPlayers().remove(player);
