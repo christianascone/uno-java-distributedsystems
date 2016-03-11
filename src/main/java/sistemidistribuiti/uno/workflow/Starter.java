@@ -44,13 +44,13 @@ public class Starter {
 
 	public static void startGame(String[] args, GameGUIListener labelListener) throws IOException,
 			NotBoundException {
-		if (System.getSecurityManager() == null) {
-			System.setSecurityManager(new SecurityManager());
-		}
 		URL url = UnoRemoteServer.class.getClassLoader().getResource(
 				"java.policy");
 
 		System.setProperty("java.security.policy", url.getPath());
+		if (System.getSecurityManager() == null) {
+			System.setSecurityManager(new SecurityManager());
+		}
 
 		serverConfiguration(args, labelListener);
 
