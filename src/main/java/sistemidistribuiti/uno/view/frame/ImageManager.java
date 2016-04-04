@@ -44,8 +44,10 @@ public class ImageManager {
 			      "shadow.png",
 			      "play.png",
 			      "playDisabled.png",
+			      "playFocus.png",
 			      "draw.png",
-			      "drawDisabled.png"
+			      "drawDisabled.png",
+			      "drawFocus.png"
 			    };
 		ArrayList<BufferedImage> images = new ArrayList<BufferedImage>(names.length);
 	    for (int i = 0; i < names.length; i++) {

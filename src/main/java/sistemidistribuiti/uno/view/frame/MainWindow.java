@@ -70,8 +70,6 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	
 	private JLabel lblThisUser;
 	private JLabel lastPlayedCard;
-	private JButton btnDraw;
-	private JButton btnPlay;
 	private JLabel lblWaiting;
 	private JLabel loadCircle;
 
@@ -132,6 +130,7 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	    
 	    gamePanel.setFocusable(true);
 	    gamePanel.setFocusTraversalKeysEnabled(false);
+	    gamePanel.setOpaque(true);
 	    gamePanel.setLayout(null);
 	    gamePanel.addMouseListener(new MouseManager());
 	    gamePanel.addMouseMotionListener(new MouseManager());
@@ -154,32 +153,6 @@ public class MainWindow extends JFrame implements GameGUIListener{
 				.getScaledInstance(120, 180,Image.SCALE_SMOOTH)));
 		gamePanel.add(lastPlayedCard);
 		
-		btnPlay = new JButton("Play");
-		btnPlay.setBounds(580, 664, 61, 29);
-		gamePanel.add(btnPlay);
-		btnPlay.setEnabled(false);
-		
-		btnDraw = new JButton("Draw");
-		btnDraw.setBounds(647, 664, 69, 29);
-		gamePanel.add(btnDraw);
-		btnDraw.setEnabled(false);		
-		
-		btnDraw.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				drawCard();
-			}
-		});
-		btnPlay.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				playCard();
-			}
-
-		});
-		
 		this.stateDrawButton = BUTTON_DISABLED;
 		this.statePlayButton = BUTTON_DISABLED;
 		
@@ -197,8 +170,6 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	@Override
 	public void setup(String text) {
 		lblThisUser.setText(text);
-		btnPlay.setVisible(false);
-		btnDraw.setVisible(false);
 	}
 
 	@Override
@@ -212,12 +183,10 @@ public class MainWindow extends JFrame implements GameGUIListener{
 
 		if(atLeastOneCardPlayable()){
 			logger.log(Level.INFO, "5 - at least 1");
-			this.btnPlay.setEnabled(true);
 			setStatePlayButton(BUTTON_ENABLED);
 			painter.capturePlayButton(BUTTON_ENABLED);
 		}else{
 			logger.log(Level.INFO, "5.1 - at least 1 NOT ");
-			this.btnDraw.setEnabled(true);
 			painter.captureDrawButton(BUTTON_ENABLED);
 			setStateDrawButton(BUTTON_ENABLED);
 		}
@@ -325,8 +294,6 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	 * @param cards
 	 */
 	private void passTurn(List<UnoCard> cards) {
-		btnPlay.setEnabled(false);
-		btnDraw.setEnabled(false);
 		painter.capturePlayButton(BUTTON_DISABLED);
 		painter.captureDrawButton(BUTTON_DISABLED);
 		setStatePlayButton(BUTTON_DISABLED);
@@ -483,21 +450,42 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		private int oldIndex;
 		
 		@Override
-		public void mouseEntered(MouseEvent e){
-			
+		public void mouseMoved(MouseEvent e){
+			Point p = e.getPoint();
+			if (playShape.contains(p) && getStatePlayButton().equals(BUTTON_ENABLED)){
+				painter.capturePlayButton(BUTTON_FOCUS);
+				setStatePlayButton(BUTTON_FOCUS);
+				repaint();
+				return;
+			} else if (drawShape.contains(p) && getStateDrawButton().equals(BUTTON_ENABLED)){
+				painter.captureDrawButton(BUTTON_FOCUS);
+				setStateDrawButton(BUTTON_FOCUS);
+				repaint();
+				return;
+			} else if (!playShape.contains(p) && getStatePlayButton().equals(BUTTON_FOCUS)){
+				painter.capturePlayButton(BUTTON_ENABLED);
+				setStatePlayButton(BUTTON_ENABLED);
+				repaint();
+				return;
+			} else if (!drawShape.contains(p) && getStateDrawButton().equals(BUTTON_FOCUS)){
+				painter.captureDrawButton(BUTTON_ENABLED);
+				setStateDrawButton(BUTTON_ENABLED);
+				repaint();
+				return;
+			}
 		}
 
 		@Override
 		public void mousePressed(MouseEvent e){
 			Point p = e.getPoint();
-			if (playShape.contains(p) && getStatePlayButton().equals(BUTTON_ENABLED)
+			if (playShape.contains(p) && !getStatePlayButton().equals(BUTTON_DISABLED)
 					&& selectedCardIndex != -1) {
 				playCard();
 				return;
-			} else if (drawShape.contains(p) && getStateDrawButton().equals(BUTTON_ENABLED)){
+			} else if (drawShape.contains(p) && !getStateDrawButton().equals(BUTTON_DISABLED)){
 				drawCard();
 				return;
-			} else if (playShape.contains(p) && getStatePlayButton().equals(BUTTON_ENABLED)
+			} else if (playShape.contains(p) && !getStatePlayButton().equals(BUTTON_DISABLED)
 					&& selectedCardIndex == -1){
 				JOptionPane.showMessageDialog(null, "Select a card!");
 				return;
