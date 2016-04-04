@@ -8,7 +8,7 @@ public interface GameGUIListener {
 	 * Set the label text
 	 * @param text
 	 */
-	void setLabelText(String text);
+	void setup(String text);
 	
 	void setGameManager(GameManager gameManager);
 

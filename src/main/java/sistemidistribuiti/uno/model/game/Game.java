@@ -71,7 +71,7 @@ public class Game implements Serializable {
 	}
 
 	/**
-	 * Shuffle the currenct deck
+	 * Shuffle the current deck
 	 */
 	public void shuffleDeck() {
 		List<UnoCard> cards = deck.getCardList();

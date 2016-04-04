@@ -129,6 +129,7 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 		return new LinkedList<UnoCard>();
 	}
 	
+	
 	public UnoCard getLastPlayedCard() {
 		List<UnoCard> discarded = game.getDiscarded().getCardList();
 		if(discarded.isEmpty()){

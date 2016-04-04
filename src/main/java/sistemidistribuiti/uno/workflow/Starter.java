@@ -42,7 +42,7 @@ public class Starter {
 
 	private static final int START_CARDS_COUNT = 7;
 
-	public static void startGame(String[] args, GameGUIListener labelListener) throws IOException,
+	public static void startGame(String[] args, GameGUIListener guiListener) throws IOException,
 			NotBoundException {
 		URL url = UnoRemoteServer.class.getClassLoader().getResource(
 				"java.policy");
@@ -52,7 +52,7 @@ public class Starter {
 			System.setSecurityManager(new SecurityManager());
 		}
 
-		serverConfiguration(args, labelListener);
+		serverConfiguration(args, guiListener);
 
 		File configFile = new File("config.json");
 		boolean leader = false;
@@ -101,7 +101,7 @@ public class Starter {
 			port = Integer.parseInt(args[2]);
 		}
 		
-		gameGuiListener.setLabelText(name);
+		gameGuiListener.setup(name);
 		
 		logger.log(Level.INFO, String.format("Server name: %s", name));
 		logger.log(Level.INFO, String.format("Server id: %d", id));
@@ -132,6 +132,8 @@ public class Starter {
 
 		String jsonString = FileUtils.readFileToString(configFile);
 		ConfigBean configBean = new ConfigBean(jsonString);
+		
+		game = new Game(configBean.getPlayers(), newDeck);
 
 		for (Player player : configBean.getPlayers()) {
 			for (int i = 0; i < START_CARDS_COUNT; i++) {
@@ -144,8 +146,7 @@ public class Starter {
 		if (leaderId != id) {
 			return false;
 		}
-
-		game = new Game(configBean.getPlayers(), newDeck);
+		
 		return true;
 	}
 

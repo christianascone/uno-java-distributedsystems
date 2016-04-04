@@ -15,16 +15,21 @@ public class NumberCard extends UnoCard{
 	 * 
 	 */
 	private static final long serialVersionUID = 7210043546952154154L;
-	
+	private String code;
 	private int number;
 
-	public NumberCard(CARD_COLOR color, byte[] image, int number) {
-		super(color, image, CARD_TYPE_ENUM.NUMBER_CARD);
+	public NumberCard(CARD_COLOR color, int number) {
+		super(color, CARD_TYPE_ENUM.NUMBER_CARD);
 		this.number = number;
+		this.code = Integer.toString(number) + color.name();
 	}
 
 	public int getNumber() {
 		return number;
+	}
+
+	public String getCode() {
+		return code;
 	}
 	
 }

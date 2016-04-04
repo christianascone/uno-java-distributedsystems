@@ -1,23 +1,34 @@
 package sistemidistribuiti.uno.view.frame;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridLayout;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.RoundRectangle2D;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
+import javax.swing.UIManager;
 
 import sistemidistribuiti.uno.exception.NextPlayerNotFoundException;
 import sistemidistribuiti.uno.model.card.CARD_COLOR;
@@ -29,43 +40,40 @@ import sistemidistribuiti.uno.model.player.Player;
 import sistemidistribuiti.uno.view.listener.GameGUIListener;
 import sistemidistribuiti.uno.workflow.GameManager;
 import sistemidistribuiti.uno.workflow.Starter;
+import java.awt.Color;
 
 public class MainWindow extends JFrame implements GameGUIListener{
 
 	private final static Logger logger = Logger.getLogger(MainWindow.class.getName());
-	
-	private static final int DIRECTION_PREVIOUS = -1;
-	private static final int DIRECTION_NEXT = 1;
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -7507193594059818919L;
-	private JPanel contentPane;
+	
+	public static ImageManager imageLoader = new ImageManager();
+	private AffineTransform a = new AffineTransform();
+	
+	private JPanel gamePanel;
+	private GameManager gameManager;
+	private Painter painter = new Painter();
+	
+	private ArrayList<Shape> playerHandShapes = new ArrayList<Shape>();
+	private RoundRectangle2D emptyPlayerCardShape;
+	private Ellipse2D playShape;
+	private Ellipse2D drawShape;
+	private int selectedCardIndex = -1;
+	
+	public static final String BUTTON_ENABLED = "enabled";
+	public static final String BUTTON_DISABLED = "disabled";
+	public static final String BUTTON_FOCUS = "focused";
+	
+	private String statePlayButton;
+	private String stateDrawButton;
 	
 	private JLabel lblThisUser;
-	JButton btnPlay;
-	
-	private GameManager gameManager;
-	private int currentCardIndex;
-	
-	private JPanel northPanel;
-	private JPanel southPanel;
-	private JPanel westPanel;
-	private JPanel eastPanel;
-	private JPanel centerPanel;
-	private JPanel cardPanel;
-	private JPanel panel;
-	private JButton previousCardBtn;
-	private JLabel numberLabel;
-	private JLabel colorLabel;
-	private JButton nextCardBtn;
-	private JPanel panel_1;
-	private JPanel lastPlayedPanel;
-	private JLabel lastPlayedNumber;
-	private JLabel lastPlayedColor;
-	private JPanel panel_2;
-	private JLabel labelCardCounter;
+	private JLabel lastPlayedCard;
 	private JButton btnDraw;
+	private JButton btnPlay;
+	private JLabel lblWaiting;
+	private JLabel loadCircle;
 
 	/**
 	 * Launch the application.
@@ -82,97 +90,87 @@ public class MainWindow extends JFrame implements GameGUIListener{
 					e.printStackTrace();
 				}
 			}
+
 		});
 	}
-
+	
 	/**
 	 * Create the frame.
 	 */
-	public MainWindow() {
+	public MainWindow() throws Exception{
+		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		setResizable(false);
-		setTitle("Uno");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 593, 571);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(new BorderLayout(0, 0));
+		setTitle("Uno Game");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);      
+		getContentPane().setMaximumSize(new Dimension(1280, 720));
+	    getContentPane().setMinimumSize(new Dimension(1280, 720));
+	    getContentPane().setPreferredSize(new Dimension(1280, 720));
+	    setIconImage(imageLoader.getResourceImage("ico", ".png"));
+	    gamePanel = new JPanel(){
+            @Override
+            protected void paintComponent(Graphics graphics) {
+            	super.paintComponent(graphics);
+                Graphics2D g = (Graphics2D)graphics;
+                painter.setRenderingHints(g);
+                painter.paintBackground(g);
+                painter.paintDeckCapture(g);
+                if(gameManager.getGame()!=null){
+                    //painter.paintOPCapture(g, a);
+                    painter.paintPlayerCapture(g);
+                    painter.paintLastCard(g);
+                    painter.paintButtonPlay(g);
+                    painter.paintButtonDraw(g);
+                }
+                a.setToIdentity();
+                g.setTransform(a);
+            }
+        };
+		getContentPane().add(gamePanel, BorderLayout.SOUTH);
+	    pack();
+	    setLocationRelativeTo(null);
+	    setVisible(true);
+	    
+	    gamePanel.setFocusable(true);
+	    gamePanel.setFocusTraversalKeysEnabled(false);
+	    gamePanel.setLayout(null);
+	    gamePanel.addMouseListener(new MouseManager());
+	    gamePanel.addMouseMotionListener(new MouseManager());
+	    gamePanel.setMinimumSize(new Dimension(1280, 720));
+	    gamePanel.setMaximumSize(new Dimension(1280, 720));
+	    gamePanel.setPreferredSize(new Dimension(1280, 720));
+	    gamePanel.setSize(new Dimension(1280, 720));
+	    gamePanel.setBounds(0, 0, 1280, 720);
 		
-		northPanel = new JPanel();
-		contentPane.add(northPanel, BorderLayout.NORTH);
+		lblThisUser = new JLabel("user");
+		lblThisUser.setHorizontalAlignment(SwingConstants.CENTER);
+		lblThisUser.setForeground(Color.WHITE);
+		lblThisUser.setFont(new Font("Arista", Font.PLAIN, 29));
+		lblThisUser.setBounds(1090, 77, 132, 37);
+		gamePanel.add(lblThisUser);
 		
-		westPanel = new JPanel();
-		contentPane.add(westPanel, BorderLayout.WEST);
-		
-		centerPanel = new JPanel();
-		contentPane.add(centerPanel, BorderLayout.CENTER);
-		centerPanel.setLayout(new GridLayout(0, 1, 0, 0));
-		
-		lastPlayedPanel = new JPanel();
-		FlowLayout fl_lastPlayedPanel = (FlowLayout) lastPlayedPanel.getLayout();
-		centerPanel.add(lastPlayedPanel);
-		
-		lastPlayedNumber = new JLabel("Number");
-		lastPlayedPanel.add(lastPlayedNumber);
-		
-		lastPlayedColor = new JLabel("Color");
-		lastPlayedPanel.add(lastPlayedColor);
-		
-		eastPanel = new JPanel();
-		contentPane.add(eastPanel, BorderLayout.EAST);
-		
-		southPanel = new JPanel();
-		contentPane.add(southPanel, BorderLayout.SOUTH);
-		southPanel.setLayout(new GridLayout(0, 1, 2, 0));
-		cardPanel = new JPanel();
-		
-		//imagePanel.setVerticalAlignment(SwingConstants.TOP);
-		southPanel.add(cardPanel);
-		
-		previousCardBtn = new JButton("Previous");
-		previousCardBtn.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				previousCard();
-			}
-		});
-		cardPanel.add(previousCardBtn);
-		
-		numberLabel = new JLabel("Number");
-		cardPanel.add(numberLabel);
-		
-		colorLabel = new JLabel("Color");
-		cardPanel.add(colorLabel);
-		
-		nextCardBtn = new JButton("Next");
-		nextCardBtn.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				nextCard();
-			}
-		});
-		cardPanel.add(nextCardBtn);
-		
-		panel_2 = new JPanel();
-		southPanel.add(panel_2);
-		
-		labelCardCounter = new JLabel("curr/total");
-		labelCardCounter.setHorizontalAlignment(SwingConstants.CENTER);
-		labelCardCounter.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		panel_2.add(labelCardCounter);
-		
-		panel_1 = new JPanel();
-		southPanel.add(panel_1);
+		lastPlayedCard = new JLabel("");
+		lastPlayedCard.setBounds(510, 240, 120, 180);
+		lastPlayedCard.setIcon(new ImageIcon(imageLoader.getComp("shadow.png")
+				.getScaledInstance(120, 180,Image.SCALE_SMOOTH)));
+		gamePanel.add(lastPlayedCard);
 		
 		btnPlay = new JButton("Play");
-		panel_1.add(btnPlay);
+		btnPlay.setBounds(580, 664, 61, 29);
+		gamePanel.add(btnPlay);
 		btnPlay.setEnabled(false);
 		
 		btnDraw = new JButton("Draw");
-		btnDraw.setEnabled(false);
-		panel_1.add(btnDraw);
+		btnDraw.setBounds(647, 664, 69, 29);
+		gamePanel.add(btnDraw);
+		btnDraw.setEnabled(false);		
+		
+		btnDraw.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				drawCard();
+			}
+		});
 		btnPlay.addActionListener(new ActionListener() {
 			
 			@Override
@@ -182,27 +180,25 @@ public class MainWindow extends JFrame implements GameGUIListener{
 
 		});
 		
-		btnDraw.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				drawCard();
-			}
-		});
+		this.stateDrawButton = BUTTON_DISABLED;
+		this.statePlayButton = BUTTON_DISABLED;
 		
-		panel = new JPanel();
-		southPanel.add(panel);
-		
-		JLabel lblUsernameTitle = new JLabel("Username:");
-		panel.add(lblUsernameTitle);
-		
-		lblThisUser = new JLabel("user1");
-		panel.add(lblThisUser);
+	    emptyPlayerCardShape = new RoundRectangle2D.Float(401, 450, 120, 180, 7, 7);
+	    playShape = new Ellipse2D.Float(530, 659, 105, 43);
+	    drawShape = new Ellipse2D.Float(675, 659, 105, 43);
+		painter.captureDeck(108);
+		painter.capturePlayButton(BUTTON_DISABLED);
+		painter.captureDrawButton(BUTTON_DISABLED);
+		setupWaiting();
+	    repaint();
+	    
 	}
 
 	@Override
-	public void setLabelText(String text) {
+	public void setup(String text) {
 		lblThisUser.setText(text);
+		btnPlay.setVisible(false);
+		btnDraw.setVisible(false);
 	}
 
 	@Override
@@ -212,46 +208,34 @@ public class MainWindow extends JFrame implements GameGUIListener{
 
 	@Override
 	public void playMyTurn() {
-		List<UnoCard> cards = gameManager.getMyCards();
-		UnoCard showed = cards.get(currentCardIndex);
-		setupCardView(showed);
-
+		setupCardView();
 
 		if(atLeastOneCardPlayable()){
 			logger.log(Level.INFO, "5 - at least 1");
 			this.btnPlay.setEnabled(true);
+			setStatePlayButton(BUTTON_ENABLED);
+			painter.capturePlayButton(BUTTON_ENABLED);
 		}else{
 			logger.log(Level.INFO, "5.1 - at least 1 NOT ");
 			this.btnDraw.setEnabled(true);
+			painter.captureDrawButton(BUTTON_ENABLED);
+			setStateDrawButton(BUTTON_ENABLED);
 		}
 		logger.log(Level.INFO, "Finished in playMyTurn GUI");
+		repaint();
 	}
 
 	@Override
-	public void updateGameField() {
-		setupLastPlayedCardView();	
-	}
-	
-	private void nextCard(){
-		changeCard(DIRECTION_NEXT);
-	}
-	
-	private void previousCard(){
-		changeCard(DIRECTION_PREVIOUS);
-	}
-	
-	/**
-	 * Change the current card with given parameter for direction
-	 * @param direction
-	 */
-	private void changeCard(int direction){
-		List<UnoCard> cards = gameManager.getMyCards();
-		currentCardIndex = (currentCardIndex + direction) % cards.size();
-		if(currentCardIndex < 0){
-			currentCardIndex = cards.size() - 1;
-		}
+	public void updateGameField() {		
+		this.lblWaiting.setVisible(false);
+		this.loadCircle.setVisible(false);
 		
-		setupCardView(cards.get(currentCardIndex));
+		painter.clearImages();
+	    painter.captureDeck(gameManager.getGame().getDeck().getCardList().size());
+		//painter.captureOtherPlayerCard(a);
+	    
+		setupLastPlayedCardView();
+		setupCardView();
 	}
 	
 	/**
@@ -259,61 +243,40 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	 * 
 	 * @param showed
 	 */
-	private void setupCardView(UnoCard showed) {
-		this.labelCardCounter.setText(String.format("%d/%d", currentCardIndex+1, gameManager.getMyCards().size()));
-		
-		switch (showed.getCardType()) {
-		case NUMBER_CARD:
-			NumberCard numberCard = (NumberCard) showed;
-			this.numberLabel.setText(numberCard.getNumber()+"");
-			this.colorLabel.setText(numberCard.getColor().toString());
-			break;
-		case SPECIAL_CARD:
-			SpecialCard specialCard = (SpecialCard) showed;
-			this.numberLabel.setText(specialCard.getSpecialCardType().toString());
-			this.colorLabel.setText(specialCard.getColor().toString());
-			break;
-		}
+	private void setupCardView() {
+		painter.capturePlayerHand(a, gameManager, selectedCardIndex);
+		setPlayerShapes();
+		repaint();
 	}
 	
 	/**
 	 * Setup the view for the last played card
 	 */
 	private void setupLastPlayedCardView() {
-		UnoCard showed = gameManager.getLastPlayedCard();
-		switch (showed.getCardType()) {
-		case NUMBER_CARD:
-			NumberCard numberCard = (NumberCard) showed;
-			this.lastPlayedNumber.setText(numberCard.getNumber()+"");
-			this.lastPlayedColor.setText(numberCard.getColor().toString());
-			break;
-		case SPECIAL_CARD:
-			SpecialCard specialCard = (SpecialCard) showed;
-			this.lastPlayedNumber.setText(specialCard.getSpecialCardType().toString());
-			this.lastPlayedColor.setText(specialCard.getColor().toString());
-			break;
-		}
+		this.lastPlayedCard.setVisible(false);
+		painter.captureLastCard(gameManager);
+		repaint();
 	}
 	
 	/**
 	 * Play the card
 	 */
 	private void playCard() {
-		if(!currentCardIsPlayable(currentCardIndex)){
+		if(!currentCardIsPlayable(selectedCardIndex)){
 			JOptionPane.showMessageDialog(null, "You cannot play this card.");
 			return;
 		}
 		
 		List<UnoCard> myCards = gameManager.getMyCards();
-		UnoCard showed = myCards.get(currentCardIndex);
-		myCards.remove(showed);
-		gameManager.discardCard(showed);
+		UnoCard selected = myCards.get(selectedCardIndex);
+		myCards.remove(selected);
+		gameManager.discardCard(selected);
 		
 		if(myCards.isEmpty()){
 			gameManager.winGame();
 		}
 		
-		manageCard(showed);
+		manageCard(selected);
 		
 		passTurn(myCards);
 	}
@@ -364,13 +327,18 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	private void passTurn(List<UnoCard> cards) {
 		btnPlay.setEnabled(false);
 		btnDraw.setEnabled(false);
+		painter.capturePlayButton(BUTTON_DISABLED);
+		painter.captureDrawButton(BUTTON_DISABLED);
+		setStatePlayButton(BUTTON_DISABLED);
+		setStateDrawButton(BUTTON_DISABLED);
+		
+		selectedCardIndex = -1;
+		painter.capturePlayerHand(a, gameManager, selectedCardIndex);
 		
 		setupLastPlayedCardView();
 		
-		currentCardIndex = 0;
-		
 		if(!cards.isEmpty()){
-			setupCardView(cards.get(0));
+			setupCardView();
 		}
 		gameManager.playMyTurn();
 	}
@@ -433,6 +401,7 @@ public class MainWindow extends JFrame implements GameGUIListener{
 			break;
 		case SPECIAL_CARD:
 			logger.log(Level.INFO, "6.0.8 playable ? ");
+			logger.log(Level.INFO, toPlay.getColor().name());
 			if(toPlay.getColor() == CARD_COLOR.RAINBOW){
 				logger.log(Level.INFO, "6.0.8.1 playable ? ");
 				return true;
@@ -466,6 +435,85 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	public void showWinnerAlert(Player player) {
 		JOptionPane.showMessageDialog(null, String.format("Player %s won!", player.getNickname()));
 	}
+	
+	public void setupWaiting() {
+		ImageIcon loading = new ImageIcon(getClass().getResource("/images/ajax-loader.gif"));
+		lblWaiting = new JLabel("waiting for other players...",JLabel.CENTER);
+		lblWaiting.setForeground(Color.WHITE);
+		lblWaiting.setFont(new Font("Arista", Font.PLAIN, 28));
+		lblWaiting.setHorizontalAlignment(SwingConstants.LEFT);
+		lblWaiting.setBounds(80, 28, 479, 37);
+		gamePanel.add(lblWaiting);		
+		loadCircle = new JLabel();
+		loadCircle.setBounds(20, 10, 55, 55);
+		loadCircle.setIcon(loading);
+		loadCircle.setVisible(true);
+		gamePanel.add(loadCircle);
+	}
+	
+	public void setPlayerShapes(){
+		List<UnoCard> cards = gameManager.getMyCards();
+		int handsize = cards.size();
+	    playerHandShapes.clear();
+	    for (int i = 0; i < handsize; i++) {
+	        playerHandShapes.add(a.createTransformedShape(emptyPlayerCardShape));
+	        a.translate(62, 0);
+	    }
+	    a.setToIdentity();
+	}
+	
+	public String getStatePlayButton() {
+		return statePlayButton;
+	}
 
+	public void setStatePlayButton(String statePlayButton) {
+		this.statePlayButton = statePlayButton;
+	}
 
+	public String getStateDrawButton() {
+		return stateDrawButton;
+	}
+
+	public void setStateDrawButton(String stateDrawButton) {
+		this.stateDrawButton = stateDrawButton;
+	}
+	
+	private class MouseManager extends MouseAdapter{
+		
+		private int oldIndex;
+		
+		@Override
+		public void mouseEntered(MouseEvent e){
+			
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e){
+			Point p = e.getPoint();
+			if (playShape.contains(p) && getStatePlayButton().equals(BUTTON_ENABLED)
+					&& selectedCardIndex != -1) {
+				playCard();
+				return;
+			} else if (drawShape.contains(p) && getStateDrawButton().equals(BUTTON_ENABLED)){
+				drawCard();
+				return;
+			} else if (playShape.contains(p) && getStatePlayButton().equals(BUTTON_ENABLED)
+					&& selectedCardIndex == -1){
+				JOptionPane.showMessageDialog(null, "Select a card!");
+				return;
+			}
+	         
+			for (int s = playerHandShapes.size() - 1; s >= 0; s--) {
+				if (playerHandShapes.get(s).contains(e.getPoint())) {
+					selectedCardIndex = s;
+					if(this.oldIndex == selectedCardIndex)
+						selectedCardIndex = -1;
+					painter.capturePlayerHand(a, gameManager, selectedCardIndex);
+	                repaint();
+	                this.oldIndex = selectedCardIndex;
+	                return;
+	             }
+	          }
+		}
+	}
 }
