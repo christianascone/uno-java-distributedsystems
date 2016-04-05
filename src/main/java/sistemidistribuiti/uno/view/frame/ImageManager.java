@@ -10,7 +10,6 @@ import java.awt.GraphicsEnvironment;
 import java.awt.RenderingHints;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -31,7 +30,11 @@ public class ImageManager {
 	public ImageManager() {
 		loadComponentImages();
 	    loadCardImages();
-	    checkFont();
+	    try {
+			checkFont();
+		} catch (FontFormatException | IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void clearImage(BufferedImage img){  
