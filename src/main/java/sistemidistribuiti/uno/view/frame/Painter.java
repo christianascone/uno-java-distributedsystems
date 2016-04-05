@@ -15,15 +15,17 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
+import sistemidistribuiti.uno.exception.NextPlayerNotFoundException;
 import sistemidistribuiti.uno.model.card.UnoCard;
 import sistemidistribuiti.uno.model.card.impl.NumberCard;
 import sistemidistribuiti.uno.model.card.impl.SpecialCard;
+import sistemidistribuiti.uno.model.player.Player;
 import sistemidistribuiti.uno.workflow.GameManager;
 
 public class Painter {
 	
 	private BufferedImage deckCapture;
-	private BufferedImage playerCardCapture;
+	private BufferedImage[] playerCardCapture = new BufferedImage[3];
 	private BufferedImage currentPlayerCardCapture;
 	private BufferedImage lastCardCapture;
 	private BufferedImage buttonPlay;
@@ -37,8 +39,9 @@ public class Painter {
 		GraphicsConfiguration gc = gs.getDefaultConfiguration();
 		deckCapture = gc.createCompatibleImage(200, 300, BufferedImage.TRANSLUCENT);
 	    lastCardCapture = gc.createCompatibleImage(120, 180, BufferedImage.TRANSLUCENT);
-	    playerCardCapture = gc.createCompatibleImage(427, 330, BufferedImage.TRANSLUCENT);
-	    currentPlayerCardCapture = gc.createCompatibleImage(627, 330, BufferedImage.TRANSLUCENT);
+	    for (int i=0; i<playerCardCapture.length; i++)
+	    	playerCardCapture[i] = gc.createCompatibleImage(400, 230, BufferedImage.TRANSLUCENT);
+	    currentPlayerCardCapture = gc.createCompatibleImage(594, 330, BufferedImage.TRANSLUCENT);
 	    buttonPlay = gc.createCompatibleImage(105, 43, BufferedImage.TRANSLUCENT);
 	    buttonDraw = gc.createCompatibleImage(105, 43, BufferedImage.TRANSLUCENT);
 	}
@@ -50,7 +53,8 @@ public class Painter {
 	}
 	
 	public void clearImages(){
-		images.clearImage(playerCardCapture);
+		for (int i=0; i<playerCardCapture.length; i++)
+			images.clearImage(playerCardCapture[i]);
 		images.clearImage(currentPlayerCardCapture);
 		images.clearImage(lastCardCapture);
 		images.clearImage(deckCapture);
@@ -124,8 +128,9 @@ public class Painter {
 		setRenderingHints(g);
 		List<UnoCard> cards = gameManager.getMyCards();
 		int handsize = cards.size();
-		int x = 0;
+		int x = 15 - (handsize/7)*5;
 		int y = 15;
+		int space = 140 - handsize*10;
 		int showX = 0, showY = 0;
 		String showCode = null;
 		for (int i = 0; i < handsize; i++) {
@@ -145,37 +150,59 @@ public class Painter {
 				showX = x;
 				showY = y -15;
 				showCode = code;
-				x = x+62;
+				x = x+space;
 				continue;
 			}
 			paintCard(g, code, x, y);
-			x = x+62;
+			x = x+space;
 		}
 		if (overIndex != -1)
 			paintCard(g, showCode, showX, showY);
 	}
 
 	
-	public void captureOtherPlayerHand(AffineTransform a){
+	public void captureOtherPlayerHand(AffineTransform a, GameManager gm) throws NextPlayerNotFoundException{
 		a.setToIdentity();
-		images.clearImage(playerCardCapture);
-		Graphics2D g = playerCardCapture.createGraphics();
-		setRenderingHints(g);
-		int size = 7;
-		//int size = player.getCards().size();
-		double initialAngle = Math.toRadians(-angle * (size + 1) / 2);
-		a.rotate(initialAngle, 213, 342 - (5 * size / 4));
-		g.setTransform(a);
-		int x = 170; 
-		int y = 102 - (5 * size / 4); 
-		for (int i = size; i > 0; i--) {
-			a.rotate(Math.toRadians(angle), 213, 342 - (5 * size / 4));
-			g.setTransform(a);
-			if (i != size) {
-				paintCard(g, "back", x, y);
+		List<Player> players = gm.getGame().getPlayers();
+		Player current = null;
+		for(Player player : players){
+			if(player.getId() == gm.getId()){
+				current = player;
 			}
 		}
-		a.setToIdentity();
+		for (int i=0; i<playerCardCapture.length; i++){
+			images.clearImage(playerCardCapture[i]);
+			Graphics2D g = playerCardCapture[i].createGraphics();
+			setRenderingHints(g);
+			Player toDrawn = gm.getGame().getNextPlayer(current.getId());
+			int size = toDrawn.getCards().size();
+			double initialAngle = Math.toRadians(-angle * (size + 1) / 2);
+			a.rotate(initialAngle, 150, 342 - (5 * size / 4));
+			g.setTransform(a);
+			int x = 60; 
+			int y = 15 - (5 * size / 4); 
+			for (int j = size; j >= 0; j--) {
+				a.rotate(Math.toRadians(angle), 150, 342 - (5 * size / 4));
+				g.setTransform(a);
+				if (j != size) {
+					paintCard(g, "back", x, y);
+				}
+			}
+			current = toDrawn;
+			a.setToIdentity();
+		}
+		
+		switch(gm.getGame().getGameDirection()){
+		case FORWARD:			
+			break;
+		case BACKWARD:
+			for(int i = 0; i < playerCardCapture.length / 2; i++){
+			    BufferedImage temp = playerCardCapture[i];
+			    playerCardCapture[i] = playerCardCapture[playerCardCapture.length - i - 1];
+			    playerCardCapture[playerCardCapture.length - i - 1] = temp;
+			}
+			break;
+		}
 	}
 	
 	public void captureDeck(int deckSize){
@@ -192,30 +219,32 @@ public class Painter {
 	public void paintOPCapture(Graphics2D g, AffineTransform a){
 		a.setToIdentity();
 		g.setTransform(a);
-		g.drawImage(playerCardCapture, 853, 0, 427, 330, null);
+		g.drawImage(playerCardCapture[0], 72, 251, 400, 230, null);
+		g.drawImage(playerCardCapture[1], 523, 35, 400, 230, null);
+		g.drawImage(playerCardCapture[2], 958, 251, 400, 230, null);
 	}
 	
 	public void paintPlayerCapture(Graphics2D g){
-		g.drawImage(currentPlayerCardCapture,401, 445, 627, 330, null);
+		g.drawImage(currentPlayerCardCapture, 380, 475, 594, 330, null);
 	}
 	
 	public void paintDeckCapture(Graphics2D g){
-		g.drawImage(deckCapture, 650, 216, 200, 300, null);
+		g.drawImage(deckCapture, 650, 256, 200, 300, null);
 	}
 	
 	public void paintLastCard(Graphics2D g){
-		g.drawImage(lastCardCapture, 510, 240, 120, 180, null);
+		g.drawImage(lastCardCapture, 510, 280, 120, 180, null);
 	}
 	   
 	public void paintBackground(Graphics2D g){
-		g.drawImage(images.getComp("wallpaper.png"), 0, 0, 1280, 720, null);
+		g.drawImage(images.getComp("wallpaper.png"), 0, 0, 1280, 750, null);
 	}
 	
 	public void paintButtonPlay(Graphics2D g){
-		g.drawImage(buttonPlay, 530, 659, 105, 43, null);
+		g.drawImage(buttonPlay, 530, 689, 105, 43, null);
 	}
 
 	public void paintButtonDraw(Graphics2D g) {
-		g.drawImage(buttonDraw, 675, 659, 105, 43, null);
+		g.drawImage(buttonDraw, 675, 689, 105, 43, null);
 	}
 }

@@ -72,6 +72,7 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	private JLabel lastPlayedCard;
 	private JLabel lblWaiting;
 	private JLabel loadCircle;
+	private JLabel[] lblPlayers = new JLabel[3];
 
 	/**
 	 * Launch the application.
@@ -100,9 +101,9 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		setResizable(false);
 		setTitle("Uno Game");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);      
-		getContentPane().setMaximumSize(new Dimension(1280, 720));
-	    getContentPane().setMinimumSize(new Dimension(1280, 720));
-	    getContentPane().setPreferredSize(new Dimension(1280, 720));
+		getContentPane().setMaximumSize(new Dimension(1280, 750));
+	    getContentPane().setMinimumSize(new Dimension(1280, 750));
+	    getContentPane().setPreferredSize(new Dimension(1280, 750));
 	    setIconImage(imageLoader.getResourceImage("ico", ".png"));
 	    gamePanel = new JPanel(){
             @Override
@@ -113,7 +114,7 @@ public class MainWindow extends JFrame implements GameGUIListener{
                 painter.paintBackground(g);
                 painter.paintDeckCapture(g);
                 if(gameManager.getGame()!=null){
-                    //painter.paintOPCapture(g, a);
+                    painter.paintOPCapture(g, a);
                     painter.paintPlayerCapture(g);
                     painter.paintLastCard(g);
                     painter.paintButtonPlay(g);
@@ -134,21 +135,42 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	    gamePanel.setLayout(null);
 	    gamePanel.addMouseListener(new MouseManager());
 	    gamePanel.addMouseMotionListener(new MouseManager());
-	    gamePanel.setMinimumSize(new Dimension(1280, 720));
-	    gamePanel.setMaximumSize(new Dimension(1280, 720));
-	    gamePanel.setPreferredSize(new Dimension(1280, 720));
-	    gamePanel.setSize(new Dimension(1280, 720));
-	    gamePanel.setBounds(0, 0, 1280, 720);
+	    gamePanel.setMinimumSize(new Dimension(1280, 750));
+	    gamePanel.setMaximumSize(new Dimension(1280, 750));
+	    gamePanel.setPreferredSize(new Dimension(1280, 750));
+	    gamePanel.setSize(new Dimension(1280, 750));
+	    gamePanel.setBounds(0, 0, 1280, 750);
 		
 		lblThisUser = new JLabel("user");
 		lblThisUser.setHorizontalAlignment(SwingConstants.CENTER);
 		lblThisUser.setForeground(Color.WHITE);
-		lblThisUser.setFont(new Font("Arista", Font.PLAIN, 29));
-		lblThisUser.setBounds(1090, 77, 132, 37);
+		lblThisUser.setFont(new Font("Arista", Font.PLAIN, 30));
+		lblThisUser.setBounds(1090, 80, 132, 37);
 		gamePanel.add(lblThisUser);
 		
+		lblPlayers[0] = new JLabel("player2");
+		lblPlayers[0].setForeground(Color.WHITE);
+		lblPlayers[0].setFont(new Font("Arista", Font.PLAIN, 28));
+		lblPlayers[0].setBounds(60, 224, 120, 37);
+		lblPlayers[0].setVisible(false);
+		gamePanel.add(lblPlayers[0]);
+		
+		lblPlayers[1] = new JLabel("player3");
+		lblPlayers[1].setForeground(Color.WHITE);
+		lblPlayers[1].setFont(new Font("Arista", Font.PLAIN, 28));
+		lblPlayers[1].setBounds(515, 8, 120, 37);
+		lblPlayers[1].setVisible(false);
+		gamePanel.add(lblPlayers[1]);
+		
+		lblPlayers[2] = new JLabel("player4");
+		lblPlayers[2].setForeground(Color.WHITE);
+		lblPlayers[2].setFont(new Font("Arista", Font.PLAIN, 28));
+		lblPlayers[2].setBounds(951, 224, 120, 37);
+		lblPlayers[2].setVisible(false);
+		gamePanel.add(lblPlayers[2]);
+		
 		lastPlayedCard = new JLabel("");
-		lastPlayedCard.setBounds(510, 240, 120, 180);
+		lastPlayedCard.setBounds(510, 280, 120, 180);
 		lastPlayedCard.setIcon(new ImageIcon(imageLoader.getComp("shadow.png")
 				.getScaledInstance(120, 180,Image.SCALE_SMOOTH)));
 		gamePanel.add(lastPlayedCard);
@@ -156,9 +178,9 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		this.stateDrawButton = BUTTON_DISABLED;
 		this.statePlayButton = BUTTON_DISABLED;
 		
-	    emptyPlayerCardShape = new RoundRectangle2D.Float(401, 450, 120, 180, 7, 7);
-	    playShape = new Ellipse2D.Float(530, 659, 105, 43);
-	    drawShape = new Ellipse2D.Float(675, 659, 105, 43);
+	    emptyPlayerCardShape = new RoundRectangle2D.Float(380, 475, 120, 180, 7, 7);
+	    playShape = new Ellipse2D.Float(530, 689, 105, 43);
+	    drawShape = new Ellipse2D.Float(675, 689, 105, 43);
 		painter.captureDeck(108);
 		painter.capturePlayButton(BUTTON_DISABLED);
 		painter.captureDrawButton(BUTTON_DISABLED);
@@ -196,12 +218,22 @@ public class MainWindow extends JFrame implements GameGUIListener{
 
 	@Override
 	public void updateGameField() {		
-		this.lblWaiting.setVisible(false);
 		this.loadCircle.setVisible(false);
+		setPlayerTurn();
+		
+		try {
+			setOtherPlayersLabel();
+		} catch (NextPlayerNotFoundException e) {
+			e.printStackTrace();
+		}
 		
 		painter.clearImages();
 	    painter.captureDeck(gameManager.getGame().getDeck().getCardList().size());
-		//painter.captureOtherPlayerCard(a);
+		try {
+			painter.captureOtherPlayerHand(a, gameManager);
+		} catch (NextPlayerNotFoundException e) {
+			e.printStackTrace();
+		}
 	    
 		setupLastPlayedCardView();
 		setupCardView();
@@ -407,9 +439,9 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		ImageIcon loading = new ImageIcon(getClass().getResource("/images/ajax-loader.gif"));
 		lblWaiting = new JLabel("waiting for other players...",JLabel.CENTER);
 		lblWaiting.setForeground(Color.WHITE);
-		lblWaiting.setFont(new Font("Arista", Font.PLAIN, 28));
+		lblWaiting.setFont(new Font("Arista", Font.PLAIN, 32));
 		lblWaiting.setHorizontalAlignment(SwingConstants.LEFT);
-		lblWaiting.setBounds(80, 28, 479, 37);
+		lblWaiting.setBounds(80, 23, 388, 48);
 		gamePanel.add(lblWaiting);		
 		loadCircle = new JLabel();
 		loadCircle.setBounds(20, 10, 55, 55);
@@ -418,13 +450,42 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		gamePanel.add(loadCircle);
 	}
 	
+	public void setOtherPlayersLabel() throws NextPlayerNotFoundException{
+		List<Player> players = gameManager.getGame().getPlayers();
+		Player current = null;
+		for(Player player : players){
+			if(player.getId() == gameManager.getId()){
+				current = player;
+			}
+		}
+		for (int i=0; i<lblPlayers.length; i++){
+			Player p = gameManager.getGame().getNextPlayer(current.getId());
+			lblPlayers[i].setText(p.getNickname());
+			lblPlayers[i].setVisible(true);
+			current =p;
+		}
+	}
+	
+	public void setPlayerTurn(){
+		Player current = gameManager.getGame().getCurrent();
+		String turn = null;
+		if(current.getId()==gameManager.getId())
+			turn="your";
+		else
+			turn=current.getNickname();
+		lblWaiting.setText("It's "+turn+" turn!");
+	}
+	
 	public void setPlayerShapes(){
 		List<UnoCard> cards = gameManager.getMyCards();
 		int handsize = cards.size();
+		int x = 15 - (handsize/7)*5;
+		int space = 140 - handsize*10;
 	    playerHandShapes.clear();
 	    for (int i = 0; i < handsize; i++) {
+	    	if(i==0) a.translate(x, 0);
 	        playerHandShapes.add(a.createTransformedShape(emptyPlayerCardShape));
-	        a.translate(62, 0);
+	        a.translate(space, 0);
 	    }
 	    a.setToIdentity();
 	}
