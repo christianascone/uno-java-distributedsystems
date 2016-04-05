@@ -1,6 +1,8 @@
 package sistemidistribuiti.uno.view.frame;
 
 import java.awt.AlphaComposite;
+import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
@@ -8,6 +10,9 @@ import java.awt.GraphicsEnvironment;
 import java.awt.RenderingHints;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,6 +31,7 @@ public class ImageManager {
 	public ImageManager() {
 		loadComponentImages();
 	    loadCardImages();
+	    checkFont();
 	}
 	
 	public void clearImage(BufferedImage img){  
@@ -67,6 +73,22 @@ public class ImageManager {
 			e.printStackTrace();
 		}
 		return image;
+	}
+	
+	public void checkFont() throws FontFormatException, IOException{
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		String []fonts=ge.getAvailableFontFamilyNames();
+		boolean installed = false;
+		for (int i = 0; i < fonts.length; i++) {
+			if(fonts[i].equals("Arista")){
+				installed = true;
+				break;
+			}
+		}
+		if (!installed){
+			InputStream font = getClass().getResourceAsStream("Arista.ttf");
+			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, font));
+		}
 	}
 
 	public void loadCardImages() {
