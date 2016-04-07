@@ -27,6 +27,7 @@ public class Game implements Serializable {
 	private Deck discarded;
 	private Player current;
 	private Direction gameDirection;
+	private boolean colorChanged;
 
 	public Game(List<Player> players, Deck deck) {
 		this.players = players;
@@ -41,6 +42,7 @@ public class Game implements Serializable {
 		this.current = players.get(0);
 
 		this.gameDirection = Direction.getDefault();
+		this.colorChanged = false;
 	}
 
 	public List<Player> getPlayers() {
@@ -147,6 +149,14 @@ public class Game implements Serializable {
 		}
 		strGame = strGame + strCom;
 		return strGame;
+	}
+
+	public boolean isColorChanged() {
+		return colorChanged;
+	}
+
+	public void setColorChanged(boolean colorChanged) {
+		this.colorChanged = colorChanged;
 	}
 	
 }

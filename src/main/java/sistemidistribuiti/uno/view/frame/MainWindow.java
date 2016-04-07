@@ -70,9 +70,10 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	
 	private JLabel lblThisUser;
 	private JLabel lastPlayedCard;
-	private JLabel lblWaiting;
+	private JLabel lblMessage;
 	private JLabel loadCircle;
 	private JLabel[] lblPlayers = new JLabel[3];
+	private JLabel lblColorChanged;
 
 	/**
 	 * Launch the application.
@@ -145,42 +146,48 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		lblThisUser.setHorizontalAlignment(SwingConstants.CENTER);
 		lblThisUser.setForeground(Color.WHITE);
 		lblThisUser.setFont(new Font("Arista", Font.PLAIN, 30));
-		lblThisUser.setBounds(1090, 80, 132, 37);
+		lblThisUser.setBounds(1080, 105, 132, 37);
 		gamePanel.add(lblThisUser);
 		
 		lblPlayers[0] = new JLabel("player2");
 		lblPlayers[0].setForeground(Color.WHITE);
 		lblPlayers[0].setFont(new Font("Arista", Font.PLAIN, 28));
-		lblPlayers[0].setBounds(60, 224, 120, 37);
+		lblPlayers[0].setBounds(63, 244, 120, 37);
 		lblPlayers[0].setVisible(false);
 		gamePanel.add(lblPlayers[0]);
 		
 		lblPlayers[1] = new JLabel("player3");
 		lblPlayers[1].setForeground(Color.WHITE);
 		lblPlayers[1].setFont(new Font("Arista", Font.PLAIN, 28));
-		lblPlayers[1].setBounds(515, 8, 120, 37);
+		lblPlayers[1].setBounds(515, 24, 120, 37);
 		lblPlayers[1].setVisible(false);
 		gamePanel.add(lblPlayers[1]);
 		
 		lblPlayers[2] = new JLabel("player4");
 		lblPlayers[2].setForeground(Color.WHITE);
 		lblPlayers[2].setFont(new Font("Arista", Font.PLAIN, 28));
-		lblPlayers[2].setBounds(951, 224, 120, 37);
+		lblPlayers[2].setBounds(951, 244, 120, 37);
 		lblPlayers[2].setVisible(false);
 		gamePanel.add(lblPlayers[2]);
 		
 		lastPlayedCard = new JLabel("");
-		lastPlayedCard.setBounds(510, 280, 120, 180);
+		lastPlayedCard.setBounds(510, 260, 120, 180);
 		lastPlayedCard.setIcon(new ImageIcon(imageLoader.getComp("shadow.png")
 				.getScaledInstance(120, 180,Image.SCALE_SMOOTH)));
 		gamePanel.add(lastPlayedCard);
 		
+		lblColorChanged = new JLabel("");
+		lblColorChanged.setForeground(Color.WHITE);
+		lblColorChanged.setFont(new Font("Arista", Font.PLAIN, 32));
+		lblColorChanged.setBounds(60, 81, 367, 37);
+		gamePanel.add(lblColorChanged);
+		
 		this.stateDrawButton = BUTTON_DISABLED;
 		this.statePlayButton = BUTTON_DISABLED;
 		
-	    emptyPlayerCardShape = new RoundRectangle2D.Float(380, 475, 120, 180, 7, 7);
-	    playShape = new Ellipse2D.Float(530, 689, 105, 43);
-	    drawShape = new Ellipse2D.Float(675, 689, 105, 43);
+	    emptyPlayerCardShape = new RoundRectangle2D.Float(380, 467, 120, 180, 7, 7);
+	    playShape = new Ellipse2D.Float(535, 674, 105, 43);
+	    drawShape = new Ellipse2D.Float(680, 674, 105, 43);
 		painter.captureDeck(108);
 		painter.capturePlayButton(BUTTON_DISABLED);
 		painter.captureDrawButton(BUTTON_DISABLED);
@@ -237,8 +244,20 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	    
 		setupLastPlayedCardView();
 		setupCardView();
+		
+		setInfoColor();
 	}
 	
+	private void setInfoColor() {
+		if (gameManager.getGame().isColorChanged()){
+			this.lblColorChanged.setText("The color is "+ gameManager.getLastPlayedCard().getColor() + " now!");
+			this.lblColorChanged.setVisible(true);
+		} else {
+			this.lblColorChanged.setVisible(false);
+		}	
+		gameManager.getGame().setColorChanged(false);
+	}
+
 	/**
 	 * Setup how the card is showed
 	 * 
@@ -297,6 +316,7 @@ public class MainWindow extends JFrame implements GameGUIListener{
 			        colors, // Array of choices
 			        colors[0]); // Initial choice
 			showed.setColor(input);
+			gameManager.getGame().setColorChanged(true);
 		}
 
 		if(showed.getCardType() == CARD_TYPE_ENUM.SPECIAL_CARD){
@@ -304,7 +324,6 @@ public class MainWindow extends JFrame implements GameGUIListener{
 			try {
 				gameManager.manageSpecialCard(specialCard);
 			} catch (NextPlayerNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -390,7 +409,6 @@ public class MainWindow extends JFrame implements GameGUIListener{
 
 				if(lastPlayedNumberCard.getNumber() == toPlayNumberCard.getNumber()){
 					logger.log(Level.INFO, "6.0.7.4 playable ? ");
-
 					return true;
 				}
 				logger.log(Level.INFO, "6.0.7.5 playable ? ");
@@ -435,22 +453,22 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		JOptionPane.showMessageDialog(null, String.format("Player %s won!", player.getNickname()));
 	}
 	
-	public void setupWaiting() {
+	private void setupWaiting() {
 		ImageIcon loading = new ImageIcon(getClass().getResource("/images/ajax-loader.gif"));
-		lblWaiting = new JLabel("waiting for other players...",JLabel.CENTER);
-		lblWaiting.setForeground(Color.WHITE);
-		lblWaiting.setFont(new Font("Arista", Font.PLAIN, 32));
-		lblWaiting.setHorizontalAlignment(SwingConstants.LEFT);
-		lblWaiting.setBounds(80, 23, 388, 48);
-		gamePanel.add(lblWaiting);		
+		lblMessage = new JLabel("waiting for other players...",JLabel.CENTER);
+		lblMessage.setForeground(Color.WHITE);
+		lblMessage.setFont(new Font("Arista", Font.PLAIN, 32));
+		lblMessage.setHorizontalAlignment(SwingConstants.LEFT);
+		lblMessage.setBounds(80, 28, 388, 48);
+		gamePanel.add(lblMessage);		
 		loadCircle = new JLabel();
-		loadCircle.setBounds(20, 10, 55, 55);
+		loadCircle.setBounds(20, 15, 55, 55);
 		loadCircle.setIcon(loading);
 		loadCircle.setVisible(true);
 		gamePanel.add(loadCircle);
 	}
 	
-	public void setOtherPlayersLabel() throws NextPlayerNotFoundException{
+	private void setOtherPlayersLabel() throws NextPlayerNotFoundException{
 		List<Player> players = gameManager.getGame().getPlayers();
 		Player current = null;
 		for(Player player : players){
@@ -473,14 +491,17 @@ public class MainWindow extends JFrame implements GameGUIListener{
 			turn="your";
 		else
 			turn=current.getNickname();
-		lblWaiting.setText("It's "+turn+" turn!");
+		lblMessage.setBounds(60, 46, 388, 48);
+		lblMessage.setText("It's "+turn+" turn!");
 	}
 	
-	public void setPlayerShapes(){
+	private void setPlayerShapes(){
 		List<UnoCard> cards = gameManager.getMyCards();
 		int handsize = cards.size();
-		int x = 15 - (handsize/7)*5;
-		int space = 140 - handsize*10;
+		int x = 10 - (handsize/7)*5;
+		if (handsize < 4) x = 80;
+		int space = 590/handsize -15;
+		if (space > 140) space =140;
 	    playerHandShapes.clear();
 	    for (int i = 0; i < handsize; i++) {
 	    	if(i==0) a.translate(x, 0);
@@ -505,7 +526,7 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	public void setStateDrawButton(String stateDrawButton) {
 		this.stateDrawButton = stateDrawButton;
 	}
-	
+
 	private class MouseManager extends MouseAdapter{
 		
 		private int oldIndex;
@@ -542,6 +563,14 @@ public class MainWindow extends JFrame implements GameGUIListener{
 			if (playShape.contains(p) && !getStatePlayButton().equals(BUTTON_DISABLED)
 					&& selectedCardIndex != -1) {
 				playCard();
+				try {
+					painter.captureOtherPlayerHand(a, gameManager);
+				} catch (NextPlayerNotFoundException e1) {
+					e1.printStackTrace();
+				}
+				repaint();
+				setPlayerTurn();
+				setInfoColor();
 				return;
 			} else if (drawShape.contains(p) && !getStateDrawButton().equals(BUTTON_DISABLED)){
 				drawCard();

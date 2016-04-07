@@ -19,6 +19,7 @@ import sistemidistribuiti.uno.exception.NextPlayerNotFoundException;
 import sistemidistribuiti.uno.model.card.UnoCard;
 import sistemidistribuiti.uno.model.card.impl.NumberCard;
 import sistemidistribuiti.uno.model.card.impl.SpecialCard;
+import sistemidistribuiti.uno.model.player.PLAYER_STATE;
 import sistemidistribuiti.uno.model.player.Player;
 import sistemidistribuiti.uno.workflow.GameManager;
 
@@ -45,6 +46,7 @@ public class Painter {
 	    buttonPlay = gc.createCompatibleImage(105, 43, BufferedImage.TRANSLUCENT);
 	    buttonDraw = gc.createCompatibleImage(105, 43, BufferedImage.TRANSLUCENT);
 	}
+	
 	
 	public void setRenderingHints(Graphics2D g){
 		g.setRenderingHint(KEY_INTERPOLATION, VALUE_INTERPOLATION_BILINEAR);
@@ -128,9 +130,11 @@ public class Painter {
 		setRenderingHints(g);
 		List<UnoCard> cards = gameManager.getMyCards();
 		int handsize = cards.size();
-		int x = 15 - (handsize/7)*5;
+		int x = 10 - (handsize/7)*5;
+		if (handsize < 4) x = 80;
 		int y = 15;
-		int space = 140 - handsize*10;
+		int space = 590/handsize -15;
+		if (space > 140) space =140;
 		int showX = 0, showY = 0;
 		String showCode = null;
 		for (int i = 0; i < handsize; i++) {
@@ -179,13 +183,13 @@ public class Painter {
 			double initialAngle = Math.toRadians(-angle * (size + 1) / 2);
 			a.rotate(initialAngle, 150, 342 - (5 * size / 4));
 			g.setTransform(a);
-			int x = 60; 
-			int y = 15 - (5 * size / 4); 
+			int x = 70; 
+			int y = 25 - (5 * size / 4); 
 			for (int j = size; j >= 0; j--) {
 				a.rotate(Math.toRadians(angle), 150, 342 - (5 * size / 4));
 				g.setTransform(a);
 				if (j != size) {
-					paintCard(g, "back", x, y);
+					paintCard(g, "back", x, y, 100, 140);
 				}
 			}
 			current = toDrawn;
@@ -219,21 +223,21 @@ public class Painter {
 	public void paintOPCapture(Graphics2D g, AffineTransform a){
 		a.setToIdentity();
 		g.setTransform(a);
-		g.drawImage(playerCardCapture[0], 72, 251, 400, 230, null);
-		g.drawImage(playerCardCapture[1], 523, 35, 400, 230, null);
-		g.drawImage(playerCardCapture[2], 958, 251, 400, 230, null);
+		g.drawImage(playerCardCapture[0], 75, 266, 400, 230, null);
+		g.drawImage(playerCardCapture[1], 523, 46, 400, 230, null);
+		g.drawImage(playerCardCapture[2], 953, 266, 400, 230, null);
 	}
 	
 	public void paintPlayerCapture(Graphics2D g){
-		g.drawImage(currentPlayerCardCapture, 380, 475, 594, 330, null);
+		g.drawImage(currentPlayerCardCapture, 380, 467, 594, 330, null);
 	}
 	
 	public void paintDeckCapture(Graphics2D g){
-		g.drawImage(deckCapture, 650, 256, 200, 300, null);
+		g.drawImage(deckCapture, 650, 236, 200, 300, null);
 	}
 	
 	public void paintLastCard(Graphics2D g){
-		g.drawImage(lastCardCapture, 510, 280, 120, 180, null);
+		g.drawImage(lastCardCapture, 510, 260, 120, 180, null);
 	}
 	   
 	public void paintBackground(Graphics2D g){
@@ -241,10 +245,10 @@ public class Painter {
 	}
 	
 	public void paintButtonPlay(Graphics2D g){
-		g.drawImage(buttonPlay, 530, 689, 105, 43, null);
+		g.drawImage(buttonPlay, 535, 674, 105, 43, null);
 	}
 
 	public void paintButtonDraw(Graphics2D g) {
-		g.drawImage(buttonDraw, 675, 689, 105, 43, null);
+		g.drawImage(buttonDraw, 680, 674, 105, 43, null);
 	}
 }
