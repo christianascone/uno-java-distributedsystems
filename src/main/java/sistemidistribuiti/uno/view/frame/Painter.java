@@ -130,38 +130,40 @@ public class Painter {
 		setRenderingHints(g);
 		List<UnoCard> cards = gameManager.getMyCards();
 		int handsize = cards.size();
-		int x = 10 - (handsize/7)*5;
-		if (handsize < 4) x = 80;
-		int y = 15;
-		int space = 590/handsize -15;
-		if (space > 140) space =140;
-		int showX = 0, showY = 0;
-		String showCode = null;
-		for (int i = 0; i < handsize; i++) {
-			String code = null;
-			UnoCard card = cards.get(i);
-			switch (card.getCardType()) {
-			case NUMBER_CARD:
-				NumberCard numberCard = (NumberCard) card;
-				code = numberCard.getCode();
-				break;
-			case SPECIAL_CARD:
-				SpecialCard specialCard = (SpecialCard) card;
-				code = specialCard.getCode();
-				break;
-			}
-			if (i == overIndex) {
-				showX = x;
-				showY = y -15;
-				showCode = code;
+		if(handsize != 0){
+			int x = 10 - (handsize/7)*5;
+			if (handsize < 4) x = 80;
+			int y = 15;
+			int space = 590/handsize -15;
+			if (space > 140) space =140;
+			int showX = 0, showY = 0;
+			String showCode = null;
+			for (int i = 0; i < handsize; i++) {
+				String code = null;
+				UnoCard card = cards.get(i);
+				switch (card.getCardType()) {
+				case NUMBER_CARD:
+					NumberCard numberCard = (NumberCard) card;
+					code = numberCard.getCode();
+					break;
+				case SPECIAL_CARD:
+					SpecialCard specialCard = (SpecialCard) card;
+					code = specialCard.getCode();
+					break;
+				}
+				if (i == overIndex) {
+					showX = x;
+					showY = y -15;
+					showCode = code;
+					x = x+space;
+					continue;
+				}
+				paintCard(g, code, x, y);
 				x = x+space;
-				continue;
 			}
-			paintCard(g, code, x, y);
-			x = x+space;
+			if (overIndex != -1)
+				paintCard(g, showCode, showX, showY);
 		}
-		if (overIndex != -1)
-			paintCard(g, showCode, showX, showY);
 	}
 
 	
@@ -180,16 +182,18 @@ public class Painter {
 			setRenderingHints(g);
 			Player toDrawn = gm.getGame().getNextPlayer(current.getId());
 			int size = toDrawn.getCards().size();
-			double initialAngle = Math.toRadians(-angle * (size + 1) / 2);
-			a.rotate(initialAngle, 150, 342 - (5 * size / 4));
-			g.setTransform(a);
-			int x = 70; 
-			int y = 25 - (5 * size / 4); 
-			for (int j = size; j >= 0; j--) {
-				a.rotate(Math.toRadians(angle), 150, 342 - (5 * size / 4));
+			if(size != 0){
+				double initialAngle = Math.toRadians(-angle * (size + 1) / 2);
+				a.rotate(initialAngle, 150, 342 - (5 * size / 4));
 				g.setTransform(a);
-				if (j != size) {
-					paintCard(g, "back", x, y, 100, 140);
+				int x = 70; 
+				int y = 25 - (5 * size / 4); 
+				for (int j = size; j >= 0; j--) {
+					a.rotate(Math.toRadians(angle), 150, 342 - (5 * size / 4));
+					g.setTransform(a);
+					if (j != size) {
+						paintCard(g, "back", x, y, 100, 140);
+					}
 				}
 			}
 			current = toDrawn;

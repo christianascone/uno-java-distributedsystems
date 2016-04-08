@@ -9,8 +9,6 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Shape;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
@@ -22,7 +20,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -310,9 +307,8 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		if(showed.getCardType() == CARD_TYPE_ENUM.SPECIAL_CARD && showed.getColor() == CARD_COLOR.RAINBOW){
 			CARD_COLOR[] colors = {CARD_COLOR.RED, CARD_COLOR.BLUE, CARD_COLOR.YELLOW, CARD_COLOR.GREEN};
 			CARD_COLOR input = (CARD_COLOR) JOptionPane.showInputDialog(null, "Choose color",
-			        "Choose the color for this card.", JOptionPane.QUESTION_MESSAGE, null, // Use
-			                                                                        // default
-			                                                                        // icon
+			        "Choose the color: ", JOptionPane.QUESTION_MESSAGE, 
+			        new ImageIcon(imageLoader.getComp("WILDico.png")),
 			        colors, // Array of choices
 			        colors[0]); // Initial choice
 			showed.setColor(input);

@@ -56,7 +56,8 @@ public class ImageManager {
 			      "playFocus.png",
 			      "draw.png",
 			      "drawDisabled.png",
-			      "drawFocus.png"
+			      "drawFocus.png",
+			      "WILDico.png"
 			    };
 		ArrayList<BufferedImage> images = new ArrayList<BufferedImage>(names.length);
 	    for (int i = 0; i < names.length; i++) {
