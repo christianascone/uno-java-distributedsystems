@@ -15,6 +15,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -206,7 +207,7 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	@Override
 	public void playMyTurn() {
 		setupCardView();
-
+		
 		if(atLeastOneCardPlayable()){
 			logger.log(Level.INFO, "5 - at least 1");
 			setStatePlayButton(BUTTON_ENABLED);
@@ -238,6 +239,7 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		} catch (NextPlayerNotFoundException e) {
 			e.printStackTrace();
 		}
+		logger.log(Level.INFO, "");
 	    
 		setupLastPlayedCardView();
 		setupCardView();
@@ -296,6 +298,14 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		manageCard(selected);
 		
 		passTurn(myCards);
+		try {
+			painter.captureOtherPlayerHand(a, gameManager);
+		} catch (NextPlayerNotFoundException e1) {
+			e1.printStackTrace();
+		}
+		repaint();
+		setPlayerTurn();
+		setInfoColor();		
 	}
 
 	/**
@@ -306,11 +316,24 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	private void manageCard(UnoCard showed) {
 		if(showed.getCardType() == CARD_TYPE_ENUM.SPECIAL_CARD && showed.getColor() == CARD_COLOR.RAINBOW){
 			CARD_COLOR[] colors = {CARD_COLOR.RED, CARD_COLOR.BLUE, CARD_COLOR.YELLOW, CARD_COLOR.GREEN};
-			CARD_COLOR input = (CARD_COLOR) JOptionPane.showInputDialog(null, "Choose color",
-			        "Choose the color: ", JOptionPane.QUESTION_MESSAGE, 
-			        new ImageIcon(imageLoader.getComp("WILDico.png")),
-			        colors, // Array of choices
-			        colors[0]); // Initial choice
+			int response = JOptionPane.showOptionDialog(null, "Choose color: ", "Choose color",
+			        JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+			        new ImageIcon(imageLoader.getComp("WILDico.png")), colors, colors[0]);
+			CARD_COLOR input = null;
+			switch (response){
+			case 0:
+				input=CARD_COLOR.RED;
+				break;
+			case 1:
+				input=CARD_COLOR.BLUE;
+				break;
+			case 2:
+				input=CARD_COLOR.YELLOW;
+				break;
+			case 3: 
+				input=CARD_COLOR.GREEN;
+				break;
+			}
 			showed.setColor(input);
 			gameManager.getGame().setColorChanged(true);
 		}
@@ -334,6 +357,13 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		myCards.add(drawedCard);
 		
 		passTurn(myCards);
+		try {
+			painter.captureOtherPlayerHand(a, gameManager);
+		} catch (NextPlayerNotFoundException e1) {
+			e1.printStackTrace();
+		}
+		repaint();
+		setPlayerTurn();
 	}
 
 	/**
@@ -348,7 +378,6 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		
 		selectedCardIndex = -1;
 		painter.capturePlayerHand(a, gameManager, selectedCardIndex);
-		
 		setupLastPlayedCardView();
 		
 		if(!cards.isEmpty()){
@@ -458,7 +487,7 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		lblMessage.setBounds(80, 28, 388, 48);
 		gamePanel.add(lblMessage);		
 		loadCircle = new JLabel();
-		loadCircle.setBounds(20, 15, 55, 55);
+		loadCircle.setBounds(20, 13, 55, 55);
 		loadCircle.setIcon(loading);
 		loadCircle.setVisible(true);
 		gamePanel.add(loadCircle);
@@ -472,11 +501,24 @@ public class MainWindow extends JFrame implements GameGUIListener{
 				current = player;
 			}
 		}
-		for (int i=0; i<lblPlayers.length; i++){
+		List<Player> order = new ArrayList<>();
+		for (int i=0; i<players.size()-1; i++){
 			Player p = gameManager.getGame().getNextPlayer(current.getId());
+			order.add(p);
+			current = p;
+		}
+		switch(gameManager.getGame().getGameDirection()){
+		case BACKWARD:
+			Collections.reverse(order);
+			break;
+		case FORWARD:
+			break;
+		}
+		for (int i=0; i<lblPlayers.length; i++){
+			Player p = order.get(i);
 			lblPlayers[i].setText(p.getNickname());
 			lblPlayers[i].setVisible(true);
-			current =p;
+			current = p;
 		}
 	}
 	
@@ -559,14 +601,6 @@ public class MainWindow extends JFrame implements GameGUIListener{
 			if (playShape.contains(p) && !getStatePlayButton().equals(BUTTON_DISABLED)
 					&& selectedCardIndex != -1) {
 				playCard();
-				try {
-					painter.captureOtherPlayerHand(a, gameManager);
-				} catch (NextPlayerNotFoundException e1) {
-					e1.printStackTrace();
-				}
-				repaint();
-				setPlayerTurn();
-				setInfoColor();
 				return;
 			} else if (drawShape.contains(p) && !getStateDrawButton().equals(BUTTON_DISABLED)){
 				drawCard();
@@ -580,6 +614,7 @@ public class MainWindow extends JFrame implements GameGUIListener{
 			for (int s = playerHandShapes.size() - 1; s >= 0; s--) {
 				if (playerHandShapes.get(s).contains(e.getPoint())) {
 					selectedCardIndex = s;
+					logger.log(Level.INFO, "Selected card "+ selectedCardIndex);
 					if(this.oldIndex == selectedCardIndex)
 						selectedCardIndex = -1;
 					painter.capturePlayerHand(a, gameManager, selectedCardIndex);

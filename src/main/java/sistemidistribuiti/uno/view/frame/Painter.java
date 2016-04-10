@@ -13,13 +13,14 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import sistemidistribuiti.uno.exception.NextPlayerNotFoundException;
 import sistemidistribuiti.uno.model.card.UnoCard;
 import sistemidistribuiti.uno.model.card.impl.NumberCard;
 import sistemidistribuiti.uno.model.card.impl.SpecialCard;
-import sistemidistribuiti.uno.model.player.PLAYER_STATE;
 import sistemidistribuiti.uno.model.player.Player;
 import sistemidistribuiti.uno.workflow.GameManager;
 
@@ -165,7 +166,6 @@ public class Painter {
 				paintCard(g, showCode, showX, showY);
 		}
 	}
-
 	
 	public void captureOtherPlayerHand(AffineTransform a, GameManager gm) throws NextPlayerNotFoundException{
 		a.setToIdentity();
@@ -176,11 +176,24 @@ public class Painter {
 				current = player;
 			}
 		}
+		List<Player> order = new ArrayList<>();
+		for (int i=0; i<players.size()-1; i++){
+			Player p = gm.getGame().getNextPlayer(current.getId());
+			order.add(p);
+			current = p;
+		}
+		switch(gm.getGame().getGameDirection()){
+		case BACKWARD:
+			Collections.reverse(order);
+			break;
+		case FORWARD:
+			break;
+		}
 		for (int i=0; i<playerCardCapture.length; i++){
 			images.clearImage(playerCardCapture[i]);
 			Graphics2D g = playerCardCapture[i].createGraphics();
 			setRenderingHints(g);
-			Player toDrawn = gm.getGame().getNextPlayer(current.getId());
+			Player toDrawn = order.get(i);
 			int size = toDrawn.getCards().size();
 			if(size != 0){
 				double initialAngle = Math.toRadians(-angle * (size + 1) / 2);
@@ -196,20 +209,7 @@ public class Painter {
 					}
 				}
 			}
-			current = toDrawn;
 			a.setToIdentity();
-		}
-		
-		switch(gm.getGame().getGameDirection()){
-		case FORWARD:			
-			break;
-		case BACKWARD:
-			for(int i = 0; i < playerCardCapture.length / 2; i++){
-			    BufferedImage temp = playerCardCapture[i];
-			    playerCardCapture[i] = playerCardCapture[playerCardCapture.length - i - 1];
-			    playerCardCapture[playerCardCapture.length - i - 1] = temp;
-			}
-			break;
 		}
 	}
 	
