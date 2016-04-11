@@ -21,6 +21,7 @@ import sistemidistribuiti.uno.exception.NextPlayerNotFoundException;
 import sistemidistribuiti.uno.model.card.UnoCard;
 import sistemidistribuiti.uno.model.card.impl.NumberCard;
 import sistemidistribuiti.uno.model.card.impl.SpecialCard;
+import sistemidistribuiti.uno.model.player.PLAYER_STATE;
 import sistemidistribuiti.uno.model.player.Player;
 import sistemidistribuiti.uno.workflow.GameManager;
 
@@ -32,6 +33,7 @@ public class Painter {
 	private BufferedImage lastCardCapture;
 	private BufferedImage buttonPlay;
 	private BufferedImage buttonDraw;
+	private BufferedImage buttonUno;
 	ImageManager images = MainWindow.imageLoader;
 	private double angle = 4.2;
 	
@@ -46,8 +48,8 @@ public class Painter {
 	    currentPlayerCardCapture = gc.createCompatibleImage(594, 330, BufferedImage.TRANSLUCENT);
 	    buttonPlay = gc.createCompatibleImage(105, 43, BufferedImage.TRANSLUCENT);
 	    buttonDraw = gc.createCompatibleImage(105, 43, BufferedImage.TRANSLUCENT);
+	    buttonUno = gc.createCompatibleImage(127, 52, BufferedImage.TRANSLUCENT);
 	}
-	
 	
 	public void setRenderingHints(Graphics2D g){
 		g.setRenderingHint(KEY_INTERPOLATION, VALUE_INTERPOLATION_BILINEAR);
@@ -102,6 +104,22 @@ public class Painter {
 			break;
 		case MainWindow.BUTTON_FOCUS:
 			g.drawImage(images.getComp("drawFocus.png"), 0, 0, 105, 43, null);
+			break;
+		}
+	}
+	
+	public void captureUnoButton(String state){
+		images.clearImage(buttonUno);
+		Graphics2D g = buttonUno.createGraphics();
+		setRenderingHints(g);
+		switch (state){
+		case MainWindow.BUTTON_ENABLED:
+			g.drawImage(images.getComp("uno.png"),0, 0, 127, 52, null);
+			break;
+		case MainWindow.BUTTON_DISABLED:
+			break;
+		case MainWindow.BUTTON_FOCUS:
+			g.drawImage(images.getComp("unoFocus.png"), 0, 0, 127, 52, null);
 			break;
 		}
 	}
@@ -195,7 +213,7 @@ public class Painter {
 			setRenderingHints(g);
 			Player toDrawn = order.get(i);
 			int size = toDrawn.getCards().size();
-			if(size != 0){
+			if(size != 0 && gm.getPlayerState(toDrawn.getId())==PLAYER_STATE.ACTIVE){
 				double initialAngle = Math.toRadians(-angle * (size + 1) / 2);
 				a.rotate(initialAngle, 150, 342 - (5 * size / 4));
 				g.setTransform(a);
@@ -254,5 +272,9 @@ public class Painter {
 
 	public void paintButtonDraw(Graphics2D g) {
 		g.drawImage(buttonDraw, 680, 674, 105, 43, null);
+	}
+	
+	public void paintButtonUno(Graphics2D g){
+		g.drawImage(buttonUno, 800, 524, 127, 52, null);
 	}
 }

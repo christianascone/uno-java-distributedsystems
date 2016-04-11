@@ -9,6 +9,8 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Shape;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
@@ -21,16 +23,19 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.Timer;
 import javax.swing.UIManager;
 
 import sistemidistribuiti.uno.exception.NextPlayerNotFoundException;
 import sistemidistribuiti.uno.model.card.CARD_COLOR;
 import sistemidistribuiti.uno.model.card.CARD_TYPE_ENUM;
+import sistemidistribuiti.uno.model.card.SPECIAL_CARD_TYPE;
 import sistemidistribuiti.uno.model.card.UnoCard;
 import sistemidistribuiti.uno.model.card.impl.NumberCard;
 import sistemidistribuiti.uno.model.card.impl.SpecialCard;
@@ -52,11 +57,14 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	private JPanel gamePanel;
 	private GameManager gameManager;
 	private Painter painter = new Painter();
+	private Timer timer;
+	private boolean flag;
 	
 	private ArrayList<Shape> playerHandShapes = new ArrayList<Shape>();
 	private RoundRectangle2D emptyPlayerCardShape;
 	private Ellipse2D playShape;
 	private Ellipse2D drawShape;
+	private Ellipse2D unoShape;
 	private int selectedCardIndex = -1;
 	
 	public static final String BUTTON_ENABLED = "enabled";
@@ -65,6 +73,7 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	
 	private String statePlayButton;
 	private String stateDrawButton;
+	private String stateUnoButton;
 	
 	private JLabel lblThisUser;
 	private JLabel lastPlayedCard;
@@ -118,6 +127,7 @@ public class MainWindow extends JFrame implements GameGUIListener{
                     painter.paintLastCard(g);
                     painter.paintButtonPlay(g);
                     painter.paintButtonDraw(g);
+                    painter.paintButtonUno(g);
                 }
                 a.setToIdentity();
                 g.setTransform(a);
@@ -182,13 +192,16 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		
 		this.stateDrawButton = BUTTON_DISABLED;
 		this.statePlayButton = BUTTON_DISABLED;
+		this.stateUnoButton = BUTTON_DISABLED;
 		
 	    emptyPlayerCardShape = new RoundRectangle2D.Float(380, 467, 120, 180, 7, 7);
 	    playShape = new Ellipse2D.Float(535, 674, 105, 43);
 	    drawShape = new Ellipse2D.Float(680, 674, 105, 43);
+	    unoShape = new Ellipse2D.Float(800, 524, 127, 52);
 		painter.captureDeck(108);
 		painter.capturePlayButton(BUTTON_DISABLED);
 		painter.captureDrawButton(BUTTON_DISABLED);
+		painter.captureUnoButton(BUTTON_DISABLED);
 		setupWaiting();
 	    repaint();
 	    
@@ -298,6 +311,7 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		manageCard(selected);
 		
 		passTurn(myCards);
+		
 		try {
 			painter.captureOtherPlayerHand(a, gameManager);
 		} catch (NextPlayerNotFoundException e1) {
@@ -365,25 +379,50 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		repaint();
 		setPlayerTurn();
 	}
+	
+	private void drawTwoCardsUno(){
+		List<UnoCard> myCards = gameManager.getMyCards();
+		for(int i=0; i<2; i++){
+			UnoCard drawedCard = gameManager.drawCard();
+			myCards.add(drawedCard);
+		}
+	}
 
 	/**
 	 * Pass the turn to the next player
 	 * @param cards
 	 */
 	private void passTurn(List<UnoCard> cards) {
-		painter.capturePlayButton(BUTTON_DISABLED);
-		painter.captureDrawButton(BUTTON_DISABLED);
 		setStatePlayButton(BUTTON_DISABLED);
 		setStateDrawButton(BUTTON_DISABLED);
-		
+		flag = true;
 		selectedCardIndex = -1;
+		
 		painter.capturePlayerHand(a, gameManager, selectedCardIndex);
 		setupLastPlayedCardView();
 		
 		if(!cards.isEmpty()){
 			setupCardView();
 		}
-		gameManager.playMyTurn();
+		
+		if(cards.size()==1){
+			flag=false;
+			setStateUnoButton(BUTTON_ENABLED);
+			timer = new Timer(6000, new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent actionEvent) {
+					//draw 2 cards
+					drawTwoCardsUno();
+					setupCardView();
+					setStateUnoButton(BUTTON_DISABLED);
+					gameManager.playMyTurn();
+				}
+			});
+			timer.setRepeats(false);
+			timer.start();
+		}
+		if (flag)
+			gameManager.playMyTurn();
 	}
 	
 	/**
@@ -392,9 +431,7 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	 * @return true or false
 	 */
 	private boolean atLeastOneCardPlayable() {
-		logger.log(Level.INFO, "5.0.1 playable ? ");
 		for(int i = 0; i < gameManager.getMyCards().size(); i++){
-			logger.log(Level.INFO, "5.0.3 playable ? " + i);
 			boolean playable = currentCardIsPlayable(i);
 			if(playable){
 				return true;
@@ -408,68 +445,42 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	 * @return
 	 */
 	private boolean currentCardIsPlayable(int index) {
-		logger.log(Level.INFO, "6.0.2 playable ? ");
 		UnoCard lastPlayed = gameManager.getLastPlayedCard();
-		logger.log(Level.INFO, "6.0.3 playable ? ");
 		List<UnoCard> cards = gameManager.getMyCards();
-		logger.log(Level.INFO, "6.0.4 playable ? ");
 		UnoCard toPlay = cards.get(index);
-		logger.log(Level.INFO, "6.0.5 playable ? ");
 		if(toPlay.getColor() == lastPlayed.getColor()){
 			return true;
 		}
-		logger.log(Level.INFO, "6.0.6 playable ? ");
 		
 		switch(toPlay.getCardType()){
 		case NUMBER_CARD:
-			logger.log(Level.INFO, "6.0.7 playable ? ");
 			if(lastPlayed.getCardType() == CARD_TYPE_ENUM.NUMBER_CARD){
-				logger.log(Level.INFO, "6.0.7.1 playable ? ");
-
 				NumberCard lastPlayedNumberCard = (NumberCard) lastPlayed;
-				logger.log(Level.INFO, "6.0.7.2 playable ? ");
-
 				NumberCard toPlayNumberCard = (NumberCard) toPlay;
-				logger.log(Level.INFO, "6.0.7.3 playable ? ");
-
 				if(lastPlayedNumberCard.getNumber() == toPlayNumberCard.getNumber()){
-					logger.log(Level.INFO, "6.0.7.4 playable ? ");
 					return true;
 				}
-				logger.log(Level.INFO, "6.0.7.5 playable ? ");
 			}
-			logger.log(Level.INFO, "6.0.7.6 playable ? ");
-
 			break;
 		case SPECIAL_CARD:
-			logger.log(Level.INFO, "6.0.8 playable ? ");
 			logger.log(Level.INFO, toPlay.getColor().name());
 			if(toPlay.getColor() == CARD_COLOR.RAINBOW){
-				logger.log(Level.INFO, "6.0.8.1 playable ? ");
 				return true;
 			}
-			logger.log(Level.INFO, "6.0.8.2 playable ? ");
 			SpecialCard toPlaySpecialCard = (SpecialCard) toPlay;
-			logger.log(Level.INFO, "6.0.8.3 playable ? ");
-			
 			SpecialCard lastPlayedSpecialCard = null;
 			try{
 				lastPlayedSpecialCard = (SpecialCard) lastPlayed;
 			}catch(Exception e){
 				return false;
 			}
-			logger.log(Level.INFO, "6.0.8.4 playable ? ");
 			if(toPlaySpecialCard.getSpecialCardType() == lastPlayedSpecialCard.getSpecialCardType()){
-				logger.log(Level.INFO, "6.0.8.5 playable ? ");
 				return true;
 			}
-			logger.log(Level.INFO, "6.0.8.6 playable ? ");
 			break;
 		default:
-			logger.log(Level.INFO, "6.0.9 playable ? ");
 			break;
-		}
-		logger.log(Level.INFO, "6.0.10 playable ? ");		
+		}	
 		return false;
 	}
 
@@ -522,14 +533,14 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		}
 	}
 	
-	public void setPlayerTurn(){
+	private void setPlayerTurn(){
 		Player current = gameManager.getGame().getCurrent();
 		String turn = null;
 		if(current.getId()==gameManager.getId())
 			turn="your";
 		else
 			turn=current.getNickname();
-		lblMessage.setBounds(60, 46, 388, 48);
+		lblMessage.setBounds(60, 45, 388, 48);
 		lblMessage.setText("It's "+turn+" turn!");
 	}
 	
@@ -555,6 +566,8 @@ public class MainWindow extends JFrame implements GameGUIListener{
 
 	public void setStatePlayButton(String statePlayButton) {
 		this.statePlayButton = statePlayButton;
+		painter.capturePlayButton(statePlayButton);
+		repaint();
 	}
 
 	public String getStateDrawButton() {
@@ -563,6 +576,18 @@ public class MainWindow extends JFrame implements GameGUIListener{
 
 	public void setStateDrawButton(String stateDrawButton) {
 		this.stateDrawButton = stateDrawButton;
+		painter.captureDrawButton(stateDrawButton);
+		repaint();
+	}
+	
+	public String getStateUnoButton(){
+		return stateUnoButton;
+	}
+	
+	public void setStateUnoButton(String stateUnoButton){
+		this.stateUnoButton = stateUnoButton;
+		painter.captureUnoButton(stateUnoButton);
+		repaint();
 	}
 
 	private class MouseManager extends MouseAdapter{
@@ -573,24 +598,22 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		public void mouseMoved(MouseEvent e){
 			Point p = e.getPoint();
 			if (playShape.contains(p) && getStatePlayButton().equals(BUTTON_ENABLED)){
-				painter.capturePlayButton(BUTTON_FOCUS);
 				setStatePlayButton(BUTTON_FOCUS);
-				repaint();
 				return;
 			} else if (drawShape.contains(p) && getStateDrawButton().equals(BUTTON_ENABLED)){
-				painter.captureDrawButton(BUTTON_FOCUS);
 				setStateDrawButton(BUTTON_FOCUS);
-				repaint();
 				return;
 			} else if (!playShape.contains(p) && getStatePlayButton().equals(BUTTON_FOCUS)){
-				painter.capturePlayButton(BUTTON_ENABLED);
 				setStatePlayButton(BUTTON_ENABLED);
-				repaint();
 				return;
 			} else if (!drawShape.contains(p) && getStateDrawButton().equals(BUTTON_FOCUS)){
-				painter.captureDrawButton(BUTTON_ENABLED);
 				setStateDrawButton(BUTTON_ENABLED);
-				repaint();
+				return;
+			} else if (unoShape.contains(p) && getStateUnoButton().equals(BUTTON_ENABLED)){
+				setStateUnoButton(BUTTON_FOCUS);
+				return;
+			} else if (!unoShape.contains(p) && getStateUnoButton().equals(BUTTON_FOCUS)){
+				setStateUnoButton(BUTTON_ENABLED);
 				return;
 			}
 		}
@@ -608,6 +631,11 @@ public class MainWindow extends JFrame implements GameGUIListener{
 			} else if (playShape.contains(p) && !getStatePlayButton().equals(BUTTON_DISABLED)
 					&& selectedCardIndex == -1){
 				JOptionPane.showMessageDialog(null, "Select a card!");
+				return;
+			} else if (unoShape.contains(p) && !getStateUnoButton().equals(BUTTON_DISABLED)){
+				timer.stop();
+				gameManager.playMyTurn();
+				setStateUnoButton(BUTTON_DISABLED);
 				return;
 			}
 	         

@@ -2,6 +2,7 @@ package sistemidistribuiti.uno.workflow;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -44,6 +45,7 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 	private GameGUIListener gameGUIListener;
 
 	private Game game;
+	private HashMap<Integer,PLAYER_STATE> playersAvailability = new HashMap<Integer,PLAYER_STATE>();
 
 	public GameManager(GameGUIListener gameGuiListener) {
 		this.gameGUIListener = gameGuiListener;
@@ -51,6 +53,14 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 
 	public Game getGame() {
 		return game;
+	}
+	
+	public void setItemStateList(int id, PLAYER_STATE state){
+		playersAvailability.put(id, state);
+	}
+	
+	public PLAYER_STATE getPlayerState(int id){
+		return playersAvailability.get(id);
 	}
 
 	@Override
@@ -247,6 +257,7 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 		// if I am the next node in the turn I ll:
 		// - remove
 		Player crashedPlayer = game.getCurrent();
+		setItemStateList(crashedPlayer.getId(), PLAYER_STATE.CRASH);
 		game.setCurrent(player);
 		//remove crashed player			
 		game.getPlayers().remove(crashedPlayer);

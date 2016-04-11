@@ -18,6 +18,7 @@ import sistemidistribuiti.uno.model.card.UnoCard;
 import sistemidistribuiti.uno.model.card.impl.Deck;
 import sistemidistribuiti.uno.model.game.Game;
 import sistemidistribuiti.uno.model.player.CurrentNode;
+import sistemidistribuiti.uno.model.player.PLAYER_STATE;
 import sistemidistribuiti.uno.model.player.Player;
 import sistemidistribuiti.uno.rmi.client.UnoRemoteClient;
 import sistemidistribuiti.uno.rmi.interfaces.UnoRemoteGameInterface;
@@ -140,6 +141,7 @@ public class Starter {
 				UnoCard draw = newDeck.getCardList().remove(0);
 				player.addCard(draw);
 			}
+			gameManager.setItemStateList(player.getId(), PLAYER_STATE.ACTIVE);
 		}
 
 		int leaderId = configBean.getLeaderId();
