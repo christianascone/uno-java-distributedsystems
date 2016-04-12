@@ -260,6 +260,12 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		setInfoColor();
 	}
 	
+	@Override
+	public void refreshUILazyUser(){
+		setStatePlayButton(BUTTON_DISABLED);
+		setStateDrawButton(BUTTON_DISABLED);
+	}
+	
 	private void setInfoColor() {
 		if (gameManager.getGame().isColorChanged()){
 			this.lblColorChanged.setText("The color is "+ gameManager.getLastPlayedCard().getColor() + " now!");
@@ -387,6 +393,8 @@ public class MainWindow extends JFrame implements GameGUIListener{
 			myCards.add(drawedCard);
 		}
 	}
+	
+	
 
 	/**
 	 * Pass the turn to the next player
