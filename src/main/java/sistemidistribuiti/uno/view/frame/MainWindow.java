@@ -264,6 +264,10 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	public void refreshUILazyUser(){
 		setStatePlayButton(BUTTON_DISABLED);
 		setStateDrawButton(BUTTON_DISABLED);
+		List<UnoCard> myCards = gameManager.getMyCards();
+		UnoCard drawedCard = gameManager.drawCard();
+		myCards.add(drawedCard);
+		setupCardView();
 	}
 	
 	private void setInfoColor() {

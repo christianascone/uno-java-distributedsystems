@@ -281,7 +281,7 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 		}else if(caller == timerForDraw){
 			// stop timer
 			// mandatory draw
-			// drawCard();
+			drawCard();
 			logger.log(Level.INFO, "################## mandatory draw ##################");
 			// pass the game
 			gameGUIListener.refreshUILazyUser();
