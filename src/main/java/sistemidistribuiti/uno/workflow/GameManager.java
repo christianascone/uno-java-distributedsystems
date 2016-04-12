@@ -102,6 +102,10 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 	public void playMyTurn() {
 		Player newCurrent;
 		try {
+			// stop timer for draw
+			this.timerForDraw.stop();
+			this.timerForDraw = null;
+			
 			newCurrent = game.getNextPlayer();
 			game.setCurrent(newCurrent);
 			
@@ -276,12 +280,13 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 			}
 		}else if(caller == timerForDraw){
 			// stop timer
-			this.timer.stop();
-			this.timer = null;
 			// mandatory draw
+			// drawCard();
 			logger.log(Level.INFO, "################## mandatory draw ##################");
 			// pass the game
+			gameGUIListener.refreshUILazyUser();
 			playMyTurn();
+
 		}else{
 			logger.log(Level.INFO, "################## timers error ##################");
 		}
