@@ -21,10 +21,11 @@ public class UNOTimer {
 	
 	public void start(){
 		// init
+		final UNOTimer ciccio = this;
 		this.timerTask = new TimerTask(){
 			public void run() {
 				try {
-					callback.timeUp();
+					callback.timeUp(ciccio);
 					stop(); 
 				} catch (Exception e) {
 					e.printStackTrace();

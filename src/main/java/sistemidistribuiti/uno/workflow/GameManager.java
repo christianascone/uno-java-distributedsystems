@@ -41,6 +41,7 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 	private UnoRemoteClient remoteClient;
 
 	private UNOTimer timer;
+	private UNOTimer timerForDraw;
 	
 	private GameGUIListener gameGUIListener;
 
@@ -85,6 +86,9 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 		
 		if (game != null && game.getCurrent() != null && isMyTurn(game)) {
 			logger.log(Level.INFO, "Turn Conditions passed");
+			// start own timer for mandatory draw
+			// create obj timer
+			startTimerForDraw();
 			enableGame();
 		}else{
 			startUnoTimer();
@@ -252,22 +256,34 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 		}
 	}
 	
-	public void timeUp() throws NextPlayerNotFoundException, RemoteException, NotBoundException {
-		Player player = game.getNextPlayer();
-		// if I am the next node in the turn I ll:
-		// - remove
-		Player crashedPlayer = game.getCurrent();
-		setItemStateList(crashedPlayer.getId(), PLAYER_STATE.CRASH);
-		game.setCurrent(player);
-		//remove crashed player			
-		game.getPlayers().remove(crashedPlayer);
-		
-		if (player.getId() == CurrentNode.getInstance().getId()){
-			// play
-			setGame(game);
+	public void timeUp(UNOTimer caller) throws NextPlayerNotFoundException, RemoteException, NotBoundException {
+		if (caller == timer){
+			Player player = game.getNextPlayer();
+			// if I am the next node in the turn I ll:
+			// - remove
+			Player crashedPlayer = game.getCurrent();
+			setItemStateList(crashedPlayer.getId(), PLAYER_STATE.CRASH);
+			game.setCurrent(player);
+			//remove crashed player			
+			game.getPlayers().remove(crashedPlayer);
 			
+			if (player.getId() == CurrentNode.getInstance().getId()){
+				// play
+				setGame(game);
+				
+			}else{
+				startUnoTimer();		// again
+			}
+		}else if(caller == timerForDraw){
+			// stop timer
+			this.timer.stop();
+			this.timer = null;
+			// mandatory draw
+			logger.log(Level.INFO, "################## mandatory draw ##################");
+			// pass the game
+			playMyTurn();
 		}else{
-			startUnoTimer();		// again
+			logger.log(Level.INFO, "################## timers error ##################");
 		}
 	}
 	
@@ -276,5 +292,10 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 		this.timer.start();
 	}
 
+	public void startTimerForDraw(){
+		// 10 seconds of gap to send the game obj
+		this.timerForDraw = new UNOTimer(this, 30);
+		this.timerForDraw.start();
+	}
 }
 	
