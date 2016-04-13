@@ -17,13 +17,11 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -35,10 +33,10 @@ import javax.swing.UIManager;
 import sistemidistribuiti.uno.exception.NextPlayerNotFoundException;
 import sistemidistribuiti.uno.model.card.CARD_COLOR;
 import sistemidistribuiti.uno.model.card.CARD_TYPE_ENUM;
-import sistemidistribuiti.uno.model.card.SPECIAL_CARD_TYPE;
 import sistemidistribuiti.uno.model.card.UnoCard;
 import sistemidistribuiti.uno.model.card.impl.NumberCard;
 import sistemidistribuiti.uno.model.card.impl.SpecialCard;
+import sistemidistribuiti.uno.model.player.PLAYER_STATE;
 import sistemidistribuiti.uno.model.player.Player;
 import sistemidistribuiti.uno.view.listener.GameGUIListener;
 import sistemidistribuiti.uno.workflow.GameManager;
@@ -66,6 +64,7 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	private Ellipse2D drawShape;
 	private Ellipse2D unoShape;
 	private int selectedCardIndex = -1;
+	private Font font;
 	
 	public static final String BUTTON_ENABLED = "enabled";
 	public static final String BUTTON_DISABLED = "disabled";
@@ -149,31 +148,33 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	    gamePanel.setPreferredSize(new Dimension(1280, 750));
 	    gamePanel.setSize(new Dimension(1280, 750));
 	    gamePanel.setBounds(0, 0, 1280, 750);
+	    
+		font =ImageManager.font;
 		
 		lblThisUser = new JLabel("user");
 		lblThisUser.setHorizontalAlignment(SwingConstants.CENTER);
 		lblThisUser.setForeground(Color.WHITE);
-		lblThisUser.setFont(new Font("Arista", Font.PLAIN, 30));
+		lblThisUser.setFont(font.deriveFont(Font.PLAIN, 30));
 		lblThisUser.setBounds(1080, 105, 132, 37);
 		gamePanel.add(lblThisUser);
 		
 		lblPlayers[0] = new JLabel("player2");
 		lblPlayers[0].setForeground(Color.WHITE);
-		lblPlayers[0].setFont(new Font("Arista", Font.PLAIN, 28));
+		lblPlayers[0].setFont(font.deriveFont(Font.PLAIN, 28));
 		lblPlayers[0].setBounds(63, 244, 120, 37);
 		lblPlayers[0].setVisible(false);
 		gamePanel.add(lblPlayers[0]);
 		
 		lblPlayers[1] = new JLabel("player3");
 		lblPlayers[1].setForeground(Color.WHITE);
-		lblPlayers[1].setFont(new Font("Arista", Font.PLAIN, 28));
+		lblPlayers[1].setFont(font.deriveFont(Font.PLAIN, 28));
 		lblPlayers[1].setBounds(515, 24, 120, 37);
 		lblPlayers[1].setVisible(false);
 		gamePanel.add(lblPlayers[1]);
 		
 		lblPlayers[2] = new JLabel("player4");
 		lblPlayers[2].setForeground(Color.WHITE);
-		lblPlayers[2].setFont(new Font("Arista", Font.PLAIN, 28));
+		lblPlayers[2].setFont(font.deriveFont(Font.PLAIN, 28));
 		lblPlayers[2].setBounds(951, 244, 120, 37);
 		lblPlayers[2].setVisible(false);
 		gamePanel.add(lblPlayers[2]);
@@ -186,7 +187,7 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		
 		lblColorChanged = new JLabel("");
 		lblColorChanged.setForeground(Color.WHITE);
-		lblColorChanged.setFont(new Font("Arista", Font.PLAIN, 32));
+		lblColorChanged.setFont(font.deriveFont(Font.PLAIN, 32));
 		lblColorChanged.setBounds(60, 81, 367, 37);
 		gamePanel.add(lblColorChanged);
 		
@@ -239,20 +240,22 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		this.loadCircle.setVisible(false);
 		setPlayerTurn();
 		
+		painter.clearImages();
+	    painter.captureDeck(gameManager.getGame().getDeck().getCardList().size());
+		try {
+			if(painter.getuserPositionList().isEmpty())
+				painter.setPlayerUIPosistion(gameManager);
+			painter.captureOtherPlayerHand(a, gameManager);
+		} catch (NextPlayerNotFoundException e) {
+			e.printStackTrace();
+		}
+		repaint();
+
 		try {
 			setOtherPlayersLabel();
 		} catch (NextPlayerNotFoundException e) {
 			e.printStackTrace();
 		}
-		
-		painter.clearImages();
-	    painter.captureDeck(gameManager.getGame().getDeck().getCardList().size());
-		try {
-			painter.captureOtherPlayerHand(a, gameManager);
-		} catch (NextPlayerNotFoundException e) {
-			e.printStackTrace();
-		}
-		logger.log(Level.INFO, "");
 	    
 		setupLastPlayedCardView();
 		setupCardView();
@@ -505,7 +508,7 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		ImageIcon loading = new ImageIcon(getClass().getResource("/images/ajax-loader.gif"));
 		lblMessage = new JLabel("waiting for other players...",JLabel.CENTER);
 		lblMessage.setForeground(Color.WHITE);
-		lblMessage.setFont(new Font("Arista", Font.PLAIN, 32));
+		lblMessage.setFont(font.deriveFont(Font.PLAIN, 32));
 		lblMessage.setHorizontalAlignment(SwingConstants.LEFT);
 		lblMessage.setBounds(80, 28, 388, 48);
 		gamePanel.add(lblMessage);		
@@ -518,30 +521,18 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	
 	private void setOtherPlayersLabel() throws NextPlayerNotFoundException{
 		List<Player> players = gameManager.getGame().getPlayers();
-		Player current = null;
-		for(Player player : players){
-			if(player.getId() == gameManager.getId()){
-				current = player;
-			}
-		}
-		List<Player> order = new ArrayList<>();
-		for (int i=0; i<players.size()-1; i++){
-			Player p = gameManager.getGame().getNextPlayer(current.getId());
-			order.add(p);
-			current = p;
-		}
-		switch(gameManager.getGame().getGameDirection()){
-		case BACKWARD:
-			Collections.reverse(order);
-			break;
-		case FORWARD:
-			break;
-		}
 		for (int i=0; i<lblPlayers.length; i++){
-			Player p = order.get(i);
-			lblPlayers[i].setText(p.getNickname());
-			lblPlayers[i].setVisible(true);
-			current = p;
+			if(gameManager.getPlayerState(painter.getuserPositionList().get(i))==PLAYER_STATE.ACTIVE){
+				for(Player p : players){
+					if(p.getId()==painter.getuserPositionList().get(i)){
+						lblPlayers[i].setVisible(true);
+						lblPlayers[i].setText(p.getNickname());
+						break;
+					}
+				}
+			}	else {
+				lblPlayers[i].setText("");
+			}
 		}
 	}
 	

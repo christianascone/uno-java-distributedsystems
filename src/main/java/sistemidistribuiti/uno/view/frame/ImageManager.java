@@ -10,8 +10,10 @@ import java.awt.GraphicsEnvironment;
 import java.awt.RenderingHints;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,6 +26,7 @@ import sistemidistribuiti.uno.model.card.SPECIAL_CARD_TYPE;
 
 public class ImageManager {
 	
+	public static Font font;
 	private HashMap<String, BufferedImage> compMap = new HashMap<String, BufferedImage>();
 	private HashMap<String, BufferedImage> cardMap = new HashMap<String, BufferedImage>();
 
@@ -31,8 +34,10 @@ public class ImageManager {
 		loadComponentImages();
 	    loadCardImages();
 	    try {
-			checkFont();
+			installFont();
 		} catch (FontFormatException | IOException e) {
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
 	}
@@ -81,23 +86,14 @@ public class ImageManager {
 		return image;
 	}
 	
-	public void checkFont() throws FontFormatException, IOException{
+	private void installFont() throws FontFormatException, IOException, URISyntaxException{
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		String []fonts=ge.getAvailableFontFamilyNames();
-		boolean installed = false;
-		for (int i = 0; i < fonts.length; i++) {
-			if(fonts[i].equals("Arista")){
-				installed = true;
-				break;
-			}
-		}
-		if (!installed){
-			InputStream font = getClass().getResourceAsStream("Arista.ttf");
-			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, font));
-		}
+		File fontFile = new File(this.getClass().getResource("/Arista.ttf").toURI());
+		font = Font.createFont(Font.TRUETYPE_FONT, fontFile);
+		ge.registerFont(font);
 	}
 
-	public void loadCardImages() {
+	private void loadCardImages() {
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 	    GraphicsDevice gs = ge.getDefaultScreenDevice();
 	    GraphicsConfiguration gc = gs.getDefaultConfiguration();

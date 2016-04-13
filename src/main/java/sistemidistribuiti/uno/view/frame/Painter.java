@@ -14,7 +14,6 @@ import java.awt.GraphicsEnvironment;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import sistemidistribuiti.uno.exception.NextPlayerNotFoundException;
@@ -34,6 +33,7 @@ public class Painter {
 	private BufferedImage buttonPlay;
 	private BufferedImage buttonDraw;
 	private BufferedImage buttonUno;
+	private List<Integer> allUsersInPosition;
 	ImageManager images = MainWindow.imageLoader;
 	private double angle = 4.2;
 	
@@ -49,6 +49,7 @@ public class Painter {
 	    buttonPlay = gc.createCompatibleImage(105, 43, BufferedImage.TRANSLUCENT);
 	    buttonDraw = gc.createCompatibleImage(105, 43, BufferedImage.TRANSLUCENT);
 	    buttonUno = gc.createCompatibleImage(127, 52, BufferedImage.TRANSLUCENT);
+	    allUsersInPosition = new ArrayList<>();
 	}
 	
 	public void setRenderingHints(Graphics2D g){
@@ -63,6 +64,21 @@ public class Painter {
 		images.clearImage(currentPlayerCardCapture);
 		images.clearImage(lastCardCapture);
 		images.clearImage(deckCapture);
+	}
+	
+	public List<Integer> getuserPositionList(){
+		return allUsersInPosition;
+	}
+	
+	public void setPlayerUIPosistion(GameManager gm) throws NextPlayerNotFoundException{
+		List<Player> players = gm.getGame().getPlayers();
+		int idCurrent = gm.getId();
+		for (int i=0; i<players.size()-1; i++){
+			Player p = gm.getGame().getNextPlayer(idCurrent);
+			int id = p.getId();
+			allUsersInPosition.add(id);
+			idCurrent = id;
+		}
 	}
 	
 	public void paintCard(Graphics2D g, String c, int x, int y){
@@ -188,32 +204,23 @@ public class Painter {
 	public void captureOtherPlayerHand(AffineTransform a, GameManager gm) throws NextPlayerNotFoundException{
 		a.setToIdentity();
 		List<Player> players = gm.getGame().getPlayers();
-		Player current = null;
-		for(Player player : players){
-			if(player.getId() == gm.getId()){
-				current = player;
-			}
-		}
-		List<Player> order = new ArrayList<>();
-		for (int i=0; i<players.size()-1; i++){
-			Player p = gm.getGame().getNextPlayer(current.getId());
-			order.add(p);
-			current = p;
-		}
-		switch(gm.getGame().getGameDirection()){
-		case BACKWARD:
-			Collections.reverse(order);
-			break;
-		case FORWARD:
-			break;
-		}
 		for (int i=0; i<playerCardCapture.length; i++){
 			images.clearImage(playerCardCapture[i]);
 			Graphics2D g = playerCardCapture[i].createGraphics();
 			setRenderingHints(g);
-			Player toDrawn = order.get(i);
+			Player toDrawn = null;
+			if(gm.getPlayerState(allUsersInPosition.get(i))==PLAYER_STATE.ACTIVE){
+				for(Player p : players){
+					if(p.getId()==allUsersInPosition.get(i)){
+						toDrawn = p;
+						break;
+					}
+				}
+			}	else {
+				continue;
+			}
 			int size = toDrawn.getCards().size();
-			if(size != 0 && gm.getPlayerState(toDrawn.getId())==PLAYER_STATE.ACTIVE){
+			if(size != 0){
 				double initialAngle = Math.toRadians(-angle * (size + 1) / 2);
 				a.rotate(initialAngle, 150, 342 - (5 * size / 4));
 				g.setTransform(a);

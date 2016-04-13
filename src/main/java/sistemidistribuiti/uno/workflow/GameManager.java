@@ -267,6 +267,7 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 			// - remove
 			Player crashedPlayer = game.getCurrent();
 			setItemStateList(crashedPlayer.getId(), PLAYER_STATE.CRASH);
+			updateGameField();
 			game.setCurrent(player);
 			//remove crashed player			
 			game.getPlayers().remove(crashedPlayer);
@@ -279,14 +280,11 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 				startUnoTimer();		// again
 			}
 		}else if(caller == timerForDraw){
-			// stop timer
 			// mandatory draw
 			drawCard();
-			logger.log(Level.INFO, "################## mandatory draw ##################");
 			// pass the game
 			gameGUIListener.refreshUILazyUser();
 			playMyTurn();
-
 		}else{
 			logger.log(Level.INFO, "################## timers error ##################");
 		}
