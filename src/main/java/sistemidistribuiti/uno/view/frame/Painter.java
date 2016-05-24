@@ -66,7 +66,7 @@ public class Painter {
 		images.clearImage(deckCapture);
 	}
 	
-	public List<Integer> getuserPositionList(){
+	public List<Integer> getUserPositionList(){
 		return allUsersInPosition;
 	}
 	
@@ -282,6 +282,6 @@ public class Painter {
 	}
 	
 	public void paintButtonUno(Graphics2D g){
-		g.drawImage(buttonUno, 800, 524, 127, 52, null);
+		g.drawImage(buttonUno, 800, 529, 127, 52, null);
 	}
 }
