@@ -198,7 +198,7 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	    emptyPlayerCardShape = new RoundRectangle2D.Float(380, 467, 120, 180, 7, 7);
 	    playShape = new Ellipse2D.Float(535, 674, 105, 43);
 	    drawShape = new Ellipse2D.Float(680, 674, 105, 43);
-	    unoShape = new Ellipse2D.Float(800, 524, 127, 52);
+	    unoShape = new Ellipse2D.Float(800, 529, 127, 52);
 		painter.captureDeck(108);
 		painter.capturePlayButton(BUTTON_DISABLED);
 		painter.captureDrawButton(BUTTON_DISABLED);
@@ -243,7 +243,7 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		painter.clearImages();
 	    painter.captureDeck(gameManager.getGame().getDeck().getCardList().size());
 		try {
-			if(painter.getuserPositionList().isEmpty())
+			if(painter.getUserPositionList().isEmpty())
 				painter.setPlayerUIPosistion(gameManager);
 			painter.captureOtherPlayerHand(a, gameManager);
 		} catch (NextPlayerNotFoundException e) {
@@ -522,9 +522,9 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	private void setOtherPlayersLabel() throws NextPlayerNotFoundException{
 		List<Player> players = gameManager.getGame().getPlayers();
 		for (int i=0; i<lblPlayers.length; i++){
-			if(gameManager.getPlayerState(painter.getuserPositionList().get(i))==PLAYER_STATE.ACTIVE){
+			if(gameManager.getPlayerState(painter.getUserPositionList().get(i))==PLAYER_STATE.ACTIVE){
 				for(Player p : players){
-					if(p.getId()==painter.getuserPositionList().get(i)){
+					if(p.getId()==painter.getUserPositionList().get(i)){
 						lblPlayers[i].setVisible(true);
 						lblPlayers[i].setText(p.getNickname());
 						break;
