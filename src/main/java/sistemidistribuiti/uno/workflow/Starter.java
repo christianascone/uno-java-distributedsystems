@@ -45,10 +45,10 @@ public class Starter {
 
 	public static void startGame(String[] args, GameGUIListener guiListener) throws IOException,
 			NotBoundException {
-		URL url = UnoRemoteServer.class.getClassLoader().getResource(
-				"java.policy");
+		File file = new File("java.policy");
+		logger.log(Level.INFO, String.format("Policy url -> %s", file.getAbsolutePath()));
 
-		System.setProperty("java.security.policy", url.getPath());
+		System.setProperty("java.security.policy", file.getAbsolutePath());
 		if (System.getSecurityManager() == null) {
 			System.setSecurityManager(new SecurityManager());
 		}

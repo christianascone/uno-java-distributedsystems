@@ -11,6 +11,7 @@ import java.awt.RenderingHints;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -19,6 +20,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.imageio.ImageIO;
+
+import org.apache.commons.io.IOUtils;
 
 import sistemidistribuiti.uno.model.card.CARD_COLOR;
 import sistemidistribuiti.uno.model.card.SPECIAL_CARD_TYPE;
@@ -88,8 +91,13 @@ public class ImageManager {
 	
 	private void installFont() throws FontFormatException, IOException, URISyntaxException{
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		File fontFile = new File(this.getClass().getResource("/Arista.ttf").toURI());
-		font = Font.createFont(Font.TRUETYPE_FONT, fontFile);
+		InputStream is = ImageManager.class.getClassLoader().getResourceAsStream("Arista.ttf");
+		File tempFile = File.createTempFile("temp", "font");
+		tempFile.deleteOnExit();
+		try (FileOutputStream out = new FileOutputStream(tempFile)) {
+            IOUtils.copy(is, out);
+        }
+		font = Font.createFont(Font.TRUETYPE_FONT, tempFile);
 		ge.registerFont(font);
 	}
 
