@@ -122,9 +122,9 @@ public class MainWindow extends JFrame implements GameGUIListener{
                 painter.paintBackground(g);
                 painter.paintDeckCapture(g);
                 if(gameManager.getGame()!=null){
-                    painter.paintOPCapture(g, a);
                     painter.paintPlayerCapture(g);
                     painter.paintLastCard(g);
+                    painter.paintOPCapture(g, a);
                     painter.paintButtonPlay(g);
                     painter.paintButtonDraw(g);
                     painter.paintButtonUno(g);

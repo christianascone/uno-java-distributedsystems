@@ -15,6 +15,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import sistemidistribuiti.uno.exception.NextPlayerNotFoundException;
 import sistemidistribuiti.uno.model.card.UnoCard;
@@ -25,6 +27,8 @@ import sistemidistribuiti.uno.model.player.Player;
 import sistemidistribuiti.uno.workflow.GameManager;
 
 public class Painter {
+	
+	private final static Logger logger = Logger.getLogger(MainWindow.class.getName());
 	
 	private BufferedImage deckCapture;
 	private BufferedImage[] playerCardCapture = new BufferedImage[3];
@@ -212,6 +216,7 @@ public class Painter {
 			if(gm.getGame().getPlayerState(allUsersInPosition.get(i))==PLAYER_STATE.ACTIVE){
 				for(Player p : players){
 					if(p.getId()==allUsersInPosition.get(i)){
+						logger.log(Level.INFO, "Drawing "+ p.getNickname()+" cards");
 						toDrawn = p;
 						break;
 					}
@@ -221,6 +226,7 @@ public class Painter {
 			}
 			if(toDrawn != null){
 				int size = toDrawn.getCards().size();
+				logger.log(Level.INFO, "Number of cards: "+ size);
 				if(size != 0){
 					double initialAngle = Math.toRadians(-angle * (size + 1) / 2);
 					a.rotate(initialAngle, 150, 342 - (5 * size / 4));
@@ -238,6 +244,7 @@ public class Painter {
 				a.setToIdentity();
 			}
 		}
+		logger.log(Level.INFO, "Drawing finished");
 	}
 	
 	public void captureDeck(int deckSize){
@@ -254,9 +261,11 @@ public class Painter {
 	public void paintOPCapture(Graphics2D g, AffineTransform a){
 		a.setToIdentity();
 		g.setTransform(a);
+		logger.log(Level.INFO, "Painting other players cards");
 		g.drawImage(playerCardCapture[0], 75, 266, 400, 230, null);
 		g.drawImage(playerCardCapture[1], 523, 46, 400, 230, null);
 		g.drawImage(playerCardCapture[2], 953, 266, 400, 230, null);
+		logger.log(Level.INFO, "Painting finished");
 	}
 	
 	public void paintPlayerCapture(Graphics2D g){

@@ -259,7 +259,6 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 			// - remove
 			Player crashedPlayer = game.getCurrent();
 			game.setPlayerState(crashedPlayer.getId(), PLAYER_STATE.CRASH);
-			//updateGameField();
 			game.setCurrent(player);
 			//remove crashed player			
 			game.getPlayers().remove(crashedPlayer);
@@ -268,7 +267,7 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 				// play
 				setGame(game);
 			}else{
-				startUnoTimer();		// again
+				startUnoTimer();		// again 
 				updateGameField();
 			}
 		}else if(caller == timerForDraw){
@@ -289,7 +288,7 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 
 	public void startTimerForDraw(){
 		// 10 seconds of gap to send the game obj
-		this.timerForDraw = new UNOTimer(this, 300);
+		this.timerForDraw = new UNOTimer(this, 60);
 		this.timerForDraw.start();
 	}
 }
