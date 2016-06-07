@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import sistemidistribuiti.uno.exception.NextPlayerNotFoundException;
 import sistemidistribuiti.uno.model.game.Game;
 import sistemidistribuiti.uno.model.player.CurrentNode;
+import sistemidistribuiti.uno.model.player.PLAYER_STATE;
 import sistemidistribuiti.uno.model.player.Player;
 import sistemidistribuiti.uno.rmi.interfaces.UnoRemoteGameInterface;
 import sistemidistribuiti.uno.rmi.utils.ServerHelper;
@@ -25,9 +26,11 @@ import sistemidistribuiti.uno.utils.Host;
 public class UnoRemoteClient {
 	private final static Logger logger = Logger.getLogger(UnoRemoteClient.class.getName());
 	
+	private int myId;
 	private List<Host> hosts;
 
 	public UnoRemoteClient(Game game, int myId) throws RemoteException, NotBoundException {
+		this.myId = myId;
 		hosts = new LinkedList<Host>();
 		
 		List<Player> players = game.getPlayers();
@@ -45,19 +48,23 @@ public class UnoRemoteClient {
 	public void broadcastNewGame(Game game) throws RemoteException, NotBoundException{
 		for(Host remote : hosts){
 			remote.getServer().setupGame(game);
+				
 		}
 	}
 	
 
 	public void broadcastUpdatedGame(Game game) throws RemoteException, NotBoundException, NextPlayerNotFoundException{
+		
 		Boolean booError = false;
 		for(Host remote : hosts){
 			try{
 				remote.getServer().sendGame(game);				
-			}catch(Exception e){				
+			}
+			catch(Exception e){				
 				for(Player player : game.getPlayers()){
 					if (player.getId() == remote.getId()){
 						game.getPlayers().remove(player);
+						game.setPlayerState(player.getId(), PLAYER_STATE.CRASH);
 						break;
 					}
 				}

@@ -46,7 +46,7 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 	private GameGUIListener gameGUIListener;
 
 	private Game game;
-	private HashMap<Integer,PLAYER_STATE> playersAvailability = new HashMap<Integer,PLAYER_STATE>();
+	
 
 	public GameManager(GameGUIListener gameGuiListener) {
 		this.gameGUIListener = gameGuiListener;
@@ -55,23 +55,15 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 	public Game getGame() {
 		return game;
 	}
-	
-	public void setItemStateList(int id, PLAYER_STATE state){
-		playersAvailability.put(id, state);
-	}
-	
-	public PLAYER_STATE getPlayerState(int id){
-		return playersAvailability.get(id);
-	}
 
 	@Override
 	public void setGame(Game game) throws RemoteException, NotBoundException {
 		if (this.timer != null) this.timer.stop();
 		this.timer = null;
-		this.game = game;		
+		this.game = game;	
+		List<Player> players = game.getPlayers();
 		// check if one of the player won
-		if(game.playerWon()){
-			List<Player> players = game.getPlayers();
+		if(game.playerWon()){	
 			for(Player player : players){
 				if(player.getState() == PLAYER_STATE.WINNER){
 					gameGUIListener.showWinnerAlert(player);
@@ -266,8 +258,8 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 			// if I am the next node in the turn I ll:
 			// - remove
 			Player crashedPlayer = game.getCurrent();
-			setItemStateList(crashedPlayer.getId(), PLAYER_STATE.CRASH);
-			updateGameField();
+			game.setPlayerState(crashedPlayer.getId(), PLAYER_STATE.CRASH);
+			//updateGameField();
 			game.setCurrent(player);
 			//remove crashed player			
 			game.getPlayers().remove(crashedPlayer);
@@ -275,9 +267,9 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 			if (player.getId() == CurrentNode.getInstance().getId()){
 				// play
 				setGame(game);
-				
 			}else{
 				startUnoTimer();		// again
+				updateGameField();
 			}
 		}else if(caller == timerForDraw){
 			// mandatory draw
@@ -291,13 +283,13 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 	}
 	
 	public void startUnoTimer(){
-		this.timer = new UNOTimer(this, 40);
+		this.timer = new UNOTimer(this, 30);
 		this.timer.start();
 	}
 
 	public void startTimerForDraw(){
 		// 10 seconds of gap to send the game obj
-		this.timerForDraw = new UNOTimer(this, 30);
+		this.timerForDraw = new UNOTimer(this, 300);
 		this.timerForDraw.start();
 	}
 }

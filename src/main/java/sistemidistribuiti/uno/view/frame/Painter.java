@@ -209,7 +209,7 @@ public class Painter {
 			Graphics2D g = playerCardCapture[i].createGraphics();
 			setRenderingHints(g);
 			Player toDrawn = null;
-			if(gm.getPlayerState(allUsersInPosition.get(i))==PLAYER_STATE.ACTIVE){
+			if(gm.getGame().getPlayerState(allUsersInPosition.get(i))==PLAYER_STATE.ACTIVE){
 				for(Player p : players){
 					if(p.getId()==allUsersInPosition.get(i)){
 						toDrawn = p;
@@ -219,22 +219,24 @@ public class Painter {
 			}	else {
 				continue;
 			}
-			int size = toDrawn.getCards().size();
-			if(size != 0){
-				double initialAngle = Math.toRadians(-angle * (size + 1) / 2);
-				a.rotate(initialAngle, 150, 342 - (5 * size / 4));
-				g.setTransform(a);
-				int x = 70; 
-				int y = 25 - (5 * size / 4); 
-				for (int j = size; j >= 0; j--) {
-					a.rotate(Math.toRadians(angle), 150, 342 - (5 * size / 4));
+			if(toDrawn != null){
+				int size = toDrawn.getCards().size();
+				if(size != 0){
+					double initialAngle = Math.toRadians(-angle * (size + 1) / 2);
+					a.rotate(initialAngle, 150, 342 - (5 * size / 4));
 					g.setTransform(a);
-					if (j != size) {
-						paintCard(g, "back", x, y, 100, 140);
+					int x = 70; 
+					int y = 25 - (5 * size / 4); 
+					for (int j = size; j >= 0; j--) {
+						a.rotate(Math.toRadians(angle), 150, 342 - (5 * size / 4));
+						g.setTransform(a);
+						if (j != size) {
+							paintCard(g, "back", x, y, 100, 140);
+						}
 					}
 				}
+				a.setToIdentity();
 			}
-			a.setToIdentity();
 		}
 	}
 	

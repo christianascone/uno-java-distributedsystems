@@ -2,6 +2,7 @@ package sistemidistribuiti.uno.model.game;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
@@ -28,6 +29,8 @@ public class Game implements Serializable {
 	private Player current;
 	private Direction gameDirection;
 	private boolean colorChanged;
+	
+	private HashMap<Integer,PLAYER_STATE> playersAvailability = new HashMap<Integer,PLAYER_STATE>();
 
 	public Game(List<Player> players, Deck deck) {
 		this.players = players;
@@ -43,6 +46,18 @@ public class Game implements Serializable {
 
 		this.gameDirection = Direction.getDefault();
 		this.colorChanged = false;
+		
+		for (Player p : players){
+			this.playersAvailability.put(p.getId(), PLAYER_STATE.ACTIVE);
+		}
+	}
+	
+	public void setPlayerState(int id, PLAYER_STATE state){
+		playersAvailability.put(id, state);
+	}
+	
+	public PLAYER_STATE getPlayerState(int id){
+		return playersAvailability.get(id);
 	}
 
 	public List<Player> getPlayers() {

@@ -141,7 +141,6 @@ public class Starter {
 				UnoCard draw = newDeck.getCardList().remove(0);
 				player.addCard(draw);
 			}
-			gameManager.setItemStateList(player.getId(), PLAYER_STATE.ACTIVE);
 		}
 
 		int leaderId = configBean.getLeaderId();

@@ -36,6 +36,7 @@ import sistemidistribuiti.uno.model.card.CARD_TYPE_ENUM;
 import sistemidistribuiti.uno.model.card.UnoCard;
 import sistemidistribuiti.uno.model.card.impl.NumberCard;
 import sistemidistribuiti.uno.model.card.impl.SpecialCard;
+import sistemidistribuiti.uno.model.game.Game;
 import sistemidistribuiti.uno.model.player.PLAYER_STATE;
 import sistemidistribuiti.uno.model.player.Player;
 import sistemidistribuiti.uno.view.listener.GameGUIListener;
@@ -79,7 +80,7 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	private JLabel lblMessage;
 	private JLabel loadCircle;
 	private JLabel[] lblPlayers = new JLabel[3];
-	private JLabel lblColorChanged;
+	private JLabel lblInfo;
 
 	/**
 	 * Launch the application.
@@ -185,11 +186,11 @@ public class MainWindow extends JFrame implements GameGUIListener{
 				.getScaledInstance(120, 180,Image.SCALE_SMOOTH)));
 		gamePanel.add(lastPlayedCard);
 		
-		lblColorChanged = new JLabel("");
-		lblColorChanged.setForeground(Color.WHITE);
-		lblColorChanged.setFont(font.deriveFont(Font.PLAIN, 32));
-		lblColorChanged.setBounds(60, 81, 367, 37);
-		gamePanel.add(lblColorChanged);
+		lblInfo = new JLabel("");
+		lblInfo.setForeground(Color.WHITE);
+		lblInfo.setFont(font.deriveFont(Font.PLAIN, 32));
+		lblInfo.setBounds(60, 81, 367, 37);
+		gamePanel.add(lblInfo);
 		
 		this.stateDrawButton = BUTTON_DISABLED;
 		this.statePlayButton = BUTTON_DISABLED;
@@ -275,10 +276,10 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	
 	private void setInfoColor() {
 		if (gameManager.getGame().isColorChanged()){
-			this.lblColorChanged.setText("The color is "+ gameManager.getLastPlayedCard().getColor() + " now!");
-			this.lblColorChanged.setVisible(true);
+			this.lblInfo.setText("The color is "+ gameManager.getLastPlayedCard().getColor() + " now!");
+			this.lblInfo.setVisible(true);
 		} else {
-			this.lblColorChanged.setVisible(false);
+			this.lblInfo.setVisible(false);
 		}	
 		gameManager.getGame().setColorChanged(false);
 	}
@@ -331,6 +332,11 @@ public class MainWindow extends JFrame implements GameGUIListener{
 			e1.printStackTrace();
 		}
 		repaint();
+		try {
+			setOtherPlayersLabel();
+		} catch (NextPlayerNotFoundException e) {
+			e.printStackTrace();
+		}
 		setPlayerTurn();
 		setInfoColor();		
 	}
@@ -522,7 +528,7 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	private void setOtherPlayersLabel() throws NextPlayerNotFoundException{
 		List<Player> players = gameManager.getGame().getPlayers();
 		for (int i=0; i<lblPlayers.length; i++){
-			if(gameManager.getPlayerState(painter.getUserPositionList().get(i))==PLAYER_STATE.ACTIVE){
+			if(gameManager.getGame().getPlayerState(painter.getUserPositionList().get(i))==PLAYER_STATE.ACTIVE){
 				for(Player p : players){
 					if(p.getId()==painter.getUserPositionList().get(i)){
 						lblPlayers[i].setVisible(true);

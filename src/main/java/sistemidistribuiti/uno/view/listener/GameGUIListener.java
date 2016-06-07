@@ -19,4 +19,5 @@ public interface GameGUIListener {
 	void showWinnerAlert(Player player);
 	
 	void refreshUILazyUser();
+
 }
