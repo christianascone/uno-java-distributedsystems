@@ -36,9 +36,6 @@ public class UnoRemoteClient {
 		List<Player> players = game.getPlayers();
 		
 		for(Player player : players){
-			if(player.getId() == myId){
-				continue;
-			}
 			
 			Host currHost = new Host(ServerHelper.setupClient(player.getHost(), player.getNickname()), player.getId(), player.getHost(),player.getNickname());
 			hosts.add(currHost);
