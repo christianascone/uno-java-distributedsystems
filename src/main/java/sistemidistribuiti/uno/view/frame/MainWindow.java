@@ -281,7 +281,6 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		} else {
 			this.lblInfo.setVisible(false);
 		}	
-		gameManager.getGame().setColorChanged(false);
 	}
 
 	/**
@@ -313,6 +312,8 @@ public class MainWindow extends JFrame implements GameGUIListener{
 			return;
 		}
 		
+		gameManager.getGame().setColorChanged(false);
+		
 		List<UnoCard> myCards = gameManager.getMyCards();
 		UnoCard selected = myCards.get(selectedCardIndex);
 		myCards.remove(selected);
@@ -323,7 +324,7 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		}
 		
 		manageCard(selected);
-		
+		setInfoColor();		
 		passTurn(myCards);
 		
 		try {
@@ -338,7 +339,6 @@ public class MainWindow extends JFrame implements GameGUIListener{
 			e.printStackTrace();
 		}
 		setPlayerTurn();
-		setInfoColor();		
 	}
 
 	/**
