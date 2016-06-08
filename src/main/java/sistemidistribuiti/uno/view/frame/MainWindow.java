@@ -556,17 +556,19 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	private void setPlayerShapes(){
 		List<UnoCard> cards = gameManager.getMyCards();
 		int handsize = cards.size();
-		int x = 10 - (handsize/7)*5;
-		if (handsize < 4) x = 80;
-		int space = 590/handsize -15;
-		if (space > 140) space =140;
-	    playerHandShapes.clear();
-	    for (int i = 0; i < handsize; i++) {
-	    	if(i==0) a.translate(x, 0);
-	        playerHandShapes.add(a.createTransformedShape(emptyPlayerCardShape));
-	        a.translate(space, 0);
-	    }
-	    a.setToIdentity();
+		if(handsize != 0){
+			int x = 10 - (handsize/7)*5;
+			if (handsize < 4) x = 80;
+			int space = 590/handsize -15;
+			if (space > 140) space =140;
+		    playerHandShapes.clear();
+		    for (int i = 0; i < handsize; i++) {
+		    	if(i==0) a.translate(x, 0);
+		        playerHandShapes.add(a.createTransformedShape(emptyPlayerCardShape));
+		        a.translate(space, 0);
+		    }
+		    a.setToIdentity();
+		}
 	}
 	
 	public String getStatePlayButton() {
