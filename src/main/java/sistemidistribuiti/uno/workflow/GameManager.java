@@ -282,13 +282,13 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 	}
 	
 	public void startUnoTimer(){
-		this.timer = new UNOTimer(this, 30);
+		this.timer = new UNOTimer(this, 40);
 		this.timer.start();
 	}
 
 	public void startTimerForDraw(){
 		// 10 seconds of gap to send the game obj
-		this.timerForDraw = new UNOTimer(this, 60);
+		this.timerForDraw = new UNOTimer(this, 30);
 		this.timerForDraw.start();
 	}
 }
