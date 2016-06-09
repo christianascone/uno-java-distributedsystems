@@ -64,9 +64,13 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 		List<Player> players = game.getPlayers();
 		// check if one of the player won
 		if(game.playerWon()){	
-			for(Player player : players){
+			for(final Player player : players){
 				if(player.getState() == PLAYER_STATE.WINNER){
-					gameGUIListener.showWinnerAlert(player);
+					new Thread(new Runnable() {
+					    public void run() {
+					    	gameGUIListener.showWinnerAlert(player);
+					    }
+					}).start();
 				}
 			}
 			return;
