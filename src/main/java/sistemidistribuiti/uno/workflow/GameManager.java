@@ -279,6 +279,9 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 		}else{
 			logger.log(Level.INFO, "################## timers error ##################");
 			logger.log(Level.INFO, "seconds " + caller.seconds);
+			logger.log(Level.INFO, "timer " + timer.toString());
+			logger.log(Level.INFO, "timer for draw " + timerForDraw.toString());
+			logger.log(Level.INFO, "caller " + caller.toString());
 		}
 	}
 	
