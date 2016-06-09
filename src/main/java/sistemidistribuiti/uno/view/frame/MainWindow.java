@@ -221,7 +221,6 @@ public class MainWindow extends JFrame implements GameGUIListener{
 
 	@Override
 	public void playMyTurn() {
-		setupCardView();
 		
 		if(atLeastOneCardPlayable()){
 			logger.log(Level.INFO, "5 - at least 1");
@@ -229,11 +228,13 @@ public class MainWindow extends JFrame implements GameGUIListener{
 			painter.capturePlayButton(BUTTON_ENABLED);
 		}else{
 			logger.log(Level.INFO, "5.1 - at least 1 NOT ");
+			setStatePlayButton(BUTTON_DISABLED);
+			painter.capturePlayButton(BUTTON_DISABLED);
 			painter.captureDrawButton(BUTTON_ENABLED);
 			setStateDrawButton(BUTTON_ENABLED);
 		}
+		setupCardView();
 		logger.log(Level.INFO, "Finished in playMyTurn GUI");
-		repaint();
 	}
 
 	@Override
