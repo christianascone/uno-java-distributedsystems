@@ -10,7 +10,7 @@ import sistemidistribuiti.uno.exception.NextPlayerNotFoundException;
 public class UNOTimer {
 
 	private TimerCallback callback;
-	private int seconds;
+	public int seconds;
 	private TimerTask timerTask;
 	private Timer timer;
 	

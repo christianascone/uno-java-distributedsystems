@@ -278,6 +278,7 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 			playMyTurn();
 		}else{
 			logger.log(Level.INFO, "################## timers error ##################");
+			logger.log(Level.INFO, "seconds " + caller.seconds);
 		}
 	}
 	
