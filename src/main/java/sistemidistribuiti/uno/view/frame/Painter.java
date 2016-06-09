@@ -52,7 +52,7 @@ public class Painter {
 	    currentPlayerCardCapture = gc.createCompatibleImage(594, 330, BufferedImage.TRANSLUCENT);
 	    buttonPlay = gc.createCompatibleImage(105, 43, BufferedImage.TRANSLUCENT);
 	    buttonDraw = gc.createCompatibleImage(105, 43, BufferedImage.TRANSLUCENT);
-	    buttonUno = gc.createCompatibleImage(127, 52, BufferedImage.TRANSLUCENT);
+	    buttonUno = gc.createCompatibleImage(166, 68, BufferedImage.TRANSLUCENT);
 	    allUsersInPosition = new ArrayList<>();
 	}
 	
@@ -134,12 +134,12 @@ public class Painter {
 		setRenderingHints(g);
 		switch (state){
 		case MainWindow.BUTTON_ENABLED:
-			g.drawImage(images.getComp("uno.png"),0, 0, 127, 52, null);
+			g.drawImage(images.getComp("uno.png"),0, 0, 166, 68, null);
 			break;
 		case MainWindow.BUTTON_DISABLED:
 			break;
 		case MainWindow.BUTTON_FOCUS:
-			g.drawImage(images.getComp("unoFocus.png"), 0, 0, 127, 52, null);
+			g.drawImage(images.getComp("unoFocus.png"), 0, 0, 166, 68, null);
 			break;
 		}
 	}
@@ -288,6 +288,6 @@ public class Painter {
 	}
 	
 	public void paintButtonUno(Graphics2D g){
-		g.drawImage(buttonUno, 800, 529, 127, 52, null);
+		g.drawImage(buttonUno, 730, 544, 166, 68, null);
 	}
 }

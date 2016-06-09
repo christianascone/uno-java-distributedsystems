@@ -199,7 +199,7 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	    emptyPlayerCardShape = new RoundRectangle2D.Float(380, 467, 120, 180, 7, 7);
 	    playShape = new Ellipse2D.Float(535, 674, 105, 43);
 	    drawShape = new Ellipse2D.Float(680, 674, 105, 43);
-	    unoShape = new Ellipse2D.Float(800, 529, 127, 52);
+	    unoShape = new Ellipse2D.Float(730, 544, 166, 68);
 		painter.captureDeck(108);
 		painter.capturePlayButton(BUTTON_DISABLED);
 		painter.captureDrawButton(BUTTON_DISABLED);
@@ -290,8 +290,8 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	 */
 	private void setupCardView() {
 		painter.capturePlayerHand(a, gameManager, selectedCardIndex);
-		setPlayerShapes();
 		repaint();
+		setPlayerShapes();
 	}
 	
 	/**
@@ -635,6 +635,8 @@ public class MainWindow extends JFrame implements GameGUIListener{
 			if (playShape.contains(p) && !getStatePlayButton().equals(BUTTON_DISABLED)
 					&& selectedCardIndex != -1) {
 				playCard();
+				selectedCardIndex = -1;
+				this.oldIndex = -1;
 				return;
 			} else if (drawShape.contains(p) && !getStateDrawButton().equals(BUTTON_DISABLED)){
 				drawCard();
