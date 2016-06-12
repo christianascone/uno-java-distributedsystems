@@ -15,8 +15,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import sistemidistribuiti.uno.exception.NextPlayerNotFoundException;
 import sistemidistribuiti.uno.model.card.UnoCard;
@@ -27,8 +25,6 @@ import sistemidistribuiti.uno.model.player.Player;
 import sistemidistribuiti.uno.workflow.GameManager;
 
 public class Painter {
-	
-	private final static Logger logger = Logger.getLogger(MainWindow.class.getName());
 	
 	private BufferedImage deckCapture;
 	private BufferedImage[] playerCardCapture = new BufferedImage[3];
@@ -48,8 +44,8 @@ public class Painter {
 		deckCapture = gc.createCompatibleImage(200, 300, BufferedImage.TRANSLUCENT);
 	    lastCardCapture = gc.createCompatibleImage(120, 180, BufferedImage.TRANSLUCENT);
 	    for (int i=0; i<playerCardCapture.length; i++)
-	    	playerCardCapture[i] = gc.createCompatibleImage(400, 230, BufferedImage.TRANSLUCENT);
-	    currentPlayerCardCapture = gc.createCompatibleImage(594, 330, BufferedImage.TRANSLUCENT);
+	    	playerCardCapture[i] = gc.createCompatibleImage(420, 230, BufferedImage.TRANSLUCENT);
+	    currentPlayerCardCapture = gc.createCompatibleImage(694, 330, BufferedImage.TRANSLUCENT);
 	    buttonPlay = gc.createCompatibleImage(105, 43, BufferedImage.TRANSLUCENT);
 	    buttonDraw = gc.createCompatibleImage(105, 43, BufferedImage.TRANSLUCENT);
 	    buttonUno = gc.createCompatibleImage(166, 68, BufferedImage.TRANSLUCENT);
@@ -170,11 +166,13 @@ public class Painter {
 		List<UnoCard> cards = gameManager.getMyCards();
 		int handsize = cards.size();
 		if(handsize != 0){
-			int x = 10 - (handsize/7)*5;
-			if (handsize < 4) x = 80;
+			int x = 60 - (handsize/7)*5;
+			if (handsize < 4) x = 130;
+			else if( handsize > 10) x = 50;
 			int y = 15;
 			int space = 590/handsize -15;
-			if (space > 140) space =140;
+			if (space > 140) space = 140;
+			else if (space < 38) space = 38;
 			int showX = 0, showY = 0;
 			String showCode = null;
 			for (int i = 0; i < handsize; i++) {
@@ -229,13 +227,23 @@ public class Painter {
 					double initialAngle = Math.toRadians(-angle * (size + 1) / 2);
 					a.rotate(initialAngle, 150, 342 - (5 * size / 4));
 					g.setTransform(a);
-					int x = 70; 
+					int x = 0;
+					if(size > 16){
+						size = 16;
+						x = 90;
+					}
+					else if(size > 10){
+						x = 100;
+					}
+					else {x = 70;} 
 					int y = 25 - (5 * size / 4); 
 					for (int j = size; j >= 0; j--) {
 						a.rotate(Math.toRadians(angle), 150, 342 - (5 * size / 4));
 						g.setTransform(a);
-						if (j != size) {
+						if (j != size && size <= 10) {
 							paintCard(g, "back", x, y, 100, 140);
+						} else if (j != size && size > 10){
+							paintCard(g, "back", x, y, 80, 120);
 						}
 					}
 				}
@@ -258,13 +266,13 @@ public class Painter {
 	public void paintOPCapture(Graphics2D g, AffineTransform a){
 		a.setToIdentity();
 		g.setTransform(a);
-		g.drawImage(playerCardCapture[0], 75, 266, 400, 230, null);
-		g.drawImage(playerCardCapture[1], 523, 46, 400, 230, null);
-		g.drawImage(playerCardCapture[2], 953, 266, 400, 230, null);
+		g.drawImage(playerCardCapture[0], 65, 266, 420, 230, null);
+		g.drawImage(playerCardCapture[1], 513, 46, 420, 230, null);
+		g.drawImage(playerCardCapture[2], 923, 266, 420, 230, null);
 	}
 	
 	public void paintPlayerCapture(Graphics2D g){
-		g.drawImage(currentPlayerCardCapture, 380, 467, 594, 330, null);
+		g.drawImage(currentPlayerCardCapture, 330, 467, 694, 330, null);
 	}
 	
 	public void paintDeckCapture(Graphics2D g){

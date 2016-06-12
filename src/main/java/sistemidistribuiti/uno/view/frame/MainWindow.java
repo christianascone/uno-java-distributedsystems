@@ -36,7 +36,6 @@ import sistemidistribuiti.uno.model.card.CARD_TYPE_ENUM;
 import sistemidistribuiti.uno.model.card.UnoCard;
 import sistemidistribuiti.uno.model.card.impl.NumberCard;
 import sistemidistribuiti.uno.model.card.impl.SpecialCard;
-import sistemidistribuiti.uno.model.game.Game;
 import sistemidistribuiti.uno.model.player.PLAYER_STATE;
 import sistemidistribuiti.uno.model.player.Player;
 import sistemidistribuiti.uno.view.listener.GameGUIListener;
@@ -59,8 +58,7 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	private Timer timer;
 	private boolean flag;
 	
-	private ArrayList<Shape> playerHandShapes = new ArrayList<Shape>();
-	private RoundRectangle2D emptyPlayerCardShape;
+	private ArrayList<Shape> playerHandShapes;
 	private Ellipse2D playShape;
 	private Ellipse2D drawShape;
 	private Ellipse2D unoShape;
@@ -131,6 +129,10 @@ public class MainWindow extends JFrame implements GameGUIListener{
                 }
                 a.setToIdentity();
                 g.setTransform(a);
+                //testing shapes
+                for (Shape s : playerHandShapes) {
+                    g.draw(s);
+                }
             }
         };
 		getContentPane().add(gamePanel, BorderLayout.SOUTH);
@@ -176,7 +178,7 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		lblPlayers[2] = new JLabel("player4");
 		lblPlayers[2].setForeground(Color.WHITE);
 		lblPlayers[2].setFont(font.deriveFont(Font.PLAIN, 28));
-		lblPlayers[2].setBounds(951, 244, 120, 37);
+		lblPlayers[2].setBounds(931, 244, 120, 37);
 		lblPlayers[2].setVisible(false);
 		gamePanel.add(lblPlayers[2]);
 		
@@ -196,7 +198,7 @@ public class MainWindow extends JFrame implements GameGUIListener{
 		this.statePlayButton = BUTTON_DISABLED;
 		this.stateUnoButton = BUTTON_DISABLED;
 		
-	    emptyPlayerCardShape = new RoundRectangle2D.Float(380, 467, 120, 180, 7, 7);
+		playerHandShapes = new ArrayList<Shape>();
 	    playShape = new Ellipse2D.Float(535, 674, 105, 43);
 	    drawShape = new Ellipse2D.Float(680, 674, 105, 43);
 	    unoShape = new Ellipse2D.Float(730, 544, 166, 68);
@@ -221,6 +223,7 @@ public class MainWindow extends JFrame implements GameGUIListener{
 
 	@Override
 	public void playMyTurn() {
+		setupCardView();
 		
 		if(atLeastOneCardPlayable()){
 			logger.log(Level.INFO, "5 - at least 1");
@@ -233,7 +236,7 @@ public class MainWindow extends JFrame implements GameGUIListener{
 			painter.captureDrawButton(BUTTON_ENABLED);
 			setStateDrawButton(BUTTON_ENABLED);
 		}
-		setupCardView();
+		repaint();
 		logger.log(Level.INFO, "Finished in playMyTurn GUI");
 	}
 
@@ -557,18 +560,23 @@ public class MainWindow extends JFrame implements GameGUIListener{
 	private void setPlayerShapes(){
 		List<UnoCard> cards = gameManager.getMyCards();
 		int handsize = cards.size();
+		int anchorX = 330;
 		if(handsize != 0){
-			int x = 10 - (handsize/7)*5;
-			if (handsize < 4) x = 80;
+			int x = 60 - (handsize/7)*5;
+			if (handsize < 4) x = 130;
+			else if( handsize > 10) x = 50;
 			int space = 590/handsize -15;
-			if (space > 140) space =140;
-		    playerHandShapes.clear();
+			if (space > 140) space = 140;
+			if (space < 38) space = 38;
+		    this.playerHandShapes.clear();
 		    for (int i = 0; i < handsize; i++) {
-		    	if(i==0) a.translate(x, 0);
-		        playerHandShapes.add(a.createTransformedShape(emptyPlayerCardShape));
-		        a.translate(space, 0);
+		    	if(i==0) {
+		    		anchorX = anchorX+x;
+		    	} else {
+		    		anchorX = anchorX + space;
+		    	}
+		        playerHandShapes.add(new RoundRectangle2D.Float(anchorX, 467, 120, 180, 7, 7));
 		    }
-		    a.setToIdentity();
 		}
 	}
 	
@@ -604,7 +612,7 @@ public class MainWindow extends JFrame implements GameGUIListener{
 
 	private class MouseManager extends MouseAdapter{
 		
-		private int oldIndex;
+		private int oldIndex = -1;
 		
 		@Override
 		public void mouseMoved(MouseEvent e){
