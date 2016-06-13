@@ -129,10 +129,6 @@ public class MainWindow extends JFrame implements GameGUIListener{
                 }
                 a.setToIdentity();
                 g.setTransform(a);
-                //testing shapes
-                for (Shape s : playerHandShapes) {
-                    g.draw(s);
-                }
             }
         };
 		getContentPane().add(gamePanel, BorderLayout.SOUTH);
