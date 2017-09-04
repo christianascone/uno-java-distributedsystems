@@ -3,7 +3,7 @@ package sistemidistribuiti.uno.model.game;
 /**
  * Enumeration for game direction.
  * 
- * @author christian
+ * @author Christian Ascone
  *
  */
 public enum Direction {

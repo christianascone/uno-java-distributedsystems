@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Card background colors
  * 
- * @author christian
+ * @author Christian Ascone
  *
  */
 public enum CARD_COLOR {

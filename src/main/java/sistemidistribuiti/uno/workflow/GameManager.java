@@ -27,7 +27,7 @@ import sistemidistribuiti.uno.view.listener.GameGUIListener;
  * Data receiver class which manage the callback when RMI methods are sent to a
  * class
  * 
- * @author christian
+ * @author Christian Ascone
  *
  */
 public class GameManager implements DataReceiverListener, TimerCallback {

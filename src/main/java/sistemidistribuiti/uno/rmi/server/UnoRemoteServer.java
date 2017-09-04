@@ -11,7 +11,7 @@ import sistemidistribuiti.uno.rmi.interfaces.UnoRemoteGameInterface;
 
 /**
  * Server class which implements all the required methods for game communication
- * @author christian
+ * @author Christian Ascone
  *
  */
 public class UnoRemoteServer implements UnoRemoteGameInterface {

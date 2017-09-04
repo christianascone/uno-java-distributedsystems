@@ -9,7 +9,7 @@ import sistemidistribuiti.uno.model.game.Game;
 /**
  * Remote interface with game methods
  * 
- * @author christian
+ * @author Christian Ascone
  *
  */
 public interface UnoRemoteGameInterface extends Remote{

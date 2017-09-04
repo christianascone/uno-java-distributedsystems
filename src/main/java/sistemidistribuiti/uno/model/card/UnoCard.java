@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Abstract class for uno card, classic or special
  * 
- * @author christian
+ * @author Christian Ascone
  *
  */
 public abstract class UnoCard implements Serializable{

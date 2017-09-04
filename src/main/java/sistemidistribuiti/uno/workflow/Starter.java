@@ -30,7 +30,7 @@ import sistemidistribuiti.uno.view.listener.GameGUIListener;
 /**
  * Starter class for every server/client
  * 
- * @author christian
+ * @author Christian Ascone
  *
  */
 public class Starter {

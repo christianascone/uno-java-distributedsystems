@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Enum for special cards
  * 
- * @author christian
+ * @author Christian Ascone
  *
  */
 public enum SPECIAL_CARD_TYPE {

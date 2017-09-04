@@ -20,7 +20,7 @@ import sistemidistribuiti.uno.utils.Host;
  * Remote client.
  * Currently it is just an example caller
  * 
- * @author christian
+ * @author Christian Ascone
  *
  */
 public class UnoRemoteClient {

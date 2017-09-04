@@ -7,7 +7,7 @@ import sistemidistribuiti.uno.model.card.UnoCard;
 /**
  * Classic card, with a number and a background color
  * 
- * @author christian
+ * @author Christian Ascone
  *
  */
 public class NumberCard extends UnoCard{

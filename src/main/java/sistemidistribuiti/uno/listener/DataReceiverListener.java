@@ -8,7 +8,7 @@ import sistemidistribuiti.uno.model.game.Game;
 /**
  * Listener used for the RMI callback
  * 
- * @author christian
+ * @author Christian Ascone
  *
  */
 public interface DataReceiverListener {
