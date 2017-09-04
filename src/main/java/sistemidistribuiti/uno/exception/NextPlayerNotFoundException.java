@@ -1,5 +1,12 @@
 package sistemidistribuiti.uno.exception;
 
+/**
+ * Exception thrown when the following player (in a match)
+ * is unreachable.
+ * 
+ * @author Christian Ascone
+ *
+ */
 public class NextPlayerNotFoundException extends Exception {
 
 	/**
