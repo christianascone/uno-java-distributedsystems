@@ -14,6 +14,11 @@ public enum CARD_COLOR {
 	// SPECIAL COLOR
 	RAINBOW;
 	
+	/**
+	 * Gets a list of valid (not special) colors
+	 * 
+	 * @return List with every CARD_COLOR except Special one
+	 */
 	public static List<CARD_COLOR> getValidColor(){
 		return Arrays.asList(RED, BLUE, YELLOW, GREEN);	
 	}
