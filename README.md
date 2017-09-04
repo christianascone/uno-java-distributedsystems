@@ -1,4 +1,4 @@
-uno Sistemi Distribuiti
+Uno Java RMI - Distributed Systems
 ==================
 
 
