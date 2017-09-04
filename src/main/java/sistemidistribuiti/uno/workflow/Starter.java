@@ -128,7 +128,7 @@ public class Starter {
 	 * @throws IOException
 	 */
 	private static boolean setupGame(File configFile) throws IOException {
-		List<UnoCard> cards = DeckHelper.getDeck();
+		List<UnoCard> cards = DeckHelper.buildNewDeck();
 		Deck newDeck = new Deck(cards);
 
 		String jsonString = FileUtils.readFileToString(configFile);
