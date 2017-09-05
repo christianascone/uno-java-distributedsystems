@@ -8,11 +8,18 @@ package sistemidistribuiti.uno.model.game;
  */
 public enum Direction {
 	// Next player is currentIndex+1
-	FORWARD, 
+	FORWARD,
 	// Next player is currentIndex-1
 	BACKWARD;
-	
-	public static Direction reverseDirection(Direction direction){
+
+	/**
+	 * Change the game directoion inverting the current one
+	 * 
+	 * @param direction
+	 *            Current direction
+	 * @return The updated direction
+	 */
+	public static Direction reverseDirection(Direction direction) {
 		switch (direction) {
 		case FORWARD:
 			return BACKWARD;
@@ -22,8 +29,8 @@ public enum Direction {
 			return getDefault();
 		}
 	}
-	
-	public static Direction getDefault(){
+
+	public static Direction getDefault() {
 		return FORWARD;
 	}
 }

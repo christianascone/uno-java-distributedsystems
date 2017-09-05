@@ -4,24 +4,29 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import sistemidistribuiti.uno.exception.NextPlayerNotFoundException;
 import sistemidistribuiti.uno.model.card.UnoCard;
 import sistemidistribuiti.uno.model.card.impl.Deck;
-import sistemidistribuiti.uno.model.player.CurrentNode;
 import sistemidistribuiti.uno.model.player.PLAYER_STATE;
 import sistemidistribuiti.uno.model.player.Player;
 import sistemidistribuiti.uno.rmi.client.UnoRemoteClient;
 
+/**
+ * Main Game class, which manages all components (players, deck)
+ * 
+ * @author Christian Ascone
+ *
+ */
 public class Game implements Serializable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 2750321770514228846L;
-	private final static Logger logger = Logger.getLogger(UnoRemoteClient.class.getName());
+	private final static Logger logger = Logger.getLogger(UnoRemoteClient.class
+			.getName());
 
 	private List<Player> players;
 	private Deck deck;
@@ -29,8 +34,8 @@ public class Game implements Serializable {
 	private Player current;
 	private Direction gameDirection;
 	private boolean colorChanged;
-	
-	private HashMap<Integer,PLAYER_STATE> playersAvailability = new HashMap<Integer,PLAYER_STATE>();
+
+	private HashMap<Integer, PLAYER_STATE> playersAvailability = new HashMap<Integer, PLAYER_STATE>();
 
 	public Game(List<Player> players, Deck deck) {
 		this.players = players;
@@ -39,24 +44,24 @@ public class Game implements Serializable {
 		shuffleDeck();
 		this.discarded = new Deck();
 
-		// Draw the starting player
-		Random rnd = new Random();
-		int randomStartingPlayer = rnd.nextInt(players.size());
+		// TODO: Draw a random starting player
+
 		this.current = players.get(0);
 
 		this.gameDirection = Direction.getDefault();
 		this.colorChanged = false;
-		
-		for (Player p : players){
+
+		// Set current active state for every player
+		for (Player p : players) {
 			this.playersAvailability.put(p.getId(), PLAYER_STATE.ACTIVE);
 		}
 	}
-	
-	public void setPlayerState(int id, PLAYER_STATE state){
+
+	public void setPlayerState(int id, PLAYER_STATE state) {
 		playersAvailability.put(id, state);
 	}
-	
-	public PLAYER_STATE getPlayerState(int id){
+
+	public PLAYER_STATE getPlayerState(int id) {
 		return playersAvailability.get(id);
 	}
 
@@ -95,10 +100,19 @@ public class Game implements Serializable {
 		Collections.shuffle(cards);
 	}
 
+	/**
+	 * @param newCurrent
+	 *            New current player
+	 */
 	public void setCurrent(Player newCurrent) {
 		this.current = newCurrent;
 	}
 
+	/**
+	 * Checks if a player won the game
+	 * 
+	 * @return If exists a player who won
+	 */
 	public boolean playerWon() {
 		for (Player player : players) {
 			if (player.getState() == PLAYER_STATE.WINNER) {
@@ -109,14 +123,30 @@ public class Game implements Serializable {
 		return false;
 	}
 
+	/**
+	 * Gets next player (after the current one) who must play
+	 * 
+	 * @return Next player
+	 * @throws NextPlayerNotFoundException
+	 *             In case next player is not found
+	 */
 	public Player getNextPlayer() throws NextPlayerNotFoundException {
 		return getNextPlayer(getCurrent().getId());
 	}
 
+	/**
+	 * Gets next player after the one with given id, who must play
+	 * 
+	 * @param id
+	 *            Id of current player
+	 * @return Next player
+	 * @throws NextPlayerNotFoundException
+	 *             In case next player is not found
+	 */
 	public Player getNextPlayer(int id) throws NextPlayerNotFoundException {
 
 		List<Player> players = getPlayers();
-		
+
 		Direction direction = getGameDirection();
 
 		int directionValue = 0;
@@ -136,31 +166,30 @@ public class Game implements Serializable {
 				i = (i + directionValue) % players.size();
 				if (i < 0) {
 					i = players.size() - 1;
-				}				
+				}
 				Player newCurrent = players.get(i);
 				return newCurrent;
 			}
 		}
 
 		logger.log(Level.INFO, "Nodes in game class:" + getPlayers().toString());
-		
+
 		throw new NextPlayerNotFoundException();
 	}
 
 	public Player getNextPlayerWithSkip() throws NextPlayerNotFoundException {
 		Player nextPlayer = getNextPlayer();
-		//return getNextPlayer(nextPlayer.getId());
 		return nextPlayer;
 	}
-	
-	public String toString(){
+
+	public String toString() {
 		String strGame = "";
 		strGame = "Next Player -> " + current.getId() + "\n";
 		strGame = strGame + "Number of players -> " + players.size() + "\n";
 		strGame = strGame + "Players IDs -> ";
 		String strCom = "";
-		for (int i = 0; i< players.size(); i++){
-			strCom = strCom + players.get(i).getId() + " - ";			
+		for (int i = 0; i < players.size(); i++) {
+			strCom = strCom + players.get(i).getId() + " - ";
 		}
 		strGame = strGame + strCom;
 		return strGame;
@@ -173,5 +202,5 @@ public class Game implements Serializable {
 	public void setColorChanged(boolean colorChanged) {
 		this.colorChanged = colorChanged;
 	}
-	
+
 }

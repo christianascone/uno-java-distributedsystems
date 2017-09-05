@@ -5,6 +5,12 @@ import sistemidistribuiti.uno.model.card.CARD_TYPE_ENUM;
 import sistemidistribuiti.uno.model.card.SPECIAL_CARD_TYPE;
 import sistemidistribuiti.uno.model.card.UnoCard;
 
+/**
+ * Special UNO Card with symbol and a specific effect
+ * 
+ * @author Christian Ascone
+ *
+ */
 public class SpecialCard extends UnoCard{
 	/**
 	 * 
