@@ -1,4 +1,4 @@
-package sistemidistribuiti.uno;
+package distributedsystems.uno;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
