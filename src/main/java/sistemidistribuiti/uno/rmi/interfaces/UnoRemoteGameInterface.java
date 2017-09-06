@@ -7,29 +7,30 @@ import java.rmi.RemoteException;
 import sistemidistribuiti.uno.model.game.Game;
 
 /**
- * Remote interface with game methods
- * {@link RemoteException} is very important for RMI
+ * Remote interface with game methods {@link RemoteException} is very important
+ * for RMI
  * 
  * @author Christian Ascone
  *
  */
-public interface UnoRemoteGameInterface extends Remote{
-	
+public interface UnoRemoteGameInterface extends Remote {
+
 	/**
 	 * Setup game to server
+	 * 
 	 * @param deck
 	 * @throws RemoteException
-	 * @throws NotBoundException 
+	 * @throws NotBoundException
 	 */
 	void setupGame(Game game) throws RemoteException, NotBoundException;
-	
+
 	/**
 	 * Send the current game to other players
+	 * 
 	 * @param game
 	 * @throws RemoteException
 	 * @throws NotBoundException
 	 */
 	void sendGame(Game game) throws RemoteException, NotBoundException;
-	
-	
+
 }
