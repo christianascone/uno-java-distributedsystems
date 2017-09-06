@@ -2,7 +2,6 @@ package sistemidistribuiti.uno.workflow;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -31,7 +30,10 @@ import sistemidistribuiti.uno.view.listener.GameGUIListener;
  *
  */
 public class GameManager implements DataReceiverListener, TimerCallback {
-	private static final Logger logger = Logger.getLogger(GameManager.class.getName());
+	private static final int FIRST_OBJECT_INDEX = 0;
+
+	private static final Logger logger = Logger.getLogger(GameManager.class
+			.getName());
 
 	private int id;
 	private String name;
@@ -42,11 +44,10 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 
 	private UNOTimer timer;
 	private UNOTimer timerForDraw;
-	
+
 	private GameGUIListener gameGUIListener;
 
 	private Game game;
-	
 
 	public GameManager(GameGUIListener gameGuiListener) {
 		this.gameGUIListener = gameGuiListener;
@@ -58,39 +59,39 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 
 	@Override
 	public void setGame(Game game) throws RemoteException, NotBoundException {
-		if (this.timer != null) this.timer.stop();
+		if (this.timer != null)
+			this.timer.stop();
 		this.timer = null;
-		this.game = game;	
+		this.game = game;
 		List<Player> players = game.getPlayers();
 		// check if one of the player won
-		if(game.playerWon()){	
-			for(final Player player : players){
-				if(player.getState() == PLAYER_STATE.WINNER){
+		if (game.playerWon()) {
+			for (final Player player : players) {
+				if (player.getState() == PLAYER_STATE.WINNER) {
 					new Thread(new Runnable() {
-					    public void run() {
-					    	gameGUIListener.showWinnerAlert(player);
-					    }
+						public void run() {
+							gameGUIListener.showWinnerAlert(player);
+						}
 					}).start();
 				}
 			}
 			return;
 		}
-		
-		if(game != null){
-			updateGameField();			
+
+		if (game != null) {
+			updateGameField();
 		}
-		
+
 		if (game != null && game.getCurrent() != null && isMyTurn(game)) {
 			logger.log(Level.INFO, "Turn Conditions passed");
 			// start own timer for mandatory draw
 			// create obj timer
 			startTimerForDraw();
 			enableGame();
-		}else{
+		} else {
 			startUnoTimer();
 		}
 	}
-
 
 	/**
 	 * Play my own turn
@@ -101,11 +102,12 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 			// stop timer for draw
 			this.timerForDraw.stop();
 			this.timerForDraw = null;
-			
+
 			newCurrent = game.getNextPlayer();
 			game.setCurrent(newCurrent);
-			
-			logger.log(Level.INFO, "Before broadcast - game struct:" + game.toString());			
+
+			logger.log(Level.INFO,
+					"Before broadcast - game struct:" + game.toString());
 			remoteClient.broadcastUpdatedGame(game);
 			startUnoTimer();
 		} catch (Exception e) {
@@ -114,75 +116,88 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 		}
 	}
 
+	/**
+	 * Enable game starting the turn
+	 */
 	private void enableGame() {
 		gameGUIListener.playMyTurn();
 	}
 
+	/**
+	 * Update game field with current data
+	 */
 	private void updateGameField() {
-		gameGUIListener.updateGameField();	
+		gameGUIListener.updateGameField();
 	}
-	
+
 	@Override
-	public void setupRemoteClient(Game game) throws RemoteException, NotBoundException {
+	public void setupRemoteClient(Game game) throws RemoteException,
+			NotBoundException {
 		this.remoteClient = new UnoRemoteClient(game, id);
 		setGame(game);
 	}
-	
+
 	/**
 	 * Gets the cards of the current player
+	 * 
 	 * @return
 	 */
-	public List<UnoCard> getMyCards(){
+	public List<UnoCard> getMyCards() {
 		List<Player> players = this.game.getPlayers();
-		for(Player player : players){
-			if(player.getId() == id){
+		for (Player player : players) {
+			if (player.getId() == id) {
 				return player.getCards();
 			}
 		}
-		
+
 		return new LinkedList<UnoCard>();
 	}
-	
-	
+
+	/**
+	 * Gets the last played card Object from discarded deck
+	 * 
+	 * @return Card played in last turn
+	 */
 	public UnoCard getLastPlayedCard() {
 		List<UnoCard> discarded = game.getDiscarded().getCardList();
-		if(discarded.isEmpty()){
+		if (discarded.isEmpty()) {
 			List<UnoCard> deckCards = game.getDeck().getCardList();
-			UnoCard card = deckCards.get(0);
-			
-			while(card.getColor() == CARD_COLOR.RAINBOW){
+			UnoCard card = deckCards.get(FIRST_OBJECT_INDEX);
+
+			while (card.getColor() == CARD_COLOR.RAINBOW) {
 				game.shuffleDeck();
 				deckCards = game.getDeck().getCardList();
-				card = deckCards.get(0);
+				card = deckCards.get(FIRST_OBJECT_INDEX);
 			}
-			
-			card = deckCards.remove(0);
+
+			card = deckCards.remove(FIRST_OBJECT_INDEX);
 			discarded.add(card);
 		}
-		return discarded.get(discarded.size()-1);
+		return discarded.get(discarded.size() - 1);
 	}
-	
-	public UnoCard drawCard(){
+
+	public UnoCard drawCard() {
 		List<UnoCard> deckCards = game.getDeck().getCardList();
-		if(!deckCards.isEmpty()){
-			return deckCards.remove(0);
+		if (!deckCards.isEmpty()) {
+			return deckCards.remove(FIRST_OBJECT_INDEX);
 		}
 		List<UnoCard> discardedCards = game.getDiscarded().getCardList();
-		
+
 		deckCards.addAll(discardedCards);
 		discardedCards.clear();
-		discardedCards.add(deckCards.get(deckCards.size()-1));
-		
+		discardedCards.add(deckCards.get(deckCards.size() - 1));
+
 		game.shuffleDeck();
-		
-		return deckCards.remove(0);
+
+		return deckCards.remove(FIRST_OBJECT_INDEX);
 	}
-	
+
 	/**
 	 * Discard the given card
+	 * 
 	 * @param discarded
 	 */
-	public void discardCard(UnoCard discarded){
+	public void discardCard(UnoCard discarded) {
 		this.game.getDiscarded().getCardList().add(discarded);
 	}
 
@@ -199,7 +214,7 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 	public void setId(int id) {
 		this.id = id;
 	}
-	
+
 	public int getId() {
 		return id;
 	}
@@ -228,16 +243,28 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 		return remoteClient;
 	}
 
+	/**
+	 * Set current player as winner
+	 */
 	public void winGame() {
 		List<Player> players = game.getPlayers();
-		for(Player player : players){
-			if(player.getId() == id){
+		for (Player player : players) {
+			if (player.getId() == id) {
 				player.setState(PLAYER_STATE.WINNER);
 			}
 		}
 	}
 
-	public void manageSpecialCard(SpecialCard specialCard) throws NextPlayerNotFoundException {
+	/**
+	 * Manage a played special card
+	 * 
+	 * @param specialCard
+	 *            Played special card
+	 * @throws NextPlayerNotFoundException
+	 *             in case next player is not found
+	 */
+	public void manageSpecialCard(SpecialCard specialCard)
+			throws NextPlayerNotFoundException {
 		switch (specialCard.getSpecialCardType()) {
 		case DRAW_TWO:
 			SpecialCardManager.drawTwoCard(getGame());
@@ -255,45 +282,45 @@ public class GameManager implements DataReceiverListener, TimerCallback {
 			break;
 		}
 	}
-	
-	public void timeUp(UNOTimer caller) throws NextPlayerNotFoundException, RemoteException, NotBoundException {
-		if (caller == timer){
+
+	public void timeUp(UNOTimer caller) throws NextPlayerNotFoundException,
+			RemoteException, NotBoundException {
+		if (caller == timer) {
 			Player player = game.getNextPlayer();
 			// if I am the next node in the turn I ll:
 			// - remove
 			Player crashedPlayer = game.getCurrent();
 			game.setPlayerState(crashedPlayer.getId(), PLAYER_STATE.CRASH);
 			game.setCurrent(player);
-			//remove crashed player			
+			// remove crashed player
 			game.getPlayers().remove(crashedPlayer);
-			
-			if (player.getId() == CurrentNode.getInstance().getId()){
+
+			if (player.getId() == CurrentNode.getInstance().getId()) {
 				// play
 				setGame(game);
-			}else{
-				startUnoTimer();		// again 
+			} else {
+				startUnoTimer(); // again
 				updateGameField();
 			}
-		}else if(caller == timerForDraw){
+		} else if (caller == timerForDraw) {
 			// mandatory draw
 			drawCard();
 			// pass the game
 			gameGUIListener.refreshUILazyUser();
 			playMyTurn();
-		}else{
+		} else {
 			logger.log(Level.INFO, " old timer expired");
 		}
 	}
-	
-	public void startUnoTimer(){
+
+	public void startUnoTimer() {
 		this.timer = new UNOTimer(this, 40);
 		this.timer.start();
 	}
 
-	public void startTimerForDraw(){
+	public void startTimerForDraw() {
 		// 10 seconds of gap to send the game obj
 		this.timerForDraw = new UNOTimer(this, 30);
 		this.timerForDraw.start();
 	}
 }
-	
