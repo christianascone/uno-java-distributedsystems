@@ -8,12 +8,12 @@ import sistemidistribuiti.uno.model.game.Game;
 
 /**
  * Remote interface with game methods
+ * {@link RemoteException} is very important for RMI
  * 
  * @author Christian Ascone
  *
  */
 public interface UnoRemoteGameInterface extends Remote{
-	// IMPORTANTISSIMA LA REMOTE EXCEPTION
 	
 	/**
 	 * Setup game to server
