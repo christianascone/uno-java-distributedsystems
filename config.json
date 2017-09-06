@@ -4,23 +4,23 @@
          {
             "name":"test1",
             "id":1,
-            "host":"dorina.cs.unibo.it",
+            "host":"localhost",
             "leader":"true"
          },
          {
             "name":"test2",
             "id":2,
-            "host":"abigaille.cs.unibo.it"
+            "host":"localhost"
          },
          {
             "name":"test3",
             "id":3,
-            "host":"marullo.cs.unibo.it"
+            "host":"localhost"
          },
          {
             "name":"test4",
             "id":4,
-            "host":"frank.cs.unibo.it"
+            "host":"localhost"
          }
       ]
    }
