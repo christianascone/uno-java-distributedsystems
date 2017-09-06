@@ -15,14 +15,17 @@ public class ServerHelper {
 	/**
 	 * Setup a remoteInterface
 	 * 
-	 * @param remoteServer Class implementing a remote interface
-	 * @param name Server's name
-	 * @param port RMI registry's port
+	 * @param remoteServer
+	 *            Class implementing a remote interface
+	 * @param name
+	 *            Server's name
+	 * @param port
+	 *            RMI registry's port
 	 * @throws RemoteException
 	 * @throws AccessException
 	 */
-	public static void setupServer(Remote remoteServer,
-			String name, int port) throws RemoteException, AccessException {
+	public static void setupServer(Remote remoteServer, String name, int port)
+			throws RemoteException, AccessException {
 		LocateRegistry.createRegistry(port);
 		Remote stub = (Remote) UnicastRemoteObject.exportObject(remoteServer,
 				port);
@@ -32,16 +35,19 @@ public class ServerHelper {
 
 	/**
 	 * Setup the client side of the caller, creating the host reference
+	 * 
 	 * @param host
 	 * @param name
 	 * @return
 	 * @throws RemoteException
 	 * @throws NotBoundException
 	 */
-	public static UnoRemoteGameInterface setupClient(String host, String name) throws RemoteException, NotBoundException{
+	public static UnoRemoteGameInterface setupClient(String host, String name)
+			throws RemoteException, NotBoundException {
 		Registry registry = LocateRegistry.getRegistry(host);
-		UnoRemoteGameInterface remoteClient = (UnoRemoteGameInterface) registry.lookup(name);
-        
-        return remoteClient;
+		UnoRemoteGameInterface remoteClient = (UnoRemoteGameInterface) registry
+				.lookup(name);
+
+		return remoteClient;
 	}
 }
