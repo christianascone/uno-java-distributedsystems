@@ -160,13 +160,11 @@ public class Game implements Serializable {
 			break;
 		}
 
+		// Search current player
 		for (int i = 0; i < players.size(); i++) {
 			Player iteratePlayer = players.get(i);
 			if (iteratePlayer.getId() == id) {
-				i = (i + directionValue) % players.size();
-				if (i < 0) {
-					i = players.size() - 1;
-				}
+				i = findNextPlayerIndex(players, directionValue, i);
 				Player newCurrent = players.get(i);
 				return newCurrent;
 			}
@@ -177,6 +175,36 @@ public class Game implements Serializable {
 		throw new NextPlayerNotFoundException();
 	}
 
+	/**
+	 * Find index of next player starting from i-th player
+	 * 
+	 * @param players
+	 *            List of players
+	 * @param directionValue
+	 *            Turn direction
+	 * @param i
+	 *            Index of current player
+	 * @return The next player
+	 */
+	private int findNextPlayerIndex(List<Player> players, int directionValue,
+			int i) {
+		// Gets index of next player (based on direction)
+		i = (i + directionValue) % players.size();
+		// If 'i' is negative get the last player
+		if (i < 0) {
+			i = players.size() - 1;
+		}
+		return i;
+	}
+
+	/**
+	 * Gets next player (after the current one) who must play, skipping the
+	 * first one
+	 * 
+	 * @return Next player
+	 * @throws NextPlayerNotFoundException
+	 *             In case next player is not found
+	 */
 	public Player getNextPlayerWithSkip() throws NextPlayerNotFoundException {
 		Player nextPlayer = getNextPlayer();
 		return nextPlayer;
