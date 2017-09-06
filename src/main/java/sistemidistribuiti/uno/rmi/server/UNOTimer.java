@@ -1,32 +1,34 @@
 package sistemidistribuiti.uno.rmi.server;
 
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import sistemidistribuiti.uno.exception.NextPlayerNotFoundException;
-
+/**
+ * Timer class responsible for player timeout
+ * 
+ * @author Christian Ascone
+ *
+ */
 public class UNOTimer {
 
 	private TimerCallback callback;
 	public int seconds;
 	private TimerTask timerTask;
 	private Timer timer;
-	
-	public UNOTimer(TimerCallback id,int seconds){
+
+	public UNOTimer(TimerCallback id, int seconds) {
 		this.callback = id;
-		this.seconds = seconds;		
+		this.seconds = seconds;
 	}
-	
-	public void start(){
+
+	public void start() {
 		// init
-		final UNOTimer ciccio = this;
-		this.timerTask = new TimerTask(){
+		final UNOTimer timer = this;
+		this.timerTask = new TimerTask() {
 			public void run() {
 				try {
-					callback.timeUp(ciccio);
-					stop(); 
+					callback.timeUp(timer);
+					stop();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -34,14 +36,14 @@ public class UNOTimer {
 		};
 		this.timer = new Timer(true);
 		// start
-		this.timer.scheduleAtFixedRate(this.timerTask,this.seconds * 1000, this.seconds * 1000);
+		int delayInMilliseconds = this.seconds * 1000;
+		this.timer.scheduleAtFixedRate(this.timerTask, delayInMilliseconds,
+				delayInMilliseconds);
 	}
 
-	public void stop(){
+	public void stop() {
 		timerTask.cancel();
-		timer.cancel(); 
+		timer.cancel();
 	}
-
-
 
 }
