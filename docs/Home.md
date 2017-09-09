@@ -1,6 +1,6 @@
 # Documentation
 
-Project code is placed inside `src/main/javasistemidistribuiti/sistemidistribuiti/uno`.
+Project code is placed inside `src/main/java/distributedsystems/uno`.
 
 ## Packages
 

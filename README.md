@@ -1,10 +1,10 @@
-Uno Java RMI - Distributed Systems
+UNO Java - Distributed Systems
 ==================
 
 
 ## Requirements
 
-- Java 7
+- Java >= 7
 - Maven
 
 
@@ -30,23 +30,23 @@ Example:
              {
                 "name":"test1",
                 "id":1,
-                "host":"dorina.cs.unibo.it",
+                "host":"localhost",
                 "leader":"true"
              },
              {
                 "name":"test2",
                 "id":2,
-                "host":"abigaille.cs.unibo.it"
+                "host":"localhost"
              },
              {
                 "name":"test3",
                 "id":3,
-                "host":"marullo.cs.unibo.it"
+                "host":"localhost"
              },
              {
                 "name":"test4",
                 "id":4,
-                "host":"frank.cs.unibo.it"
+                "host":"localhost"
              }
           ]
        }
@@ -54,12 +54,16 @@ Example:
 
 ### Run
 
-Starting from last host, start the following command:
+Place `java.policy` in the same directory of executable jar.
+Now, starting on every non-leader host and finally with leader host, execute:
 
-    java -jar uno-*-jar-with-dependencies.jar name number port
+    java -jar uno-*-jar-with-dependencies.jar name playernumber port
+
+In case of using the same host for every player, commands must be executed changing port:
 
 Example:
 
+    java -jar uno-*-jar-with-dependencies.jar test2 2 1099
+    java -jar uno-*-jar-with-dependencies.jar test3 3 1199
     java -jar uno-*-jar-with-dependencies.jar test4 4 1299
-
-Attention: in case of multiple instances on the same host, it is necessary to change port for every launch.
+    java -jar uno-*-jar-with-dependencies.jar test1 1 1399
