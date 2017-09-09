@@ -23,8 +23,8 @@ Set hosts in `config.json` and a name for each host.
 Choose a leader and set `"leader":"true"`.
 
 Example:
-
-    {
+```js
+    {
        "UnoConfig":{
           "nodes":[
              {
@@ -50,20 +50,25 @@ Example:
              }
           ]
        }
-    }
+    }
+```
 
 ### Run
 
 Place `java.policy` in the same directory of executable jar.
 Now, starting on every non-leader host and finally with leader host, execute:
 
-    java -jar uno-*-jar-with-dependencies.jar name playernumber port
+```shell
+java -jar uno-*-jar-with-dependencies.jar name playernumber port
+```
 
 In case of using the same host for every player, commands must be executed changing port:
 
 Example:
 
-    java -jar uno-*-jar-with-dependencies.jar test2 2 1099
-    java -jar uno-*-jar-with-dependencies.jar test3 3 1199
-    java -jar uno-*-jar-with-dependencies.jar test4 4 1299
-    java -jar uno-*-jar-with-dependencies.jar test1 1 1399
+```shell
+java -jar uno-*-jar-with-dependencies.jar test2 2 1099
+java -jar uno-*-jar-with-dependencies.jar test3 3 1199
+java -jar uno-*-jar-with-dependencies.jar test4 4 1299
+java -jar uno-*-jar-with-dependencies.jar test1 1 1399
+```
