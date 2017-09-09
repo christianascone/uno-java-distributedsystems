@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <class-diagram version="1.1.9" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
   realizations="true" associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
-  <class id="1" language="java" name="sistemidistribuiti.uno.model.card.UnoCard" project="uno" 
-    file="/uno/src/main/java/sistemidistribuiti/uno/model/card/UnoCard.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="1" language="java" name="distributedsystems.uno.model.card.UnoCard" project="uno" 
+    file="/uno/src/main/java/distributedsystems/uno/model/card/UnoCard.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="653" y="1812"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -10,8 +10,8 @@
       <operations public="true" package="true" protected="false" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="2" language="java" name="sistemidistribuiti.uno.model.card.impl.NumberCard" project="uno" 
-    file="/uno/src/main/java/sistemidistribuiti/uno/model/card/impl/NumberCard.java" binary="false" 
+  <class id="2" language="java" name="distributedsystems.uno.model.card.impl.NumberCard" project="uno" 
+    file="/uno/src/main/java/distributedsystems/uno/model/card/impl/NumberCard.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="818" y="2040"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -20,8 +20,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="3" language="java" name="sistemidistribuiti.uno.model.card.impl.SpecialCard" project="uno" 
-    file="/uno/src/main/java/sistemidistribuiti/uno/model/card/impl/SpecialCard.java" binary="false" 
+  <class id="3" language="java" name="distributedsystems.uno.model.card.impl.SpecialCard" project="uno" 
+    file="/uno/src/main/java/distributedsystems/uno/model/card/impl/SpecialCard.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="460" y="2040"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -30,8 +30,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="4" language="java" name="sistemidistribuiti.uno.model.card.impl.Deck" project="uno" 
-    file="/uno/src/main/java/sistemidistribuiti/uno/model/card/impl/Deck.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="4" language="java" name="distributedsystems.uno.model.card.impl.Deck" project="uno" 
+    file="/uno/src/main/java/distributedsystems/uno/model/card/impl/Deck.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="652" y="1616"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -39,8 +39,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <enumeration id="5" language="java" name="sistemidistribuiti.uno.model.card.CARD_TYPE_ENUM" project="uno" 
-    file="/uno/src/main/java/sistemidistribuiti/uno/model/card/CARD_TYPE_ENUM.java" binary="false" corner="BOTTOM_RIGHT">    
+  <enumeration id="5" language="java" name="distributedsystems.uno.model.card.CARD_TYPE_ENUM" project="uno" 
+    file="/uno/src/main/java/distributedsystems/uno/model/card/CARD_TYPE_ENUM.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="326" y="1812"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -48,8 +48,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </enumeration>  
-  <enumeration id="6" language="java" name="sistemidistribuiti.uno.model.card.CARD_COLOR" project="uno" 
-    file="/uno/src/main/java/sistemidistribuiti/uno/model/card/CARD_COLOR.java" binary="false" corner="BOTTOM_RIGHT">    
+  <enumeration id="6" language="java" name="distributedsystems.uno.model.card.CARD_COLOR" project="uno" 
+    file="/uno/src/main/java/distributedsystems/uno/model/card/CARD_COLOR.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="998" y="1810"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -57,8 +57,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </enumeration>  
-  <enumeration id="7" language="java" name="sistemidistribuiti.uno.model.card.SPECIAL_CARD_TYPE" project="uno" 
-    file="/uno/src/main/java/sistemidistribuiti/uno/model/card/SPECIAL_CARD_TYPE.java" binary="false" 
+  <enumeration id="7" language="java" name="distributedsystems.uno.model.card.SPECIAL_CARD_TYPE" project="uno" 
+    file="/uno/src/main/java/distributedsystems/uno/model/card/SPECIAL_CARD_TYPE.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="467" y="2281"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -67,8 +67,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </enumeration>  
-  <class id="8" language="java" name="sistemidistribuiti.uno.model.game.Game" project="uno" 
-    file="/uno/src/main/java/sistemidistribuiti/uno/model/game/Game.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="8" language="java" name="distributedsystems.uno.model.game.Game" project="uno" 
+    file="/uno/src/main/java/distributedsystems/uno/model/game/Game.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="652" y="1234"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -76,8 +76,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="9" language="java" name="sistemidistribuiti.uno.workflow.GameManager" project="uno" 
-    file="/uno/src/main/java/sistemidistribuiti/uno/workflow/GameManager.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="9" language="java" name="distributedsystems.uno.workflow.GameManager" project="uno" 
+    file="/uno/src/main/java/distributedsystems/uno/workflow/GameManager.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="261" y="1229"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -85,8 +85,8 @@
       <operations public="true" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="10" language="java" name="sistemidistribuiti.uno.workflow.Starter" project="uno" 
-    file="/uno/src/main/java/sistemidistribuiti/uno/workflow/Starter.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="10" language="java" name="distributedsystems.uno.workflow.Starter" project="uno" 
+    file="/uno/src/main/java/distributedsystems/uno/workflow/Starter.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="645" y="798"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -94,8 +94,8 @@
       <operations public="true" package="true" protected="true" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="11" language="java" name="sistemidistribuiti.uno.model.player.Player" project="uno" 
-    file="/uno/src/main/java/sistemidistribuiti/uno/model/player/Player.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="11" language="java" name="distributedsystems.uno.model.player.Player" project="uno" 
+    file="/uno/src/main/java/distributedsystems/uno/model/player/Player.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="989" y="1232"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -103,8 +103,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <enumeration id="12" language="java" name="sistemidistribuiti.uno.model.player.PLAYER_STATE" project="uno" 
-    file="/uno/src/main/java/sistemidistribuiti/uno/model/player/PLAYER_STATE.java" binary="false" corner="BOTTOM_RIGHT">    
+  <enumeration id="12" language="java" name="distributedsystems.uno.model.player.PLAYER_STATE" project="uno" 
+    file="/uno/src/main/java/distributedsystems/uno/model/player/PLAYER_STATE.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="999" y="1548"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
