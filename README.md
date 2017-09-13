@@ -61,7 +61,7 @@ Place `java.policy` in the same directory of executable jar.
 Now, starting on every non-leader host and finally with leader host, execute:
 
 ```shell
-java -jar uno-x.y.z.jar.jar name playernumber port
+java -jar uno-x.y.z.jar name playernumber port
 ```
 
 In case of using the same host for every player, commands must be executed changing port:
@@ -69,8 +69,8 @@ In case of using the same host for every player, commands must be executed chang
 Example:
 
 ```shell
-java -jar uno-x.y.z.jar.jar test2 2 1099
-java -jar uno-x.y.z.jar.jar test3 3 1199
-java -jar uno-x.y.z.jar.jar test4 4 1299
-java -jar uno-x.y.z.jar.jar test1 1 1399
+java -jar uno-x.y.z.jar test2 2 1099
+java -jar uno-x.y.z.jar test3 3 1199
+java -jar uno-x.y.z.jar test4 4 1299
+java -jar uno-x.y.z.jar test1 1 1399
 ```
