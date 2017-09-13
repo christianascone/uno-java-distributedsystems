@@ -1,6 +1,7 @@
 UNO Java - Distributed Systems
 ==================
 
+[![GitHub release](https://img.shields.io/github/release/christianascone/uno-java-distributedsystems.svg?maxAge=2592000)](https://github.com/christianascone/uno-java-distributedsystems/releases/latest)
 
 ## Requirements
 
