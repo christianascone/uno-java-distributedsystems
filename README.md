@@ -2,6 +2,7 @@ UNO Java - Distributed Systems
 ==================
 
 [![GitHub release](https://img.shields.io/github/release/christianascone/uno-java-distributedsystems.svg?maxAge=2592000)](https://github.com/christianascone/uno-java-distributedsystems/releases/latest)
+[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/christianascone/uno-java-distributedsystems/blob/master/LICENSE)
 
 ## Requirements
 
@@ -75,3 +76,6 @@ java -jar uno-x.y.z.jar test3 3 1199
 java -jar uno-x.y.z.jar test4 4 1299
 java -jar uno-x.y.z.jar test1 1 1399
 ```
+
+## License
+Released under the [MIT License](http://www.opensource.org/licenses/MIT), see [LICENSE](LICENSE).
